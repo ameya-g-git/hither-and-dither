@@ -2,20 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --light: #febcf7;
+    --medium: #79468A;
+    --dark: #140428;
+    --glow: #ea4bfc;
+}
+
 @font-face {
     font-family: IllusionSerif;
     font-style: italic;
     font-weight: normal;
+    line-height: normal;
     src: url("./assets/fonts/IllusionSerif-Italic.otf")
 }
 
 @font-face {
-    font-family: IllusionSerif-BoldItalic;
+    font-family: IllusionSerif;
     font-style: italic;
     font-weight: bold;
-    src: url("./assets/fonts/IllusionSerif-Italic.otf")
+    line-height: normal;
+    src: url("./assets/fonts/IllusionSerif-BoldItalic.otf")
 }
 
 body {
-    font-family: IllusionSerif-Italic;
+    padding: 0 4rem;
+    font-family: IllusionSerif;
+    background-image: radial-gradient(#1D0638, #0F0121);
+}
+
+h1 {
+    padding-top: 1rem;
+    font-size: 4.5rem;
+    font-weight: bold;
+    line-height: 160%;
+    color: transparent;
+    background-color: var(--glow);
+    text-shadow: var(--light) 0 0 .5rem;
+    background-clip: text;
 }
