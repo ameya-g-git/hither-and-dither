@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: IllusionSerif;
+    font-style: italic;
+    font-weight: normal;
+    src: url("./assets/fonts/IllusionSerif-Italic.otf")
+}
+
+@font-face {
+    font-family: IllusionSerif-BoldItalic;
+    font-style: italic;
+    font-weight: bold;
+    src: url("./assets/fonts/IllusionSerif-Italic.otf")
+}
+
+body {
+    font-family: IllusionSerif-Italic;
+}
