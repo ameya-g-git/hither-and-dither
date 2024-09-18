@@ -27,9 +27,14 @@
 }
 
 body {
-    padding: 0 4rem;
     font-family: IllusionSerif;
+    width: 100vw;
     background-image: radial-gradient(#1D0638, #0F0121);
+}
+
+img {
+    user-select: none;
+    pointer-events: none;
 }
 
 h1, h2, h3 {
