@@ -554,20 +554,28 @@ video {
   --tw-contain-style:  ;
 }
 
-.-ml-4 {
-  margin-left: -1rem;
+.-mr-\[0\.01rem\] {
+  margin-right: -0.01rem;
 }
 
-.-mr-2 {
-  margin-right: -0.5rem;
+.mb-2 {
+  margin-bottom: 0.5rem;
 }
 
-.-ml-2 {
-  margin-left: -0.5rem;
+.mt-6 {
+  margin-top: 1.5rem;
 }
 
 .flex {
   display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.h-\[3\.5rem\] {
+  height: 3.5rem;
 }
 
 .h-full {
@@ -590,22 +598,6 @@ video {
   width: 100vw;
 }
 
-.w-\[2\.75rem\] {
-  width: 2.75rem;
-}
-
-.w-\[2\.5rem\] {
-  width: 2.5rem;
-}
-
-.w-20 {
-  width: 5rem;
-}
-
-.w-10 {
-  width: 2.5rem;
-}
-
 .-scale-x-100 {
   --tw-scale-x: -1;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -622,11 +614,15 @@ video {
 }
 
 .animate-infinite-scroll {
-  animation: infinite-scroll 7s linear infinite;
+  animation: infinite-scroll 1s linear infinite;
 }
 
 .flex-row {
   flex-direction: row;
+}
+
+.items-end {
+  align-items: flex-end;
 }
 
 .items-center {
@@ -637,8 +633,22 @@ video {
   justify-content: flex-end;
 }
 
+.gap-2 {
+  gap: 0.5rem;
+}
+
 .overflow-hidden {
   overflow: hidden;
+}
+
+.shadow-light {
+  --tw-shadow-color: #FFC7F9;
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
+.drop-shadow-lg {
+  --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 :root {
@@ -646,6 +656,7 @@ video {
   --medium: #79468A;
   --dark: #140428;
   --glow: #ea4bfc;
+  --test: #f795ee;
 }
 
 @font-face {
@@ -678,36 +689,244 @@ body {
   background-image: radial-gradient(#1D0638, #0F0121);
 }
 
-h1 {
+h1, h2, h3 {
   padding-top: 1rem;
-  font-size: 4.5rem;
-  font-weight: bold;
-  line-height: 160%;
   color: transparent;
-  background-color: var(--glow);
-  text-shadow: var(--light) 0 0 .5rem;
   -webkit-background-clip: text;
           background-clip: text;
 }
 
-.\*\:ml-2 > * {
-  margin-left: 0.5rem;
+h1 {
+  font-size: 6rem;
+  font-weight: bold;
+  line-height: 160%;
+  background-color: var(--glow);
+  text-shadow: var(--light) 0 0 .5rem;
 }
 
-.\*\:-ml-2 > * {
-  margin-left: -0.5rem;
+h2 {
+  font-size: 1.5rem;
+  background-color: var(--glow);
+  text-shadow: var(--light) 0 0 .225rem;
 }
 
-.\*\:-mr-2 > * {
-  margin-right: -0.5rem;
+h3 {
+  font-size: 0.75rem;
+  color: var(--medium);
 }
 
-.\*\:-mr-1 > * {
-  margin-right: -0.25rem;
+/*Stolen from http://aleclownes.com/2017/02/01/crt-display.html*/
+
+/*This adds a "crt scanlines" effect to the screen*/
+
+.crt-scanlines::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgb
+a(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
 }
 
-.\*\:-mr-1\.5 > * {
-  margin-right: -0.375rem;
+/*This adds a "flickering screen" effect*/
+
+.crt-flicker::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: flicker 0.3s infinite;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.27861;
+  }
+
+  5% {
+    opacity: 0.34769;
+  }
+
+  10% {
+    opacity: 0.23604;
+  }
+
+  15% {
+    opacity: 0.90626;
+  }
+
+  20% {
+    opacity: 0.18128;
+  }
+
+  25% {
+    opacity: 0.83891;
+  }
+
+  30% {
+    opacity: 0.65583;
+  }
+
+  35% {
+    opacity: 0.67807;
+  }
+
+  40% {
+    opacity: 0.26559;
+  }
+
+  45% {
+    opacity: 0.84693;
+  }
+
+  50% {
+    opacity: 0.96019;
+  }
+
+  55% {
+    opacity: 0.08594;
+  }
+
+  60% {
+    opacity: 0.20313;
+  }
+
+  65% {
+    opacity: 0.71988;
+  }
+
+  70% {
+    opacity: 0.53455;
+  }
+
+  75% {
+    opacity: 0.37288;
+  }
+
+  80% {
+    opacity: 0.71428;
+  }
+
+  85% {
+    opacity: 0.70419;
+  }
+
+  90% {
+    opacity: 0.7003;
+  }
+
+  95% {
+    opacity: 0.36108;
+  }
+
+  100% {
+    opacity: 0.24387;
+  }
+}
+
+/*Adds a "color separation flicker" effect to all text*/
+
+.crt-colorsep {
+  animation: textShadow 1.6s infinite !important;
+}
+
+@keyframes textShadow {
+  0% {
+    text-shadow: 0.4389924193300864px 0 1px rgba(150, 0, 200, 0.2), -0.4389924193300864px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  5% {
+    text-shadow: 2.7928974010788217px 0 1px rgba(150, 0, 200, 0.2), -2.7928974010788217px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  10% {
+    text-shadow: 0.02956275843481219px 0 1px rgba(150, 0, 200, 0.2), -0.02956275843481219px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  15% {
+    text-shadow: 0.40218538552878136px 0 1px rgba(150, 0, 200, 0.2), -0.40218538552878136px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  20% {
+    text-shadow: 3.4794037899852017px 0 1px rgba(150, 0, 200, 0.2), -3.4794037899852017px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  25% {
+    text-shadow: 1.6125630401149584px 0 1px rgba(150, 0, 200, 0.2), -1.6125630401149584px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  30% {
+    text-shadow: 0.7015590085143956px 0 1px rgba(150, 0, 200, 0.2), -0.7015590085143956px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  35% {
+    text-shadow: 3.896914047650351px 0 1px rgba(150, 0, 200, 0.2), -3.896914047650351px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  40% {
+    text-shadow: 3.870905614848819px 0 1px rgba(150, 0, 200, 0.2), -3.870905614848819px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  45% {
+    text-shadow: 2.231056963361899px 0 1px rgba(150, 0, 200, 0.2), -2.231056963361899px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  50% {
+    text-shadow: 0.08084290417898504px 0 1px rgba(150, 0, 200, 0.2), -0.08084290417898504px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  55% {
+    text-shadow: 2.3758461067427543px 0 1px rgba(150, 0, 200, 0.2), -2.3758461067427543px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  60% {
+    text-shadow: 2.202193051050636px 0 1px rgba(150, 0, 200, 0.2), -2.202193051050636px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  65% {
+    text-shadow: 2.8638780614874975px 0 1px rgba(150, 0, 200, 0.2), -2.8638780614874975px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  70% {
+    text-shadow: 0.48874025155497314px 0 1px rgba(150, 0, 200, 0.2), -0.48874025155497314px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  75% {
+    text-shadow: 1.8948491305757957px 0 1px rgba(150, 0, 200, 0.2), -1.8948491305757957px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  80% {
+    text-shadow: 0.0833037308038857px 0 1px rgba(150, 0, 200, 0.2), -0.0833037308038857px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  85% {
+    text-shadow: 0.09769827255241735px 0 1px rgba(150, 0, 200, 0.2), -0.09769827255241735px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  90% {
+    text-shadow: 3.443339761481782px 0 1px rgba(150, 0, 200, 0.2), -3.443339761481782px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  95% {
+    text-shadow: 2.1841838852799786px 0 1px rgba(150, 0, 200, 0.2), -2.1841838852799786px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
+
+  100% {
+    text-shadow: 2.6208764473832513px 0 1px rgba(150, 0, 200, 0.2), -2.6208764473832513px 0 1px rgba(150, 0, 200, 0.3), 0 0 3px;
+  }
 }
 
 .last\:m-0:last-child {
