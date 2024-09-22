@@ -22,16 +22,16 @@ export default function App() {
 
 	return (
 		<>
-			<div className="box-border flex items-center w-full h-screen pl-16 overflow-x-hidden crt-flicker crt-colorsep">
-				<div className="absolute flex items-center justify-center w-full h-full select-none">
+			<div className="box-border flex items-center w-full h-screen pl-16 crt-flicker crt-colorsep">
+				<div className="absolute flex items-center justify-center w-full h-full pt-16 pointer-events-none select-none">
 					<ParallaxLayer mousePosition={mousePosition} factor={0.01}>
-						<img src={back_layer} className="h-full mt-16 opacity-50 " alt="" />
+						<img src={back_layer} className="mt-16 opacity-50 h-5/6" alt="" />
 					</ParallaxLayer>
 					<ParallaxLayer mousePosition={mousePosition} factor={0.03}>
-						<img src={mid_layer} className="w-5/6 opacity-60 ml-96" alt="" />
+						<img src={mid_layer} className="h-5/6 opacity-60 ml-96" alt="" />
 					</ParallaxLayer>
 					<ParallaxLayer mousePosition={mousePosition} factor={0.05}>
-						<img src={top_layer} className="w-5/6" alt="" />
+						<img src={top_layer} className="h-4/6" alt="" />
 					</ParallaxLayer>
 				</div>
 				<div className="ml-4" id="hero-text">
