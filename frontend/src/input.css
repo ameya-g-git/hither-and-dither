@@ -64,6 +64,10 @@ h3 {
     filter: brightness(0.75)
 }
 
+#bayer {
+    image-rendering: pixelated;
+}
+
 /*Stolen from http://aleclownes.com/2017/02/01/crt-display.html*/
 
 /*This adds a "crt scanlines" effect to the screen*/

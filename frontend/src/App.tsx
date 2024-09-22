@@ -2,10 +2,13 @@ import wave from "./assets/pixel_doodles/wave.svg";
 import back_layer from "./assets/pixel_doodles/back_layer.svg";
 import mid_layer from "./assets/pixel_doodles/mid_layer.svg";
 import top_layer from "./assets/pixel_doodles/top_layer.svg";
+import bayer from "./assets/img/bayerpattern.png";
 
 import ScrollingImage from "./components/ScrollingImage";
 import useMousePosition from "./hooks/useMousePosition";
 import ParallaxLayer from "./components/ParallaxLayer";
+
+// TODO: re-export the parallax layers so opacity doesn't need to be altered
 
 export default function App() {
 	const mousePosition = useMousePosition();
@@ -23,6 +26,14 @@ export default function App() {
 	return (
 		<>
 			<div className="box-border flex items-center w-full h-screen pl-16 crt-flicker crt-colorsep">
+				<div
+					id="bayer"
+					className="absolute left-0 flex flex-row items-center justify-between w-full -top-96 animate-float -z-[99] opacity-25"
+				>
+					<img src={bayer} />
+					<img src={bayer} />
+					<img src={bayer} />
+				</div>
 				<div className="absolute flex items-center justify-center w-full h-full pt-16 pointer-events-none select-none">
 					<ParallaxLayer mousePosition={mousePosition} factor={0.01}>
 						<img src={back_layer} className="mt-16 opacity-50 h-5/6" alt="" />
