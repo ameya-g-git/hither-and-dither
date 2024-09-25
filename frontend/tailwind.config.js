@@ -20,7 +20,7 @@ module.exports = {
 				},
 				float: {
 					"0%, 100%": { transform: "translateY(0)" },
-					"50%": { transform: "translateY(1rem)" },
+					"50%": { transform: "translateY(var(--float-dist, 1rem))" },
 				},
 			},
 		},
