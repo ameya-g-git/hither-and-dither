@@ -2,6 +2,10 @@ import wave from "./assets/pixel_doodles/wave.svg";
 import back_layer from "./assets/pixel_doodles/back_layer.svg";
 import mid_layer from "./assets/pixel_doodles/mid_layer.svg";
 import top_layer from "./assets/pixel_doodles/top_layer.svg";
+import back_cloud from "./assets/pixel_doodles/back_cloud.webp";
+import mid_cloud from "./assets/pixel_doodles/mid_cloud.webp";
+import top_cloud from "./assets/pixel_doodles/top_cloud.webp";
+
 import bayer from "./assets/img/bayerpattern.png";
 import creation from "./assets/img/creation.webp";
 import david from "./assets/img/david.webp";
@@ -36,46 +40,79 @@ export default function App() {
 			));
 	};
 
-	return (
-		<MousePosition.Provider value={useMousePosition()}>
-			<div className="flex items-center w-full h-screen pl-24 crt-flicker crt-colorsep">
-				<div
-					id="bayer"
-					className="absolute left-0 flex flex-row items-center justify-between w-full -top-96 animate-float [--float-dist:2rem] -z-[99] opacity-25"
-				>
-					<img src={bayer} />
-					<img src={bayer} />
-					<img src={bayer} />
+	const cloudElements = (n: number) => {
+		return Array(n)
+			.fill("")
+			.map((_, i) => (
+				<div className="relative max-h-96 w-full *:absolute *:top-12 ">
+					<img src={back_cloud} className="animate-float [--delay:500ms]" alt="" />
+					<img src={mid_cloud} className="animate-float [--delay:1000ms]" alt="" />
+					<img src={top_cloud} className="animate-float [--delay:1500ms]" alt="" />
 				</div>
-				<div className="absolute flex items-center justify-center w-full h-full pt-16 pointer-events-none select-none">
+			));
+	};
+
+	return (
+		<>
+			<MousePosition.Provider value={useMousePosition()}>
+				<div className="box-border flex items-center w-screen h-screen crt-flicker crt-colorsep">
+					<div
+						id="bayer"
+						className="absolute left-0 flex flex-row items-center justify-center w-full -top-96 animate-float [--float-dist:2rem] overflow-hidden -z-[99] opacity-25"
+					>
+						<img src={bayer} />
+						<img src={bayer} />
+						<img src={bayer} />
+					</div>
+					<div className="absolute flex items-center justify-center w-full h-full pt-16 overflow-hidden pointer-events-none select-none">
+						{/* TODO: fix the height of the space layers    it'll do */}
+						<ParallaxLayer factor={0.01}>
+							<img src={back_layer} className="h-screen mt-16 opacity-50" alt="" />
+						</ParallaxLayer>
+						<ParallaxLayer factor={0.03}>
+							<img src={mid_layer} className="h-5/6 opacity-60 ml-96" alt="" />
+						</ParallaxLayer>
+						<ParallaxLayer factor={0.04}>
+							<img src={top_layer} className="h-4/6" alt="" />
+						</ParallaxLayer>
+					</div>
+					<div className="ml-16 " id="hero-text">
+						<h1>
+							hither <br /> & dither
+						</h1>
+						<div id="wave" className="flex flex-row w-full drop-shadow-lg shadow-light">
+							{waveElements(12)}
+						</div>
+						<span className="inline-flex items-end gap-2">
+							<h2 className="h-[3.5rem] mt-6">pursue your pixelated dreams...</h2>
+							<h3 className="mb-2">(click to begin!)</h3>
+						</span>
+					</div>
+				</div>
+				<div className="mt-12 overflow-visible z-[99]">
 					<ParallaxLayer factor={0.01}>
-						<img src={back_layer} className="mt-16 opacity-50 h-5/6" alt="" />
+						<img src={webb} className="absolute h-80 -top-48 animate-float left-4 [--delay:1000ms]" alt="" />
+						<img src={pearl} className="absolute w-96 -top-56 animate-float -right-24 [--delay:500ms]" alt="" />
+						<img src={venus} className="absolute w-96 -top-24 animate-float left-[60%] [--delay:1600ms]" alt="" />
 					</ParallaxLayer>
 					<ParallaxLayer factor={0.03}>
-						<img src={mid_layer} className="h-5/6 opacity-60 ml-96" alt="" />
+						<img src={supper} className="absolute h-56 -top-48 animate-float left-[45%] [--delay:1000ms]" alt="" />
+						<img src={creation} className="absolute h-64 -top-56 animate-float left-32 [--delay:1500ms] " alt="" />
+						<img src={david} className="absolute h-80 -top-48 animate-float left-3/4 [--delay:750ms]" alt="" />
 					</ParallaxLayer>
 					<ParallaxLayer factor={0.05}>
-						<img src={top_layer} className="h-4/6" alt="" />
+						<img src={mona} className="absolute w-72 -top-48 animate-float left-[23%] [--delay:1000ms]" alt="" />
+						<img src={moon} className="absolute h-60 -top-24 animate-float left-1/2 [--delay:1000ms]" alt="" />
+					</ParallaxLayer>
+					<ParallaxLayer factor={0.07}>
+						<img src={flowers} className="absolute h-72 -top-64 animate-float left-1/3 [--delay:750ms]" alt="" />
+						<img src={waves} className="absolute h-56 -top-24 animate-float left-[35%] [--delay:500ms]" alt="" />
 					</ParallaxLayer>
 				</div>
-				<div className="ml-4" id="hero-text">
-					<h1>
-						hither <br /> & dither
-					</h1>
-					<div id="wave" className="flex flex-row w-full drop-shadow-lg shadow-light">
-						{waveElements(12)}
-					</div>
-					<span className="inline-flex items-end gap-2">
-						<h2 className="h-[3.5rem] mt-6">pursue your pixelated dreams...</h2>
-						<h3 className="mb-2">(click to begin!)</h3>
-					</span>
-				</div>
+			</MousePosition.Provider>
+			<div className="box-border w-screen h-screen overflow-hidden bg-medium">
+				<div className="flex flex-row *:-mr-4">{cloudElements(7)}</div>
 			</div>
-			<div className="h-screen overflow-visible">
-				<ParallaxLayer factor={0.03}>
-					<img src={creation} className="absolute h-56 -top-48 animate-float left-[2%]" alt="" />
-				</ParallaxLayer>
-			</div>
-		</MousePosition.Provider>
+		</>
 	);
 }
