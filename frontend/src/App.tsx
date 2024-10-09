@@ -23,6 +23,7 @@ import useMousePosition, { position } from "./hooks/useMousePosition";
 import ParallaxLayer from "./components/ParallaxLayer";
 import useScrollLength from "./hooks/useScrollLength";
 import { createContext } from "react";
+import WindowImage from "./components/WindowImage";
 
 // TODO: re-export the parallax layers so opacity doesn't need to be altered
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
@@ -44,7 +45,7 @@ export default function App() {
 		return Array(n)
 			.fill("")
 			.map((_, i) => (
-				<div className="relative max-h-96 w-full *:absolute *:top-8">
+				<div key={i} className="relative max-h-96 w-full *:absolute *:top-8">
 					<img src={back_cloud} className="mt-8 animate-float [--delay:500ms]" alt="" />
 					<img src={mid_cloud} className="mt-4 animate-float [--delay:1000ms]" alt="" />
 					<img src={top_cloud} className="animate-float [--delay:1500ms]" alt="" />
@@ -112,6 +113,9 @@ export default function App() {
 			</MousePosition.Provider>
 			<div className="box-border w-screen h-screen overflow-hidden bg-medium">
 				<div className="flex flex-row *:-mr-4">{cloudElements(7)}</div>
+				<div className="w-full h-full mt-56 ml-56">
+					<WindowImage className="w-1/3 h-96" title="teehee.jpg" img={waves} />
+				</div>
 			</div>
 		</>
 	);
