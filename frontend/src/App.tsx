@@ -44,9 +44,9 @@ export default function App() {
 		return Array(n)
 			.fill("")
 			.map((_, i) => (
-				<div className="relative max-h-96 w-full *:absolute *:top-12 ">
-					<img src={back_cloud} className="animate-float [--delay:500ms]" alt="" />
-					<img src={mid_cloud} className="animate-float [--delay:1000ms]" alt="" />
+				<div className="relative max-h-96 w-full *:absolute *:top-8">
+					<img src={back_cloud} className="mt-8 animate-float [--delay:500ms]" alt="" />
+					<img src={mid_cloud} className="mt-4 animate-float [--delay:1000ms]" alt="" />
 					<img src={top_cloud} className="animate-float [--delay:1500ms]" alt="" />
 				</div>
 			));
@@ -89,7 +89,7 @@ export default function App() {
 						</span>
 					</div>
 				</div>
-				<div className="mt-12 overflow-visible z-[99]">
+				<div className="mt-24 overflow-visible z-[99]">
 					<ParallaxLayer factor={0.01}>
 						<img src={webb} className="absolute h-80 -top-48 animate-float left-4 [--delay:1000ms]" alt="" />
 						<img src={pearl} className="absolute w-96 -top-56 animate-float -right-24 [--delay:500ms]" alt="" />
@@ -101,11 +101,11 @@ export default function App() {
 						<img src={david} className="absolute h-80 -top-48 animate-float left-3/4 [--delay:750ms]" alt="" />
 					</ParallaxLayer>
 					<ParallaxLayer factor={0.05}>
-						<img src={mona} className="absolute w-72 -top-48 animate-float left-[23%] [--delay:1000ms]" alt="" />
+						<img src={mona} className="absolute w-72 -top-48 animate-float left-[20%] [--delay:1000ms]" alt="" />
 						<img src={moon} className="absolute h-60 -top-24 animate-float left-1/2 [--delay:1000ms]" alt="" />
 					</ParallaxLayer>
-					<ParallaxLayer factor={0.07}>
-						<img src={flowers} className="absolute h-72 -top-64 animate-float left-1/3 [--delay:750ms]" alt="" />
+					<ParallaxLayer factor={0.06}>
+						<img src={flowers} className="absolute h-80 -top-64 animate-float left-[30%] [--delay:750ms]" alt="" />
 						<img src={waves} className="absolute h-56 -top-24 animate-float left-[35%] [--delay:500ms]" alt="" />
 					</ParallaxLayer>
 				</div>

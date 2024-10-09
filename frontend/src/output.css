@@ -634,6 +634,18 @@ video {
   left: 60%;
 }
 
+.left-\[20\%\] {
+  left: 20%;
+}
+
+.left-\[30\%\] {
+  left: 30%;
+}
+
+.-top-36 {
+  top: -9rem;
+}
+
 .-z-\[99\] {
   z-index: -99;
 }
@@ -672,6 +684,14 @@ video {
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.mt-24 {
+  margin-top: 6rem;
 }
 
 .box-border {
@@ -1209,6 +1229,10 @@ h3 {
 
 .\*\:top-12 > * {
   top: 3rem;
+}
+
+.\*\:top-8 > * {
+  top: 2rem;
 }
 
 .\*\:-mr-4 > * {
