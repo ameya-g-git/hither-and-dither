@@ -66,17 +66,16 @@ h2 {
 }
 
 h3 {
-	font-size: 0.75rem;
-	color: var(--medium);
-	filter: brightness(0.75);
-}
-
-h4 {
-	font-size: 0.75rem;
+	font-size: 0.875rem;
 	font-weight: bold;
 	color: var(--dark);
 }
 
+h4 {
+	font-size: 0.75rem;
+	color: var(--medium);
+	filter: brightness(0.75);
+}
 #bayer {
 	image-rendering: pixelated;
 }

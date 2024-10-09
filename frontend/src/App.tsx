@@ -17,6 +17,10 @@ import supper from "./assets/img/supper.webp";
 import venus from "./assets/img/venus.webp";
 import waves from "./assets/img/waves.webp";
 import webb from "./assets/img/webb.webp";
+import earth from "./assets/img/earth.webp";
+import clouds from "./assets/img/clouds.webp";
+import flower from "./assets/img/flower.webp";
+import reef from "./assets/img/reef.webp";
 
 import ScrollingImage from "./components/ScrollingImage";
 import useMousePosition, { position } from "./hooks/useMousePosition";
@@ -30,6 +34,7 @@ export const MousePosition = createContext<position>({ x: 0, y: 0 });
 
 export default function App() {
 	const scrollLength = useScrollLength();
+	console.log(scrollLength);
 
 	const waveElements = (n: number) => {
 		return Array(n)
@@ -86,7 +91,7 @@ export default function App() {
 						</div>
 						<span className="inline-flex items-end gap-2">
 							<h2 className="h-[3.5rem] mt-6">pursue your pixelated dreams...</h2>
-							<h3 className="mb-2">(click to begin!)</h3>
+							<h4 className="mb-2">(click to begin!)</h4>
 						</span>
 					</div>
 				</div>
@@ -113,8 +118,21 @@ export default function App() {
 			</MousePosition.Provider>
 			<div className="box-border w-screen h-screen overflow-hidden bg-medium">
 				<div className="flex flex-row *:-mr-4">{cloudElements(7)}</div>
-				<div className="w-full h-full mt-56 ml-56">
-					<WindowImage className="w-1/3 h-96" title="teehee.jpg" img={waves} />
+				<div className="w-full h-full overflow-hidden">
+					<WindowImage
+						x={Math.min(150, (scrollLength - 700) / 3)}
+						y={400}
+						className="w-1/3 h-5/12"
+						title="DSC_0132"
+						img={clouds}
+					/>
+					<WindowImage
+						x={600}
+						y={Math.max(400, -(scrollLength - 1400)) / 4}
+						className="w-1/4 h-1/2"
+						title="DSC_0132"
+						img={flower}
+					/>
 				</div>
 			</div>
 		</>
