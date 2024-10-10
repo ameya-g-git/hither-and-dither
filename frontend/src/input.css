@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-	--light: #febcf7;
-	--medium: #dc78ff;
+	--light: #f8a4f0;
+	--medium: #79468a;
 	--dark: #140428;
-	--glow: #ea4bfc;
+	--glow: #dc78ff;
 	--sep: rgba(182, 1, 242, 0.3);
 }
 
@@ -76,8 +76,15 @@ h4 {
 	color: var(--medium);
 	filter: brightness(0.75);
 }
+
 #bayer {
 	image-rendering: pixelated;
+}
+
+.window-title {
+	text-shadow: calc(-1 * var(--stroke)) calc(-1 * var(--stroke)) 0 var(--medium),
+		var(--stroke) calc(-1 * var(--stroke)) 0 var(--medium), calc(-1 * var(--stroke)) var(--stroke) 0 var(--medium),
+		var(--stroke) var(--stroke) 0 var(--medium);
 }
 
 /*Stolen from http://aleclownes.com/2017/02/01/crt-display.html*/

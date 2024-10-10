@@ -12,7 +12,7 @@ interface WindowImageProps {
 export default function WindowImage({ x, y, className, img, title }: WindowImageProps) {
 	return (
 		<div
-			className={`${className} flex justify-center`}
+			className={`${className} absolute flex justify-center`}
 			style={{
 				transform: `translate(${x}px, ${y}px)`,
 			}}

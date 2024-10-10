@@ -26,15 +26,28 @@ import ScrollingImage from "./components/ScrollingImage";
 import useMousePosition, { position } from "./hooks/useMousePosition";
 import ParallaxLayer from "./components/ParallaxLayer";
 import useScrollLength from "./hooks/useScrollLength";
-import { createContext } from "react";
+import { createContext, useEffect, useState } from "react";
 import WindowImage from "./components/WindowImage";
 
 // TODO: re-export the parallax layers so opacity doesn't need to be altered
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
 
 export default function App() {
-	const scrollLength = useScrollLength();
-	console.log(scrollLength);
+	// const scrollLength = useScrollLength();
+	// console.log(scrollLength);
+	const [positions, setPositions] = useState([
+		{ targetPosition: 0, currentPosition: 0 },
+		{ targetPosition: 0, currentPosition: 0 },
+		{ targetPosition: 0, currentPosition: 0 },
+		{ targetPosition: 0, currentPosition: 0 },
+	]);
+	const targetPositionFunctions = (s: number) => [
+		// list of functions to calculate target position of window
+		Math.min(150, (s - 700) / 3),
+		Math.max(450, -(s - 2500) / 3),
+		Math.min(425, (s + 100) / 3),
+		Math.max(1400, -(s - 5500) / 3),
+	];
 
 	const waveElements = (n: number) => {
 		return Array(n)
@@ -57,6 +70,42 @@ export default function App() {
 				</div>
 			));
 	};
+
+	useEffect(() => {
+		// update target position based on scroll length
+		function handleScroll() {
+			const scrollLength = window.scrollY;
+
+			setPositions((prevPositions) =>
+				prevPositions.map((pos, i) => ({
+					...pos,
+					targetPosition: targetPositionFunctions(scrollLength)[i], // use a predefined function to decide the window's target position
+				}))
+			);
+		}
+
+		window.addEventListener("scroll", handleScroll);
+
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+		};
+	}, []);
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setPositions((prevPositions) =>
+				prevPositions.map((pos) => ({
+					...pos,
+					currentPosition:
+						Math.abs(pos.currentPosition - pos.targetPosition) <= 0.1
+							? pos.targetPosition
+							: pos.currentPosition + (pos.targetPosition - pos.currentPosition) * 0.1,
+				}))
+			);
+		}, 8);
+
+		return () => clearTimeout(timeout);
+	}, [positions]);
 
 	return (
 		<>
@@ -111,28 +160,59 @@ export default function App() {
 						<img src={moon} className="absolute h-60 -top-24 animate-float left-1/2 [--delay:1000ms]" alt="" />
 					</ParallaxLayer>
 					<ParallaxLayer factor={0.06}>
-						<img src={flowers} className="absolute h-80 -top-64 animate-float left-[30%] [--delay:750ms]" alt="" />
-						<img src={waves} className="absolute h-56 -top-24 animate-float left-[35%] [--delay:500ms]" alt="" />
+						<img src={flowers} className="absolute h-80 -top-48 animate-float left-[30%] [--delay:750ms]" alt="" />
+						<img src={waves} className="absolute h-56 -top-16 animate-float left-[35%] [--delay:500ms]" alt="" />
 					</ParallaxLayer>
 				</div>
 			</MousePosition.Provider>
 			<div className="box-border w-screen h-screen overflow-hidden bg-medium">
-				<div className="flex flex-row *:-mr-4">{cloudElements(7)}</div>
+				<div className="flex flex-row *:-mr-4 z-50">{cloudElements(7)}</div>
 				<div className="w-full h-full overflow-hidden">
 					<WindowImage
-						x={Math.min(150, (scrollLength - 700) / 3)}
+						x={positions[0].currentPosition}
 						y={400}
-						className="w-1/3 h-5/12"
+						className="w-1/3 aspect-[5/3]"
 						title="DSC_0132"
 						img={clouds}
 					/>
 					<WindowImage
+						x={1000}
+						y={positions[2].currentPosition}
+						className="w-[30%] aspect-[4/3]"
+						title="DJI_5129"
+						img={reef}
+					/>
+					<WindowImage
+						// x={Math.min(150, }
+						x={positions[3].currentPosition}
+						y={500}
+						className="w-1/4 aspect-square"
+						title="IMG_7823"
+						img={earth}
+					/>
+					<WindowImage
 						x={600}
-						y={Math.max(400, -(scrollLength - 1400)) / 4}
-						className="w-1/4 h-1/2"
-						title="DSC_0132"
+						y={positions[1].currentPosition}
+						className="w-1/4 aspect-[4/5]"
+						title="IMG_8214"
 						img={flower}
 					/>
+					<span
+						style={{
+							transform: `translate(${positions[0].currentPosition - 100}px, 650px)`,
+						}}
+						className="absolute left-0 tracking-widest font-bold text-2xl window-title [--stroke:3px] text-dark"
+					>
+						the beauty of the world...
+					</span>
+					<span
+						style={{
+							transform: `translate(500px, ${positions[1].currentPosition + 300}px)`,
+						}}
+						className="absolute tracking-widest font-bold text-2xl window-title [--stroke:3px] text-dark"
+					>
+						in just a couple pixels...
+					</span>
 				</div>
 			</div>
 		</>
