@@ -27,6 +27,7 @@ import useMousePosition, { position } from "./hooks/useMousePosition";
 import ParallaxLayer from "./components/ParallaxLayer";
 import { createContext, useEffect, useState } from "react";
 import WindowImage from "./components/WindowImage";
+import useWindowSize from "./hooks/useWindowSize";
 
 // TODO: re-export the parallax layers so opacity doesn't need to be altered
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
@@ -41,12 +42,14 @@ export default function App() {
 		{ targetPosition: 0, currentPosition: 0 },
 	]);
 
+	const { screenWidth, screenHeight } = useWindowSize();
+
 	const targetPositionFunctions = (s: number) => [
 		// list of functions to calculate target position of window
-		Math.min(8, s / 1080 - 35),
-		Math.max(450, -(s - 2500) / 3),
-		Math.min(425, (s + 100) / 3),
-		Math.max(1400, -(s - 5500) / 3),
+		(Math.min(60, (s - 1000) / 3) / screenWidth) * 100,
+		(Math.max(500, -(s - 2500) / 3) / screenHeight) * 100,
+		(Math.min(300, (s + 200) / 3) / screenHeight) * 100,
+		(Math.max(1450, -(s - 5000) / 3) / screenWidth) * 100,
 	];
 
 	const waveElements = (n: number) => {
@@ -75,6 +78,7 @@ export default function App() {
 		// update target positions based on scroll length
 		function handleScroll() {
 			const scrollLength = window.scrollY;
+			console.log(scrollLength);
 
 			setPositions((prevPositions) =>
 				prevPositions.map((pos, i) => ({
@@ -82,6 +86,7 @@ export default function App() {
 					targetPosition: targetPositionFunctions(scrollLength)[i], // use a predefined function to decide the window's target position
 				}))
 			);
+			console.log(positions);
 		}
 
 		window.addEventListener("scroll", handleScroll);
@@ -168,39 +173,38 @@ export default function App() {
 			</MousePosition.Provider>
 			<div className="box-border w-screen h-screen overflow-hidden bg-medium">
 				<div className="flex flex-row *:-mr-4 z-50">{cloudElements(7)}</div>
-				<div className="w-full h-full overflow-hidden">
+				<div className="w-full h-full pl-[4vh] overflow-hidden">
 					<WindowImage
 						x={positions[0].currentPosition}
-						y={400}
-						className="w-1/3 aspect-[5/3]"
+						y={30}
+						className="w-[33vw] h-[40vh]"
 						title="DSC_0132"
 						img={clouds}
 					/>
 					<WindowImage
-						x={1000}
+						x={50}
 						y={positions[2].currentPosition}
-						className="w-[30%] aspect-[4/3]"
-						title="DJI_5129"
-						img={reef}
+						className="w-[25vw] h-[50vh]"
+						title="IMG_8214"
+						img={flower}
 					/>
 					<WindowImage
-						// x={Math.min(150, }
 						x={positions[3].currentPosition}
-						y={500}
-						className="w-1/4 aspect-square"
+						y={40}
+						className="w-[25vw] aspect-square"
 						title="IMG_7823"
 						img={earth}
 					/>
 					<WindowImage
-						x={600}
+						x={28}
 						y={positions[1].currentPosition}
-						className="w-1/4 aspect-[4/5]"
-						title="IMG_8214"
-						img={flower}
+						className="w-[30vw] h-[45vh]"
+						title="DJI_5129"
+						img={reef}
 					/>
 					<span
 						style={{
-							transform: `translate(${positions[0].currentPosition - 100}px, 650px)`,
+							transform: `translate(${positions[0].currentPosition * 2}vw, 55vh)`,
 						}}
 						className="absolute left-0 tracking-widest font-bold text-2xl window-title [--stroke:3px] text-dark"
 					>
@@ -208,7 +212,7 @@ export default function App() {
 					</span>
 					<span
 						style={{
-							transform: `translate(500px, ${positions[1].currentPosition + 300}px)`,
+							transform: `translate(28vw, ${positions[1].currentPosition * 1.8 - 17}vh)`,
 						}}
 						className="absolute tracking-widest font-bold text-2xl window-title [--stroke:3px] text-dark"
 					>
