@@ -25,7 +25,6 @@ import reef from "./assets/img/reef.webp";
 import ScrollingImage from "./components/ScrollingImage";
 import useMousePosition, { position } from "./hooks/useMousePosition";
 import ParallaxLayer from "./components/ParallaxLayer";
-import useScrollLength from "./hooks/useScrollLength";
 import { createContext, useEffect, useState } from "react";
 import WindowImage from "./components/WindowImage";
 
@@ -41,9 +40,10 @@ export default function App() {
 		{ targetPosition: 0, currentPosition: 0 },
 		{ targetPosition: 0, currentPosition: 0 },
 	]);
+
 	const targetPositionFunctions = (s: number) => [
 		// list of functions to calculate target position of window
-		Math.min(150, (s - 700) / 3),
+		Math.min(8, s / 1080 - 35),
 		Math.max(450, -(s - 2500) / 3),
 		Math.min(425, (s + 100) / 3),
 		Math.max(1400, -(s - 5500) / 3),
@@ -72,7 +72,7 @@ export default function App() {
 	};
 
 	useEffect(() => {
-		// update target position based on scroll length
+		// update target positions based on scroll length
 		function handleScroll() {
 			const scrollLength = window.scrollY;
 
@@ -92,13 +92,14 @@ export default function App() {
 	}, []);
 
 	useEffect(() => {
+		// ease current positions to each target position with basic interpolation
 		const timeout = setTimeout(() => {
 			setPositions((prevPositions) =>
 				prevPositions.map((pos) => ({
 					...pos,
 					currentPosition:
 						Math.abs(pos.currentPosition - pos.targetPosition) <= 0.1
-							? pos.targetPosition
+							? pos.targetPosition // clamp value to target position when the position is close enough
 							: pos.currentPosition + (pos.targetPosition - pos.currentPosition) * 0.1,
 				}))
 			);

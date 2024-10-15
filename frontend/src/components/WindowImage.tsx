@@ -14,7 +14,7 @@ export default function WindowImage({ x, y, className, img, title }: WindowImage
 		<div
 			className={`${className} absolute flex justify-center`}
 			style={{
-				transform: `translate(${x}px, ${y}px)`,
+				transform: `translate(${x}%, ${y}%)`,
 			}}
 		>
 			<div className="box-border absolute flex flex-row w-11/12 h-48 overflow-hidden -bottom-4">
