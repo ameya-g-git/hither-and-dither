@@ -10,7 +10,7 @@ module.exports = {
 				glow: "#DC78FF",
 			},
 			animation: {
-				"infinite-scroll": "infinite-scroll 1s linear infinite",
+				"infinite-scroll": "infinite-scroll 10s linear infinite",
 				float: "float 5s ease-in-out var(--delay, 0ms) infinite",
 			},
 			keyframes: {

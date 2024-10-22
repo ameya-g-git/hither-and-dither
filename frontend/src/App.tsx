@@ -5,6 +5,9 @@ import top_layer from "./assets/pixel_doodles/top_layer.svg";
 import back_cloud from "./assets/pixel_doodles/back_cloud.webp";
 import mid_cloud from "./assets/pixel_doodles/mid_cloud.webp";
 import top_cloud from "./assets/pixel_doodles/top_cloud.webp";
+import wave_border from "./assets/pixel_doodles/waveborder.webp";
+import vines from "./assets/pixel_doodles/vines.webp";
+import flowers_base from "./assets/pixel_doodles/flowers.webp";
 
 import bayer from "./assets/img/bayerpattern.png";
 import creation from "./assets/img/creation.webp";
@@ -46,10 +49,10 @@ export default function App() {
 
 	const targetPositionFunctions = (s: number) => [
 		// list of functions to calculate target position of window
-		(Math.min(60, (s - 1000) / 3) / screenWidth) * 100,
-		(Math.max(500, -(s - 2500) / 3) / screenHeight) * 100,
-		(Math.min(300, (s + 200) / 3) / screenHeight) * 100,
-		(Math.max(1450, -(s - 5000) / 3) / screenWidth) * 100,
+		(Math.min(100, (s - 900) / 3) / screenWidth) * 100,
+		(Math.max(400, -(s - 2000) / 3) / screenHeight) * 100,
+		(Math.min(250, (s + 200) / 3) / screenHeight) * 100,
+		(Math.max(1300, -(s - 5000) / 3) / screenWidth) * 100,
 	];
 
 	const waveElements = (n: number) => {
@@ -173,7 +176,7 @@ export default function App() {
 			</MousePosition.Provider>
 			<div className="box-border w-screen h-screen overflow-hidden bg-medium">
 				<div className="flex flex-row *:-mr-4 z-50">{cloudElements(7)}</div>
-				<div className="w-full h-full pl-[4vh] overflow-hidden">
+				<div className="w-full h-full mt-12 overflow-hidden">
 					<WindowImage
 						x={positions[0].currentPosition}
 						y={30}
@@ -190,13 +193,13 @@ export default function App() {
 					/>
 					<WindowImage
 						x={positions[3].currentPosition}
-						y={40}
+						y={45}
 						className="w-[25vw] aspect-square"
 						title="IMG_7823"
 						img={earth}
 					/>
 					<WindowImage
-						x={28}
+						x={22}
 						y={positions[1].currentPosition}
 						className="w-[30vw] h-[45vh]"
 						title="DJI_5129"
@@ -212,12 +215,31 @@ export default function App() {
 					</span>
 					<span
 						style={{
-							transform: `translate(28vw, ${positions[1].currentPosition * 1.8 - 17}vh)`,
+							transform: `translate(${positions[3].currentPosition * 1.8 - 65}vw, 65vh)`,
 						}}
 						className="absolute tracking-widest font-bold text-2xl window-title [--stroke:3px] text-dark"
 					>
 						in just a couple pixels...
 					</span>
+				</div>
+			</div>
+			<div className="flex flex-row z-50 w-full h-32 *:-ml-4 overflow-x-hidden">
+				{Array(13)
+					.fill("")
+					.map((_, i) => (
+						<img key={i} src={wave_border} className="h-full" alt="" />
+					))}
+			</div>
+			<div className="w-screen h-screen">
+				<img src={vines} className="absolute w-full -top-72 opacity-40" alt="" />
+				<img src={flowers_base} className="absolute bottom-0 w-full opacity-40" alt="" />
+				<div
+					id="bayer"
+					className="absolute left-0 flex flex-row items-center justify-center w-full -top-[30rem] animate-float [--float-dist:2rem] overflow-hidden -z-[99] opacity-25"
+				>
+					<img src={bayer} />
+					<img src={bayer} />
+					<img src={bayer} />
 				</div>
 			</div>
 		</>

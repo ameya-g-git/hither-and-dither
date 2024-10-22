@@ -21,7 +21,7 @@ export default function WindowImage({ x, y, className, img, title }: WindowImage
 				<img src={shadow} className="h-full" alt="" />
 				<img src={shadow} className="h-full" alt="" />
 			</div>
-			<div className="flex flex-col w-full h-full gap-2 px-3 py-2 border-8 text-dark bg-medium border-dark overflow-clip">
+			<div className="flex flex-col w-full h-full gap-2 px-3 py-2 border-[6px] text-dark bg-medium border-dark overflow-clip">
 				<div className="flex flex-row items-center justify-between w-full">
 					<h3 className="pt-3">{title}</h3>
 					<img className="h-8" src={icons} alt="" />
