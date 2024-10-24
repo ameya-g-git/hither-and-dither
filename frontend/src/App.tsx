@@ -241,6 +241,7 @@ export default function App() {
 					<img src={bayer} />
 					<img src={bayer} />
 				</div>
+				{/* ohh boy the big kahuna the biggun    we gotta work on form state logic   a bunch of reducer actions needed etc etc !! */}
 			</div>
 		</>
 	);
