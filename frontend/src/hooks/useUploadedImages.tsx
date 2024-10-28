@@ -146,7 +146,7 @@ function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | I
 			};
 
 			return newState;
-		}
+		} // TODO: i dunno just test things out and see if they work all good
 		default: {
 			return state;
 		}

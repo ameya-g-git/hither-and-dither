@@ -31,19 +31,20 @@ import ParallaxLayer from "./components/ParallaxLayer";
 import { createContext, useEffect, useState } from "react";
 import WindowImage from "./components/WindowImage";
 import useWindowSize from "./hooks/useWindowSize";
+import useUploadedFiles from "./hooks/useUploadedImages";
 
 // TODO: re-export the parallax layers so opacity doesn't need to be altered
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
 
 export default function App() {
-	// const scrollLength = useScrollLength();
-	// console.log(scrollLength);
 	const [positions, setPositions] = useState([
 		{ targetPosition: 0, currentPosition: 0 },
 		{ targetPosition: 0, currentPosition: 0 },
 		{ targetPosition: 0, currentPosition: 0 },
 		{ targetPosition: 0, currentPosition: 0 },
 	]);
+
+	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles(["hi"]);
 
 	const { screenWidth, screenHeight } = useWindowSize();
 
@@ -242,6 +243,26 @@ export default function App() {
 					<img src={bayer} />
 				</div>
 				{/* ohh boy the big kahuna the biggun    we gotta work on form state logic   a bunch of reducer actions needed etc etc !! */}
+				<form className="flex items-center justify-center w-full h-full" action="proxy address">
+					{imgState.map((img, i) => {
+						return (
+							<div className="absolute pt-16 p-12 flex flex-row w-10/12 mt-16 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2">
+								<div className="flex flex-col gap-4 grow">
+									<div className="flex flex-col">
+										<label htmlFor="algorithm">Algorithm</label>
+										<select id="algorithm" name="algorithm">
+											{" "}
+											{/* TODO: create custom dropdown component because im INSANE im BONKERS
+																					needs list of pairs for real input, label, id, and onChange handler  */}
+											<option value="fs">Floyd-Steinberg</option>
+										</select>
+									</div>
+								</div>
+								<div className="grow"></div>
+							</div>
+						);
+					})}
+				</form>
 			</div>
 		</>
 	);
