@@ -49,7 +49,7 @@ type uploadHandlerType = (files: FileList) => void;
 
 export type selectHandlerType = (id: string, value: boolean) => void;
 
-type inputHandlerType = (id: string, key: string, value: any) => void;
+export type inputHandlerType = (id: string, key: string, value: any) => void;
 
 type UploadedFilesHookReturn = [UploadedImage[], uploadHandlerType, selectHandlerType, inputHandlerType];
 
