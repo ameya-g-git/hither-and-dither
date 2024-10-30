@@ -50,7 +50,18 @@ export default function App() {
 		{ val: "fs2", name: "Floyd-Steinberg2" },
 	];
 
-	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles(["hi"]);
+	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles([
+		{
+			id: "1",
+			fileName: "1",
+			src: "1",
+			open: true,
+			algorithm: "fs",
+			palette: "bw",
+			width: 48,
+			scale: 2,
+		},
+	]);
 
 	const { screenWidth, screenHeight } = useWindowSize();
 
@@ -252,10 +263,20 @@ export default function App() {
 				<form className="flex items-center justify-center w-full h-full" action="proxy address">
 					{imgState.map((img, i) => {
 						return (
-							<div className="absolute pt-16 p-12 flex flex-row w-10/12 mt-16 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2">
+							<div
+								// TODO: make the open property in an UploadedImage do   something
+								key={i}
+								className="absolute pt-16 p-12 flex flex-row w-10/12 mt-16 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2"
+							>
 								<div className="flex flex-col gap-4 grow">
 									<div className="flex flex-col">
-										<Dropdown label="Algorithm" id="algorithm" options={algOptions} onChange={formHandler} />
+										<Dropdown
+											value={img.algorithm}
+											label="Algorithm"
+											id={img.id}
+											options={algOptions}
+											onChange={formHandler}
+										/>
 										{/* <select id="algorithm" name="algorithm">
 											{" "}
 											TODO: create custom dropdown component because im INSANE im BONKERS
