@@ -45,51 +45,58 @@ export default function Dropdown({ value, label, options, id, onChange }: Dropdo
 	}
 
 	// TODO: ok im more insane   if i want the animation to work i need to change the positioning of options depending on what's selected
-
+	// TODO: create hook to detect clicking off
 	// TODO: add framer motion animation for this   although this can come later during the  Polishing state tbh
 	// i should   check these TODOs one day
 
 	return (
-		<div className="flex flex-col w-full gap-6 text-sm border-4 min-h-16 rounded-2xl border-medium">
-			<div>
-				<button
-					className="flex flex-row items-center h-16 gap-6 select"
-					onClick={(e) => {
-						toggleDropdown(e as unknown as Event);
-					}}
-				>
-					{currentOption.name}
-				</button>
-				{showDropdownList && <hr className="absolute w-full" />}
-			</div>
-			{showDropdownList && (
-				<div className="flex flex-col gap-4 px-4">
-					{optionsList.map((group, i) => (
-						<div className="w-full min-h-16">
-							<label className="text-sm text-medium/50">{group.name}</label>
-							<ol className="flex flex-col items-center">
-								{group.options.map((op, j) => (
-									<>
-										<li className="w-full h-12">
-											<button
-												className="flex flex-row items-center h-12 gap-6 select"
-												onClick={(e) => {
-													toggleDropdown(e as unknown as Event, op);
-													onChange(id, "algorithm", op.val);
-												}}
-											>
-												{op.name}
-											</button>
-										</li>
-									</>
-								))}
-							</ol>
-							{i != optionsList.length - 1 && <hr />}
-						</div>
-					))}
+		<>
+			<label className="mb-4 text-lg">{label}</label>
+			<div
+				className={`${
+					showDropdownList && "overflow-y-scroll"
+				} relative flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
+			>
+				<div className="sticky top-0 z-50 bg-dark rounded-2xl">
+					<button
+						className="flex flex-row items-center h-16 gap-6 select"
+						onClick={(e) => {
+							toggleDropdown(e as unknown as Event);
+						}}
+					>
+						{currentOption.name}
+					</button>
+					{showDropdownList && <hr className="absolute w-full" />}
 				</div>
-			)}
-		</div>
+				{showDropdownList && (
+					<div className="flex flex-col gap-4 px-4">
+						{optionsList.map((group, i) => (
+							<div className="w-full min-h-16">
+								<label className="text-sm text-medium/50">{group.name}</label>
+								<ol className="flex flex-col items-center">
+									{group.options.map((op) => (
+										<>
+											<li className="w-full h-12">
+												<button
+													className="flex flex-row items-center h-12 gap-6 select"
+													onClick={(e) => {
+														toggleDropdown(e as unknown as Event, op);
+														onChange(id, "algorithm", op.val);
+													}}
+												>
+													{op.name}
+												</button>
+											</li>
+										</>
+									))}
+								</ol>
+								{i != optionsList.length - 1 && <hr />}
+							</div>
+						))}
+					</div>
+				)}
+			</div>
+		</>
 	);
 
 	// return (
