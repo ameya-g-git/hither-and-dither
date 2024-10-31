@@ -52,6 +52,13 @@ export default function App() {
 				{ val: "fs2", name: "Floyd-Steinberg2" },
 			],
 		},
+		{
+			name: "Ordered",
+			options: [
+				{ val: "b2x2", name: "Bayer 2x2" },
+				{ val: "b4x4", name: "Bayer 4x4" },
+			],
+		},
 	];
 
 	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles([
