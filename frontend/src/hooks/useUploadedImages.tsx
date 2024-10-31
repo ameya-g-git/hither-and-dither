@@ -88,7 +88,7 @@ function fileToUploadedImage(file: File) {
 		src: "",
 		open: true,
 
-		algorithm: "fs", // TODO: i dunno if the dropdown input element allows for separate value vs. label  hopefully
+		algorithm: "fs",
 		palette: "bw", // TODO: figure out a better way to encode this maybe ???
 		width: 480,
 		scale: 1,
@@ -146,7 +146,7 @@ function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | I
 			};
 
 			return newState;
-		} // TODO: i dunno just test things out and see if they work all good
+		}
 		default: {
 			return state;
 		}

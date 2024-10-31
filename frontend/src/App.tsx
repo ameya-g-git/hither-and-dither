@@ -32,9 +32,8 @@ import { createContext, useEffect, useState } from "react";
 import WindowImage from "./components/WindowImage";
 import useWindowSize from "./hooks/useWindowSize";
 import useUploadedFiles from "./hooks/useUploadedImages";
-import Dropdown, { Option } from "./components/Dropdown";
+import Dropdown, { OptionGroup } from "./components/Dropdown";
 
-// TODO: re-export the parallax layers so opacity doesn't need to be altered
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
 
 export default function App() {
@@ -45,9 +44,14 @@ export default function App() {
 		{ targetPosition: 0, currentPosition: 0 },
 	]);
 
-	const algOptions: Option[] = [
-		{ val: "fs", name: "Floyd-Steinberg" },
-		{ val: "fs2", name: "Floyd-Steinberg2" },
+	const algOptions: OptionGroup[] = [
+		{
+			name: "Diffusion",
+			options: [
+				{ val: "fs", name: "Floyd-Steinberg" },
+				{ val: "fs2", name: "Floyd-Steinberg2" },
+			],
+		},
 	];
 
 	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles([
@@ -147,7 +151,6 @@ export default function App() {
 						<img src={bayer} />
 					</div>
 					<div className="absolute flex items-center justify-center w-full h-full pt-16 overflow-hidden pointer-events-none select-none">
-						{/* TODO: fix the height of the space layers    it'll do */}
 						<ParallaxLayer factor={0.01}>
 							<img src={back_layer} className="h-screen mt-16 opacity-50" alt="" />
 						</ParallaxLayer>
@@ -277,12 +280,6 @@ export default function App() {
 											options={algOptions}
 											onChange={formHandler}
 										/>
-										{/* <select id="algorithm" name="algorithm">
-											{" "}
-											TODO: create custom dropdown component because im INSANE im BONKERS
-												needs list of pairs for real input, label, id, and onChange handler
-											<option value="fs">Floyd-Steinberg</option>
-										</select> */}
 									</div>
 								</div>
 								<div className="w-1/2"></div>
