@@ -61,6 +61,23 @@ export default function App() {
 		},
 	];
 
+	const paletteOptions: OptionGroup[] = [
+		{
+			name: "Standard",
+			options: [
+				{ val: "bw", name: "B&W" },
+				{ val: "cmyk", name: "CMYK" },
+			],
+		},
+		{
+			name: "Retro",
+			options: [
+				{ val: "gboy", name: "Gameboy" },
+				{ val: "gboy2", name: "Gameboy2" },
+			],
+		},
+	];
+
 	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles([
 		{
 			id: "1",
@@ -279,15 +296,15 @@ export default function App() {
 								className="absolute pt-16 p-12 flex flex-row w-10/12 mt-16 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2"
 							>
 								<div className="flex flex-col gap-4 grow">
-									<div className="flex flex-col">
-										<Dropdown
-											value={img.algorithm}
-											label="Algorithm"
-											id={img.id}
-											options={algOptions}
-											onChange={formHandler}
-										/>
-									</div>
+									<Dropdown
+										className="z-50"
+										label="Algorithm"
+										id={img.id}
+										options={algOptions}
+										onChange={formHandler}
+									/>
+									<Dropdown label="Palette" id={img.id} options={paletteOptions} onChange={formHandler} />
+									<input type="range" name="" id="" />
 								</div>
 								<div className="w-1/2"></div>
 							</div>
