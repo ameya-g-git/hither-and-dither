@@ -33,6 +33,7 @@ import WindowImage from "./components/WindowImage";
 import useWindowSize from "./hooks/useWindowSize";
 import useUploadedFiles from "./hooks/useUploadedImages";
 import Dropdown, { OptionGroup } from "./components/Dropdown";
+import Slider from "./components/Slider";
 
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
 
@@ -43,6 +44,9 @@ export default function App() {
 		{ targetPosition: 0, currentPosition: 0 },
 		{ targetPosition: 0, currentPosition: 0 },
 	]);
+
+	const [brightness, setBrightness] = useState(50); // TODO: adapt these to lists depending on how images are uploaded
+	const [contrast, setContrast] = useState(50);
 
 	const algOptions: OptionGroup[] = [
 		{
@@ -127,7 +131,6 @@ export default function App() {
 		// update target positions based on scroll length
 		function handleScroll() {
 			const scrollLength = window.scrollY;
-			console.log(scrollLength);
 
 			setPositions((prevPositions) =>
 				prevPositions.map((pos, i) => ({
@@ -135,7 +138,6 @@ export default function App() {
 					targetPosition: targetPositionFunctions(scrollLength)[i], // use a predefined function to decide the window's target position
 				}))
 			);
-			console.log(positions);
 		}
 
 		window.addEventListener("scroll", handleScroll);
@@ -148,15 +150,17 @@ export default function App() {
 	useEffect(() => {
 		// ease current positions to each target position with basic interpolation
 		const timeout = setTimeout(() => {
-			setPositions((prevPositions) =>
-				prevPositions.map((pos) => ({
-					...pos,
-					currentPosition:
-						Math.abs(pos.currentPosition - pos.targetPosition) <= 0.1
-							? pos.targetPosition // clamp value to target position when the position is close enough
-							: pos.currentPosition + (pos.targetPosition - pos.currentPosition) * 0.1,
-				}))
-			);
+			if (window.scrollY < 1500) {
+				setPositions((prevPositions) =>
+					prevPositions.map((pos) => ({
+						...pos,
+						currentPosition:
+							Math.abs(pos.currentPosition - pos.targetPosition) <= 0.1
+								? pos.targetPosition // clamp value to target position when the position is close enough
+								: pos.currentPosition + (pos.targetPosition - pos.currentPosition) * 0.1,
+					}))
+				);
+			}
 		}, 8);
 
 		return () => clearTimeout(timeout);
@@ -218,100 +222,114 @@ export default function App() {
 						<img src={waves} className="absolute h-56 -top-16 animate-float left-[35%] [--delay:500ms]" alt="" />
 					</ParallaxLayer>
 				</div>
-			</MousePosition.Provider>
-			<div className="box-border w-screen h-screen overflow-hidden bg-medium">
-				<div className="flex flex-row *:-mr-4 z-50">{cloudElements(7)}</div>
-				<div className="w-full h-full mt-12 overflow-hidden">
-					<WindowImage
-						x={positions[0].currentPosition}
-						y={30}
-						className="w-[33vw] h-[40vh]"
-						title="DSC_0132"
-						img={clouds}
-					/>
-					<WindowImage
-						x={50}
-						y={positions[2].currentPosition}
-						className="w-[25vw] h-[50vh]"
-						title="IMG_8214"
-						img={flower}
-					/>
-					<WindowImage
-						x={positions[3].currentPosition}
-						y={45}
-						className="w-[25vw] aspect-square"
-						title="IMG_7823"
-						img={earth}
-					/>
-					<WindowImage
-						x={22}
-						y={positions[1].currentPosition}
-						className="w-[30vw] h-[45vh]"
-						title="DJI_5129"
-						img={reef}
-					/>
-					<span
-						style={{
-							transform: `translate(${positions[0].currentPosition * 2}vw, 55vh)`,
-						}}
-						className="absolute left-0 tracking-widest font-bold text-2xl window-title [--stroke:3px] text-dark"
-					>
-						the beauty of the world...
-					</span>
-					<span
-						style={{
-							transform: `translate(${positions[3].currentPosition * 1.8 - 65}vw, 65vh)`,
-						}}
-						className="absolute tracking-widest font-bold text-2xl window-title [--stroke:3px] text-dark"
-					>
-						in just a couple pixels...
-					</span>
+				<div className="box-border w-screen h-screen overflow-hidden bg-medium">
+					<div className="flex flex-row *:-mr-4 z-50">{cloudElements(7)}</div>
+					<div className="w-full h-full mt-12 overflow-hidden">
+						<WindowImage
+							x={positions[0].currentPosition}
+							y={30}
+							className="w-[33vw] h-[40vh]"
+							title="DSC_0132"
+							img={clouds}
+						/>
+						<WindowImage
+							x={50}
+							y={positions[2].currentPosition}
+							className="w-[25vw] h-[50vh]"
+							title="IMG_8214"
+							img={flower}
+						/>
+						<WindowImage
+							x={positions[3].currentPosition}
+							y={45}
+							className="w-[25vw] aspect-square"
+							title="IMG_7823"
+							img={earth}
+						/>
+						<WindowImage
+							x={22}
+							y={positions[1].currentPosition}
+							className="w-[30vw] h-[45vh]"
+							title="DJI_5129"
+							img={reef}
+						/>
+						<span
+							style={{
+								transform: `translate(${positions[0].currentPosition * 2}vw, 55vh)`,
+							}}
+							className="absolute left-0 tracking-widest font-bold text-2xl window-title [--stroke:3px] text-dark"
+						>
+							the beauty of the world...
+						</span>
+						<span
+							style={{
+								transform: `translate(${positions[3].currentPosition * 1.8 - 65}vw, 65vh)`,
+							}}
+							className="absolute tracking-widest font-bold text-2xl window-title [--stroke:3px] text-dark"
+						>
+							in just a couple pixels...
+						</span>
+					</div>
 				</div>
-			</div>
-			<div className="flex flex-row z-50 w-full h-32 *:-ml-4 overflow-x-hidden">
-				{Array(13)
-					.fill("")
-					.map((_, i) => (
-						<img key={i} src={wave_border} className="h-full" alt="" />
-					))}
-			</div>
-			<div className="w-screen h-screen">
-				<img src={vines} className="absolute w-full -top-72 opacity-40" alt="" />
-				<img src={flowers_base} className="absolute bottom-0 w-full opacity-40" alt="" />
-				<div
-					id="bayer"
-					className="absolute left-0 flex flex-row items-center justify-center w-full -top-[30rem] animate-float [--float-dist:2rem] overflow-hidden -z-[99] opacity-25"
-				>
-					<img src={bayer} />
-					<img src={bayer} />
-					<img src={bayer} />
+				<div className="flex flex-row z-50 w-full h-32 *:-ml-4 overflow-x-hidden">
+					{Array(13)
+						.fill("")
+						.map((_, i) => (
+							<img key={i} src={wave_border} className="h-full" alt="" />
+						))}
 				</div>
-				{/* ohh boy the big kahuna the biggun    we gotta work on form state logic   a bunch of reducer actions needed etc etc !! */}
-				<form className="flex items-center justify-center w-full h-full" action="proxy address">
-					{imgState.map((img, i) => {
-						return (
-							<div
-								// TODO: make the open property in an UploadedImage do   something
-								key={i}
-								className="absolute pt-16 p-12 flex flex-row w-10/12 mt-16 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2"
-							>
-								<div className="flex flex-col gap-4 grow">
-									<Dropdown
-										className="z-50"
-										label="Algorithm"
-										id={img.id}
-										options={algOptions}
-										onChange={formHandler}
-									/>
-									<Dropdown label="Palette" id={img.id} options={paletteOptions} onChange={formHandler} />
-									<input type="range" name="" id="" />
+				<div className="w-screen h-screen">
+					<img src={vines} className="absolute w-full -top-72 opacity-40" alt="" />
+					<img src={flowers_base} className="absolute bottom-0 w-full opacity-40" alt="" />
+					<div
+						id="bayer"
+						className="absolute left-0 flex flex-row items-center justify-center w-full -top-[30rem] animate-float [--float-dist:2rem] overflow-hidden -z-[99] opacity-25"
+					>
+						<img src={bayer} />
+						<img src={bayer} />
+						<img src={bayer} />
+					</div>
+					{/* ohh boy the big kahuna the biggun    we gotta work on form state logic   a bunch of reducer actions needed etc etc !! */}
+					<form className="flex items-center justify-center w-full h-full" action="proxy address">
+						{imgState.map((img, i) => {
+							return (
+								<div
+									// TODO: make the open property in an UploadedImage do   something
+									key={i}
+									className="absolute pt-16 p-12 flex flex-row w-10/12 mt-16 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2"
+								>
+									<div className="flex flex-col gap-4 grow">
+										<Dropdown
+											className="z-50"
+											label="Algorithm"
+											id={img.id}
+											options={algOptions}
+											onChange={formHandler}
+										/>
+										<Dropdown
+											className="z-40"
+											label="Palette"
+											id={img.id}
+											options={paletteOptions}
+											onChange={formHandler}
+										/>
+										<Slider
+											label="Brightness"
+											id={img.id}
+											value={brightness}
+											min={1}
+											max={100}
+											step={1}
+											onChange={(val) => setBrightness(val)}
+										/>
+									</div>
+									<div className="w-1/2"></div>
 								</div>
-								<div className="w-1/2"></div>
-							</div>
-						);
-					})}
-				</form>
-			</div>
+							);
+						})}
+					</form>
+				</div>
+			</MousePosition.Provider>
 		</>
 	);
 }
