@@ -102,7 +102,7 @@ export default function App() {
 		(Math.min(100, (s - 900) / 3) / screenWidth) * 100,
 		(Math.max(400, -(s - 2000) / 3) / screenHeight) * 100,
 		(Math.min(250, (s + 200) / 3) / screenHeight) * 100,
-		(Math.max(1300, -(s - 5000) / 3) / screenWidth) * 100,
+		(Math.max(1080, -(s - 4200) / 3) / screenWidth) * 100,
 	];
 
 	const waveElements = (n: number) => {
@@ -279,7 +279,7 @@ export default function App() {
 						))}
 				</div>
 				<div className="w-screen h-screen">
-					<img src={vines} className="absolute w-full -top-72 opacity-40" alt="" />
+					<img src={vines} className="absolute w-full -z-[99] -top-72 opacity-40" alt="" />
 					<img src={flowers_base} className="absolute bottom-0 w-full opacity-40" alt="" />
 					<div
 						id="bayer"

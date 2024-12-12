@@ -1,6 +1,5 @@
-import { ChangeEventHandler, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import useMousePosition from "../hooks/useMousePosition";
 import { MousePosition } from "../App";
 
 interface SliderProps {
@@ -37,21 +36,23 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 			const value = ((mousePosition.x - sliderX) / sliderWidth) * 100;
 			setSliderVal(value > 98 ? 100 : value);
 		}
-	}, [sliderRef, mouseDown, mousePosition]);
+	}, [mouseDown, mousePosition]);
 
 	// TODO: fix this event listener shit
 
 	return (
 		<>
-			<input
-				className="hidden"
-				type="range"
-				name={label.toLowerCase()}
-				min={min}
-				max={max}
-				step={step}
-				onChange={(e) => setSliderVal(Number(e.target.value))}
-			/>
+			<div className="overflow-hidden">
+				<input
+					className="absolute right-0 w-full"
+					type="range"
+					name={label.toLowerCase()}
+					min={min}
+					max={max}
+					step={step}
+					onChange={(e) => setSliderVal(Number(e.target.value))}
+				/>
+			</div>
 			<div
 				className="flex items-center justify-start w-full p-1 border-4 cursor-pointer bg-dark border-medium rounded-2xl "
 				// onDrag={(e) => {
@@ -69,7 +70,7 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 				<label className={labelStyles(false)} htmlFor={label.toLowerCase()}>
 					{label}
 				</label>
-				<div className="w-full h-12">
+				<div className="w-full h-[3.5rem]">
 					<div
 						style={{
 							width: `${sliderVal}%`,
