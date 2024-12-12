@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { inputHandlerType } from "../hooks/useUploadedImages";
 import { motion } from "framer-motion";
 import { useClickOutside } from "../hooks/useClickOutside";
+import { useKeyPress } from "../hooks/useKeyPress";
 
 interface Option {
 	val: string;
@@ -47,6 +48,7 @@ export default function Dropdown({ label, options, id, onChange, className }: Dr
 	}
 
 	useClickOutside(dropdownRef, (_) => setShowDropdownList(false));
+	useKeyPress("Escape", (_) => setShowDropdownList(false));
 
 	// TODO: ok im more insane   if i want the animation to work i need to change the positioning of options depending on what's selected
 	// TODO: add framer motion animation for this   although this can come later during the  Polishing state tbh
