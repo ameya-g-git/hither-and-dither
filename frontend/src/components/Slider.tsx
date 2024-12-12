@@ -41,7 +41,7 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 	// TODO: fix this event listener shit
 
 	return (
-		<>
+		<div>
 			<div className="overflow-hidden">
 				<input
 					className="absolute right-0 w-full"
@@ -81,6 +81,6 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }

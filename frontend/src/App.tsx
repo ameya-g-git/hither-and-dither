@@ -34,6 +34,7 @@ import useWindowSize from "./hooks/useWindowSize";
 import useUploadedFiles from "./hooks/useUploadedImages";
 import Dropdown, { OptionGroup } from "./components/Dropdown";
 import Slider from "./components/Slider";
+import DitherForm from "./components/DitherForm";
 
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
 
@@ -43,56 +44,6 @@ export default function App() {
 		{ targetPosition: 0, currentPosition: 0 },
 		{ targetPosition: 0, currentPosition: 0 },
 		{ targetPosition: 0, currentPosition: 0 },
-	]);
-
-	const [brightness, setBrightness] = useState(50); // TODO: adapt these to lists depending on how images are uploaded
-	const [contrast, setContrast] = useState(50);
-
-	const algOptions: OptionGroup[] = [
-		{
-			name: "Diffusion",
-			options: [
-				{ val: "fs", name: "Floyd-Steinberg" },
-				{ val: "fs2", name: "Floyd-Steinberg2" },
-			],
-		},
-		{
-			name: "Ordered",
-			options: [
-				{ val: "b2x2", name: "Bayer 2x2" },
-				{ val: "b4x4", name: "Bayer 4x4" },
-			],
-		},
-	];
-
-	const paletteOptions: OptionGroup[] = [
-		{
-			name: "Standard",
-			options: [
-				{ val: "bw", name: "B&W" },
-				{ val: "cmyk", name: "CMYK" },
-			],
-		},
-		{
-			name: "Retro",
-			options: [
-				{ val: "gboy", name: "Gameboy" },
-				{ val: "gboy2", name: "Gameboy2" },
-			],
-		},
-	];
-
-	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles([
-		{
-			id: "1",
-			fileName: "1",
-			src: "1",
-			open: true,
-			algorithm: "fs",
-			palette: "bw",
-			width: 48,
-			scale: 2,
-		},
 	]);
 
 	const { screenWidth, screenHeight } = useWindowSize();
@@ -289,45 +240,7 @@ export default function App() {
 						<img src={bayer} />
 						<img src={bayer} />
 					</div>
-					{/* ohh boy the big kahuna the biggun    we gotta work on form state logic   a bunch of reducer actions needed etc etc !! */}
-					<form className="flex items-center justify-center w-full h-full" action="proxy address">
-						{imgState.map((img, i) => {
-							return (
-								<div
-									// TODO: make the open property in an UploadedImage do   something
-									key={i}
-									className="absolute pt-16 p-12 flex flex-row w-10/12 mt-16 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2"
-								>
-									<div className="flex flex-col gap-4 grow">
-										<Dropdown
-											className="z-50"
-											label="Algorithm"
-											id={img.id}
-											options={algOptions}
-											onChange={formHandler}
-										/>
-										<Dropdown
-											className="z-40"
-											label="Palette"
-											id={img.id}
-											options={paletteOptions}
-											onChange={formHandler}
-										/>
-										<Slider
-											label="Brightness"
-											id={img.id}
-											value={brightness}
-											min={1}
-											max={100}
-											step={1}
-											onChange={(val) => setBrightness(val)}
-										/>
-									</div>
-									<div className="w-1/2"></div>
-								</div>
-							);
-						})}
-					</form>
+					<DitherForm imgState={} />
 				</div>
 			</MousePosition.Provider>
 		</>

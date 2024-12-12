@@ -22,6 +22,22 @@ interface DropdownProps {
 	className?: string;
 }
 
+interface DropdownOptionProps {
+	option: Option;
+	onClick: (e: Event) => void;
+}
+
+// simple component for a single dropdown option just to make component code a little Cleaner
+function DropdownOption({ option, onClick }: DropdownOptionProps) {
+	return (
+		<li className="w-full h-12">
+			<button className="flex flex-row items-center h-12 gap-6 select" onClick={(e) => onClick(e as unknown as Event)}>
+				{option.name}
+			</button>
+		</li>
+	);
+}
+
 export default function Dropdown({ label, options, id, onChange, className }: DropdownProps) {
 	const [showDropdownList, setShowDropdownList] = useState(false);
 	const [currentOption, setCurrentOption] = useState(options[0].options[0]);
@@ -45,6 +61,11 @@ export default function Dropdown({ label, options, id, onChange, className }: Dr
 				});
 			});
 		}
+	}
+
+	function optionClick(e: Event, op: Option) {
+		toggleDropdown(e, op);
+		onChange(id, "algorithm", op.val);
 	}
 
 	useClickOutside(dropdownRef, (_) => setShowDropdownList(false));
@@ -81,19 +102,7 @@ export default function Dropdown({ label, options, id, onChange, className }: Dr
 								<label className="text-sm text-medium/50">{group.name}</label>
 								<ol className="flex flex-col items-center">
 									{group.options.map((op) => (
-										<>
-											<li className="w-full h-12">
-												<button
-													className="flex flex-row items-center h-12 gap-6 select"
-													onClick={(e) => {
-														toggleDropdown(e as unknown as Event, op);
-														onChange(id, "algorithm", op.val);
-													}}
-												>
-													{op.name}
-												</button>
-											</li>
-										</>
+										<DropdownOption option={op} onClick={(e) => optionClick(e, op)} />
 									))}
 								</ol>
 								{i != optionsList.length - 1 && <hr />}
