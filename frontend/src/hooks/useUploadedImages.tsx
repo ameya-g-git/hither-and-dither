@@ -8,6 +8,9 @@ import { useCallback, useReducer } from "react";
  * @property {string} fileName | The filename of the image
  * @property {string} src | The data URL of the image
  * @property {boolean} open | True if this image is the currently open one in the menu
+ * IMAGE ADJUSTMENTS
+ * @property {number} brightness
+ * @property {number} contrast
  * DITHERING OPTIONS
  * @property {string} algorithm | Dithering algorithm of choice
  * @property {string} palette
@@ -20,6 +23,9 @@ export interface UploadedImage {
 	src: string;
 	open: boolean;
 
+	brightness: number;
+	contrast: number;
+
 	algorithm: string;
 	palette: string;
 	width: number;
@@ -31,8 +37,8 @@ interface Action {
 }
 
 interface UploadAction extends Action {
-	files: FileList;
-	src: string[];
+	file: File;
+	src: string;
 }
 
 interface SelectAction extends Action {
@@ -45,7 +51,7 @@ interface InputAction extends Action {
 	value: any;
 }
 
-type uploadHandlerType = (files: FileList) => void;
+type uploadHandlerType = (file: File) => void;
 
 export type selectHandlerType = (id: string, value: boolean) => void;
 
@@ -88,6 +94,9 @@ function fileToUploadedImage(file: File) {
 		src: "",
 		open: true,
 
+		brightness: 100,
+		contrast: 100,
+
 		algorithm: "fs",
 		palette: "bw", // TODO: figure out a better way to encode this maybe ???
 		width: 480,
@@ -106,15 +115,13 @@ function fileToUploadedImage(file: File) {
 function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | InputAction | SelectAction) {
 	switch (action.type) {
 		case "UPLOAD_FILES": {
-			const { files, src } = action as UploadAction;
+			const { file, src } = action as UploadAction;
 			const uploadState = state as UploadedImage[];
 			const fileList: UploadedImage[] = [];
 
-			[...files].forEach((file, i) => {
-				const image = fileToUploadedImage(file);
-				image.src = src[i];
-				fileList.push(image);
-			});
+			const image = fileToUploadedImage(file);
+			image.src = src;
+			fileList.push(image);
 
 			return [...uploadState, ...fileList];
 		}
@@ -161,15 +168,15 @@ function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | I
 export default function useUploadedFiles(initialImages: UploadedImage[]) {
 	const [imgState, dispatch] = useReducer(imgReducer, [...initialImages]);
 
-	const uploadHandler = useCallback((files: FileList) => {
-		const srcPromises = Array.from(files).map(readDataURL);
+	const uploadHandler = useCallback((file: File) => {
+		const src = readDataURL(file);
 
-		Promise.all(srcPromises)
-			.then((srcList) => {
+		Promise.resolve(src)
+			.then((src) => {
 				dispatch({
 					type: "UPLOAD_FILES",
-					files: files,
-					src: srcList,
+					file: file,
+					src: src,
 				});
 			})
 			.catch((error) => console.error("Error uploading files", error));
