@@ -32,9 +32,8 @@ import { createContext, useEffect, useState } from "react";
 import WindowImage from "./components/WindowImage";
 import useWindowSize from "./hooks/useWindowSize";
 import useUploadedFiles from "./hooks/useUploadedImages";
-import Dropdown, { OptionGroup } from "./components/Dropdown";
-import Slider from "./components/Slider";
 import DitherForm from "./components/DitherForm";
+import FileUpload from "./components/FileUpload";
 
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
 
@@ -44,6 +43,21 @@ export default function App() {
 		{ targetPosition: 0, currentPosition: 0 },
 		{ targetPosition: 0, currentPosition: 0 },
 		{ targetPosition: 0, currentPosition: 0 },
+	]);
+
+	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles([
+		{
+			id: "1",
+			fileName: "1",
+			src: "1",
+			open: true,
+			brightness: 100,
+			contrast: 100,
+			algorithm: "fs",
+			palette: "bw",
+			width: 48,
+			scale: 2,
+		},
 	]);
 
 	const { screenWidth, screenHeight } = useWindowSize();
@@ -119,8 +133,9 @@ export default function App() {
 
 	return (
 		<>
+			<FileUpload onUpload={uploadHandler} className="" />
 			<MousePosition.Provider value={useMousePosition()}>
-				<div className="box-border flex items-center w-screen h-screen crt-flicker crt-colorsep">
+				<div className="box-border flex items-center w-screen h-screen ">
 					<div
 						id="bayer"
 						className="absolute left-0 flex flex-row items-center justify-center w-full -top-96 animate-float [--float-dist:2rem] overflow-hidden -z-[99] opacity-25"
@@ -141,7 +156,7 @@ export default function App() {
 						</ParallaxLayer>
 					</div>
 					<div className="ml-16 " id="hero-text">
-						<h1>
+						<h1 className="">
 							hither <br /> & dither
 						</h1>
 						<div id="wave" className="flex flex-row w-full drop-shadow-lg shadow-light">
@@ -150,28 +165,29 @@ export default function App() {
 						<span className="inline-flex items-end gap-2">
 							<h2 className="h-[3.5rem] mt-6">pursue your pixelated dreams...</h2>
 							<h4 className="mb-2">(click to begin!)</h4>
+							{/* TODO: add the click functionality to scroll to the form smoothly */}
 						</span>
 					</div>
 				</div>
 				<div className="mt-24 overflow-visible z-[99]">
-					<ParallaxLayer factor={0.01}>
-						<img src={webb} className="absolute h-80 -top-48 animate-float left-4 [--delay:1000ms]" alt="" />
-						<img src={pearl} className="absolute w-96 -top-56 animate-float -right-24 [--delay:500ms]" alt="" />
-						<img src={venus} className="absolute w-96 -top-24 animate-float left-[60%] [--delay:1600ms]" alt="" />
-					</ParallaxLayer>
-					<ParallaxLayer factor={0.03}>
-						<img src={supper} className="absolute h-56 -top-48 animate-float left-[45%] [--delay:1000ms]" alt="" />
-						<img src={creation} className="absolute h-64 -top-56 animate-float left-32 [--delay:1500ms] " alt="" />
-						<img src={david} className="absolute h-80 -top-48 animate-float left-3/4 [--delay:750ms]" alt="" />
-					</ParallaxLayer>
-					<ParallaxLayer factor={0.05}>
-						<img src={mona} className="absolute w-72 -top-48 animate-float left-[20%] [--delay:1000ms]" alt="" />
-						<img src={moon} className="absolute h-60 -top-24 animate-float left-1/2 [--delay:1000ms]" alt="" />
-					</ParallaxLayer>
-					<ParallaxLayer factor={0.06}>
-						<img src={flowers} className="absolute h-80 -top-48 animate-float left-[30%] [--delay:750ms]" alt="" />
-						<img src={waves} className="absolute h-56 -top-16 animate-float left-[35%] [--delay:500ms]" alt="" />
-					</ParallaxLayer>
+					{/* <ParallaxLayer factor={0}> */}
+					<img src={webb} className="absolute h-80 -top-48 animate-float left-4 [--delay:1000ms]" alt="" />
+					<img src={pearl} className="absolute w-96 -top-56 animate-float -right-24 [--delay:500ms]" alt="" />
+					<img src={venus} className="absolute w-96 -top-24 animate-float left-[60%] [--delay:1600ms]" alt="" />
+					{/* </ParallaxLayer> */}
+					{/* <ParallaxLayer factor={0}> */}
+					<img src={supper} className="absolute h-56 -top-48 animate-float left-[45%] [--delay:1000ms]" alt="" />
+					<img src={creation} className="absolute h-64 -top-56 animate-float left-32 [--delay:1500ms] " alt="" />
+					<img src={david} className="absolute h-80 -top-48 animate-float left-3/4 [--delay:750ms]" alt="" />
+					{/* </ParallaxLayer> */}
+					{/* <ParallaxLayer factor={0}> */}
+					<img src={mona} className="absolute w-72 -top-48 animate-float left-[20%] [--delay:1000ms]" alt="" />
+					<img src={moon} className="absolute h-60 -top-24 animate-float left-1/2 [--delay:1000ms]" alt="" />
+					{/* </ParallaxLayer> */}
+					{/* <ParallaxLayer factor={0}> */}
+					<img src={flowers} className="absolute h-80 -top-48 animate-float left-[30%] [--delay:750ms]" alt="" />
+					<img src={waves} className="absolute h-56 -top-16 animate-float left-[35%] [--delay:500ms]" alt="" />
+					{/* </ParallaxLayer> */}
 				</div>
 				<div className="box-border w-screen h-screen overflow-hidden bg-medium">
 					<div className="flex flex-row *:-mr-4 z-50">{cloudElements(7)}</div>
@@ -240,7 +256,7 @@ export default function App() {
 						<img src={bayer} />
 						<img src={bayer} />
 					</div>
-					<DitherForm imgState={} />
+					<DitherForm imgState={imgState} onChange={formHandler} />
 				</div>
 			</MousePosition.Provider>
 		</>

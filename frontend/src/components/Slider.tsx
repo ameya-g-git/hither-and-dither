@@ -35,6 +35,7 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 			const sliderWidth = sliderRect.width;
 			const value = ((mousePosition.x - sliderX) / sliderWidth) * 100;
 			setSliderVal(value > 98 ? 100 : value);
+			onChange(value);
 		}
 	}, [mouseDown, mousePosition]);
 
@@ -50,7 +51,10 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 					min={min}
 					max={max}
 					step={step}
-					onChange={(e) => setSliderVal(Number(e.target.value))}
+					onChange={(e) => {
+						setSliderVal(Number(e.target.value));
+						onChange(Number(e.target.value));
+					}}
 				/>
 			</div>
 			<div
