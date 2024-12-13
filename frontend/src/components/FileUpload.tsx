@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
-import upload from "../assets/upload.png";
 import clsx from "clsx";
 
 interface FileUploadType {
-	onUpload: (files: FileList) => void;
+	onUpload: (file: File) => void;
 	className: string;
 }
 
@@ -20,7 +19,7 @@ export default function FileUpload({ onUpload, className }: FileUploadType) {
 	// TODO: create a little modal for when the file size is too big, don't push it to imgState either
 
 	const dragAreaStyles = clsx({
-		"transition-all flex flex-col bg-white items-center justify-center gap-2 border-2 border-dashed rounded-3xl h-full border-slate-700":
+		"transition-all z-[999] pointer-events-none visible fixed h-screen w-screen flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2 border-slate-700":
 			true,
 		"brightness-75 opacity-100": isDraggedOver,
 		"opacity-0": !isDraggedOver,
@@ -45,8 +44,12 @@ export default function FileUpload({ onUpload, className }: FileUploadType) {
 			const dt = e.dataTransfer;
 			const files = dt!.files; // get files from drag event
 			if (files.length > 0) {
-				// note to self: add the image file validation logic here
-				onUpload(files); // handle file upload via a handler function prop
+				for (const file of files) {
+					if (true) {
+						// TODO: ADD FILE SIZE LIMIT, THE CODE IS HERE JUST ADD SOME ARBITRARY LIMIT
+						onUpload(file); // handle file upload via a handler function prop
+					}
+				}
 			} else {
 				console.error("Error in uploading file, try uploading a file saved on your computer");
 			}
@@ -55,39 +58,22 @@ export default function FileUpload({ onUpload, className }: FileUploadType) {
 	);
 
 	return (
-		<div className={`flex flex-col items-stretch w-full ${className}`}>
-			<div
-				id="drag-area"
-				className={dragAreaStyles}
-				onDragEnter={(e) => dragOverHandler(e as unknown as DragEvent)}
-				onDragOver={(e) => dragOverHandler(e as unknown as DragEvent)}
-				onDragLeave={(e) => dragLeaveHandler(e as unknown as DragEvent)}
-				onDrop={(e) => {
-					dragLeaveHandler(e as unknown as DragEvent);
-					dropHandler(e as unknown as DragEvent);
-				}}
-			>
-				<img src={upload} alt="upload" className="w-32 -m-4" />
-				<span className="flex flex-col *:-m-1 items-center">
-					<h2>Upload your file!</h2>
-					<h2>
-						or{" "}
-						<input
-							type="file"
-							id="fileElem"
-							multiple
-							accept="image/*"
-							hidden
-							onChange={(e) => onUpload(e.target.files as FileList)}
-						/>
-						<label htmlFor="fileElem" className="font-bold text-blue-500 underline cursor-pointer">
-							browse!
-						</label>
-					</h2>
-				</span>
-
-				<h3 className="text-slate-400">(supports JPEG, JPG, PNG!)</h3>
-			</div>
+		<div
+			id="drag-area"
+			className={dragAreaStyles}
+			onDragEnter={(e) => dragOverHandler(e as unknown as DragEvent)}
+			onDragOver={(e) => dragOverHandler(e as unknown as DragEvent)}
+			onDragLeave={(e) => dragLeaveHandler(e as unknown as DragEvent)}
+			onDrop={(e) => {
+				dragLeaveHandler(e as unknown as DragEvent);
+				dropHandler(e as unknown as DragEvent);
+			}}
+		>
+			<img alt="upload" className="w-32 -m-4" />
+			<span className="flex flex-col items-center gap-8 ">
+				<h2 className="text-3xl">let go of your file!</h2>
+				<span className="text-sm opacity-50 text-glow">(all will be taken care of)</span>
+			</span>
 		</div>
 	);
 }
