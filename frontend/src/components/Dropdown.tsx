@@ -65,7 +65,7 @@ export default function Dropdown({ label, options, id, onChange, className }: Dr
 
 	function optionClick(e: Event, op: Option) {
 		toggleDropdown(e, op);
-		onChange(id, "algorithm", op.val);
+		onChange(id, label.toLowerCase(), op.val);
 	}
 
 	useClickOutside(dropdownRef, (_) => setShowDropdownList(false));
