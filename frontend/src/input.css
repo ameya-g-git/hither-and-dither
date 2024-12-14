@@ -90,7 +90,7 @@ label {
 	overflow: visible;
 }
 
-label {
+label:not([id="fileElemLabel"]) {
 	font-size: 1.125rem;
 	user-select: none;
 }

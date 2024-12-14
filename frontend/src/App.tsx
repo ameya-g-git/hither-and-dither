@@ -48,18 +48,18 @@ export default function App() {
 
 	const { screenWidth, screenHeight } = useWindowSize();
 	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles([
-		{
-			id: "1",
-			fileName: "1",
-			src: "1",
-			open: true,
-			brightness: 100,
-			contrast: 100,
-			algorithm: "fs",
-			palette: "bw",
-			width: 48,
-			scale: 2,
-		},
+		// {
+		// 	id: "1",
+		// 	fileName: "1",
+		// 	src: "1",
+		// 	open: true,
+		// 	brightness: 100,
+		// 	contrast: 100,
+		// 	algorithm: "fs",
+		// 	palette: "bw",
+		// 	width: 48,
+		// 	scale: 2,
+		// },
 	]);
 
 	const targetPositionFunctions = (s: number) => [
@@ -134,7 +134,7 @@ export default function App() {
 	return (
 		<ScreenSize.Provider value={useWindowSize()}>
 			<MousePosition.Provider value={useMousePosition()}>
-				<FileUpload onUpload={uploadHandler} />
+				{!imgState.length && <FileUpload onUpload={uploadHandler} />}
 				<div className="box-border flex items-center w-screen h-screen ">
 					<div
 						id="bayer"
@@ -256,7 +256,7 @@ export default function App() {
 						<img src={bayer} />
 						<img src={bayer} />
 					</div>
-					<DitherForm imgState={imgState} onChange={formHandler} />
+					<DitherForm imgState={imgState} onChange={formHandler} onUpload={uploadHandler} />
 				</div>
 			</MousePosition.Provider>
 		</ScreenSize.Provider>

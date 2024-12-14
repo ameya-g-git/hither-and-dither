@@ -3,22 +3,22 @@ import clsx from "clsx";
 import { MousePosition, ScreenSize } from "../App";
 
 interface FileUploadType {
+	className?: string;
 	onUpload: (file: File) => void;
+	visible?: boolean;
 	// isDraggedOver: boolean;
 	// setIsDraggedOver: (isDraggedOver: boolean) => void;
 }
 
 /**
  * Displays a rectangular area that accepts dropping files in, as well as picking a file via your system's default file manager
+ * @param className | Additional Tailwind classes
  * @param onUpload | A handler function to process images that have been uploaded via the component
- * @param isDraggedOver | Controls visibility if the component is being dragged over, aids in animation
- * @param setIsDraggedOver | Visibility toggle function
+ * @param visible | Override reactive visibility and just have it constantly visible
  * @returns | The JSX that displays the drag-and-drop uploader
  */
 
-export default function FileUpload({ onUpload }: FileUploadType) {
-	const mousePosition = useContext(MousePosition);
-	const { screenWidth, screenHeight } = useContext(ScreenSize);
+export default function FileUpload({ className = "", onUpload, visible = false }: FileUploadType) {
 	const [isDraggedOver, setIsDraggedOver] = useState(false);
 
 	const screenPadding = 10;
@@ -38,10 +38,8 @@ export default function FileUpload({ onUpload }: FileUploadType) {
 	// TODO: create a little modal for when the file size is too big, don't push it to imgState either
 
 	const dragAreaStyles = clsx({
-		"transition-all isDraggedOver fixed h-full w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2 border-slate-700":
+		"transition-all fixed h-full w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2":
 			true,
-		"brightness-75 opacity-100 ": isDraggedOver,
-		"opacity-100": !isDraggedOver,
 	});
 
 	function dragOverHandler(e: DragEvent) {
@@ -78,7 +76,7 @@ export default function FileUpload({ onUpload }: FileUploadType) {
 
 	return (
 		<div
-			className="absolute w-screen h-screen"
+			className={`${className} absolute w-full h-full z-[999]`}
 			id="modal"
 			onDragEnter={(e) => dragOverHandler(e as unknown as DragEvent)}
 			onDragOver={(e) => dragOverHandler(e as unknown as DragEvent)}
@@ -88,12 +86,12 @@ export default function FileUpload({ onUpload }: FileUploadType) {
 				dropHandler(e as unknown as DragEvent);
 			}}
 		>
-			{isDraggedOver && (
+			{(visible || isDraggedOver) && (
 				<div id="drag-area" className={dragAreaStyles}>
 					{/* <img alt="upload" className="w-32 -m-4" /> */}
 					<span className="flex flex-col items-center gap-8 ">
 						<h2 className="text-3xl">let go of your file!</h2>
-						<span className="text-sm opacity-50 text-glow">(all will be taken care of!)</span>
+						<span className="text-sm opacity-50 text-medium">(all will be taken care of!)</span>
 					</span>
 				</div>
 			)}

@@ -51,7 +51,7 @@ interface InputAction extends Action {
 	value: any;
 }
 
-type uploadHandlerType = (file: File) => void;
+export type uploadHandlerType = (file: File) => void;
 
 export type selectHandlerType = (id: string, value: boolean) => void;
 

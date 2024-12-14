@@ -28,7 +28,6 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 	const [sliderVal, setSliderVal] = useState(value);
 
 	useEffect(() => {
-		// TODO: edit this so that the slider still registers when the mouse is not y-aligned, but it does when its x-aligned
 		if (mouseDown && mouseIn && sliderRef && sliderRef.current) {
 			const sliderRect = sliderRef.current.getBoundingClientRect();
 			const sliderX = sliderRect.x;
@@ -38,8 +37,6 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 			onChange(value);
 		}
 	}, [mouseDown, mousePosition]);
-
-	// TODO: fix this event listener shit
 
 	return (
 		<div>
