@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { inputHandlerType, UploadedImage } from "../hooks/useUploadedImages";
 import Dropdown, { OptionGroup } from "./Dropdown";
 import Slider from "./Slider";
+import clsx from "clsx";
+import ResButton from "./ResButton";
 
 interface DitherFormProps {
 	imgState: UploadedImage[];
@@ -8,6 +11,17 @@ interface DitherFormProps {
 }
 
 export default function DitherForm({ imgState, onChange }: DitherFormProps) {
+	const widthOptions: OptionGroup[] = [
+		{
+			name: "",
+			options: [
+				{ val: 360, name: "360px" },
+				{ val: 480, name: "480px" },
+				{ val: 720, name: "720px" },
+			],
+		},
+	];
+
 	const algOptions: OptionGroup[] = [
 		{
 			name: "Diffusion",
@@ -75,6 +89,11 @@ export default function DitherForm({ imgState, onChange }: DitherFormProps) {
 								step={1}
 								onChange={(val) => onChange(img.id, "contrast", val)}
 							/>
+							<div className="flex flex-row items-center w-full gap-4 mt-4 max-h-16">
+								<label htmlFor="">Image Width</label>
+								<Dropdown className="z-30 -mt-6" id={img.id} options={widthOptions} onChange={onChange} />
+								<ResButton id={img.id} onClick={onChange} />
+							</div>
 						</div>
 						<div className="w-1/2"></div>
 					</div>

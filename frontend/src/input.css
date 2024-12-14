@@ -96,10 +96,13 @@ label {
 }
 
 button {
+	transition: all 0.1s ease-in-out;
+}
+
+button:not([id^="width"]) {
 	text-align: left;
 	padding-top: 0.25rem;
 	padding-left: 2rem;
-	transition: all 0.1s ease-in-out;
 }
 
 button:hover {

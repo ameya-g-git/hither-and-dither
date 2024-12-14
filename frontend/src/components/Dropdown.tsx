@@ -5,7 +5,7 @@ import { useClickOutside } from "../hooks/useClickOutside";
 import { useKeyPress } from "../hooks/useKeyPress";
 
 interface Option {
-	val: string;
+	val: any;
 	name: string;
 }
 
@@ -15,7 +15,7 @@ export interface OptionGroup {
 }
 
 interface DropdownProps {
-	label: string; // label for dropdown
+	label?: string; // label for dropdown
 	options: OptionGroup[];
 	id: string; // id of image its updating
 	onChange: inputHandlerType; // form state change handler function
@@ -65,7 +65,7 @@ export default function Dropdown({ label, options, id, onChange, className }: Dr
 
 	function optionClick(e: Event, op: Option) {
 		toggleDropdown(e, op);
-		onChange(id, label.toLowerCase(), op.val);
+		onChange(id, label ? label.toLowerCase() : "", op.val);
 	}
 
 	useClickOutside(dropdownRef, (_) => setShowDropdownList(false));
@@ -76,12 +76,12 @@ export default function Dropdown({ label, options, id, onChange, className }: Dr
 	// i should   check these TODOs one day
 
 	return (
-		<div className={`min-h-32 ${className ? className : ""}`}>
-			<label className="text-lg ">{label}</label>
+		<div className={`min-h-32 min-w-48 ${className ? className : ""}`}>
+			{label && <label className="text-lg ">{label}</label>}
 			<div
 				ref={dropdownRef}
 				className={`${
-					showDropdownList && "overflow-y-scroll"
+					showDropdownList && "overflow-y-auto"
 				} absolute top-10 scrollbar-thin scrollbar-track-dark scrollbar-thumb-medium scrollbar-track-rounded-full mb-8 flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
 			>
 				<div className="sticky top-0 z-10 bg-dark rounded-2xl">

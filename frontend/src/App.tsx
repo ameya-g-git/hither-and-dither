@@ -36,6 +36,7 @@ import DitherForm from "./components/DitherForm";
 import FileUpload from "./components/FileUpload";
 
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
+export const ScreenSize = createContext({ screenWidth: 0, screenHeight: 0 });
 
 export default function App() {
 	const [positions, setPositions] = useState([
@@ -45,6 +46,7 @@ export default function App() {
 		{ targetPosition: 0, currentPosition: 0 },
 	]);
 
+	const { screenWidth, screenHeight } = useWindowSize();
 	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles([
 		{
 			id: "1",
@@ -60,14 +62,12 @@ export default function App() {
 		},
 	]);
 
-	const { screenWidth, screenHeight } = useWindowSize();
-
 	const targetPositionFunctions = (s: number) => [
 		// list of functions to calculate target position of window
 		(Math.min(100, (s - 900) / 3) / screenWidth) * 100,
 		(Math.max(400, -(s - 2000) / 3) / screenHeight) * 100,
 		(Math.min(250, (s + 200) / 3) / screenHeight) * 100,
-		(Math.max(1080, -(s - 4200) / 3) / screenWidth) * 100,
+		(Math.max(1200, -(s - 4200) / 3) / screenWidth) * 100,
 	];
 
 	const waveElements = (n: number) => {
@@ -132,9 +132,9 @@ export default function App() {
 	}, [positions]);
 
 	return (
-		<>
-			<FileUpload onUpload={uploadHandler} className="" />
+		<ScreenSize.Provider value={useWindowSize()}>
 			<MousePosition.Provider value={useMousePosition()}>
+				<FileUpload onUpload={uploadHandler} />
 				<div className="box-border flex items-center w-screen h-screen ">
 					<div
 						id="bayer"
@@ -259,6 +259,6 @@ export default function App() {
 					<DitherForm imgState={imgState} onChange={formHandler} />
 				</div>
 			</MousePosition.Provider>
-		</>
+		</ScreenSize.Provider>
 	);
 }
