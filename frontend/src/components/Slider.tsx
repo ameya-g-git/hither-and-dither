@@ -32,8 +32,8 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 			const sliderRect = sliderRef.current.getBoundingClientRect();
 			const sliderX = sliderRect.x;
 			const sliderWidth = sliderRect.width;
-			const value = ((mousePosition.x - sliderX) / sliderWidth) * 100;
-			setSliderVal(value > 98 ? 100 : value);
+			const value = ((mousePosition.x - sliderX) / sliderWidth) * 200;
+			setSliderVal(value > 198 ? 200 : value);
 			onChange(value);
 		}
 	}, [mouseDown, mousePosition]);
@@ -47,6 +47,7 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 					name={label.toLowerCase()}
 					min={min}
 					max={max}
+					value={(min + max) / 2}
 					step={step}
 					onChange={(e) => {
 						setSliderVal(Number(e.target.value));
@@ -74,7 +75,7 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 				<div className="w-full h-[3.5rem]">
 					<div
 						style={{
-							width: `${sliderVal}%`,
+							width: `${(sliderVal / max) * 100}%`,
 						}}
 						className="flex items-center h-full overflow-hidden rounded-lg text-dark bg-medium"
 					>
