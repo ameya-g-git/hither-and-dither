@@ -32,8 +32,8 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 			const sliderRect = sliderRef.current.getBoundingClientRect();
 			const sliderX = sliderRect.x;
 			const sliderWidth = sliderRect.width;
-			const value = ((mousePosition.x - sliderX) / sliderWidth) * 200;
-			setSliderVal(value > 198 ? 200 : value);
+			const value = ((mousePosition.x - sliderX) / sliderWidth) * max;
+			setSliderVal(value > 0.99 * max ? max : value);
 			onChange(value);
 		}
 	}, [mouseDown, mousePosition]);

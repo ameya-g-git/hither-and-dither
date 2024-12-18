@@ -1,10 +1,10 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import clsx from "clsx";
-import { MousePosition, ScreenSize } from "../App";
+import { uploadHandlerType } from "../hooks/useUploadedImages";
 
 interface FileUploadType {
 	className?: string;
-	onUpload: (file: File) => void;
+	onUpload: uploadHandlerType;
 	visible?: boolean;
 	// isDraggedOver: boolean;
 	// setIsDraggedOver: (isDraggedOver: boolean) => void;

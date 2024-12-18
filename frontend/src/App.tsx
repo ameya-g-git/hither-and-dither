@@ -34,9 +34,11 @@ import useWindowSize from "./hooks/useWindowSize";
 import useUploadedFiles from "./hooks/useUploadedImages";
 import DitherForm from "./components/DitherForm";
 import FileUpload from "./components/FileUpload";
+import UploadButton from "./components/UploadButton";
 
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
 export const ScreenSize = createContext({ screenWidth: 0, screenHeight: 0 });
+export const windowImageStyles = "object-cover h-full overflow-hidden border-4 border-box border-dark";
 
 export default function App() {
 	const [positions, setPositions] = useState([
@@ -67,7 +69,7 @@ export default function App() {
 		(Math.min(100, (s - 900) / 3) / screenWidth) * 100,
 		(Math.max(400, -(s - 2000) / 3) / screenHeight) * 100,
 		(Math.min(250, (s + 200) / 3) / screenHeight) * 100,
-		(Math.max(1200, -(s - 4200) / 3) / screenWidth) * 100,
+		(Math.max(950, -(s - 4100) / 3) / screenWidth) * 100,
 	];
 
 	const waveElements = (n: number) => {
@@ -135,6 +137,7 @@ export default function App() {
 		<ScreenSize.Provider value={useWindowSize()}>
 			<MousePosition.Provider value={useMousePosition()}>
 				{!imgState.length && <FileUpload onUpload={uploadHandler} />}
+				<UploadButton onUpload={uploadHandler} />
 				<div className="box-border flex items-center w-screen h-screen ">
 					<div
 						id="bayer"
@@ -144,7 +147,10 @@ export default function App() {
 						<img src={bayer} />
 						<img src={bayer} />
 					</div>
-					<div className="absolute flex items-center justify-center w-full h-full pt-16 overflow-hidden pointer-events-none select-none">
+					<div
+						onMouseDown={(_) => console.log("on")}
+						className="absolute flex items-center justify-center w-full h-full pt-16 overflow-hidden pointer-events-none select-none"
+					>
 						<ParallaxLayer factor={0.01}>
 							<img src={back_layer} className="h-screen mt-16 opacity-50" alt="" />
 						</ParallaxLayer>
@@ -192,34 +198,18 @@ export default function App() {
 				<div className="box-border w-screen h-screen overflow-hidden bg-medium">
 					<div className="flex flex-row *:-mr-4 z-50">{cloudElements(7)}</div>
 					<div className="w-full h-full mt-12 overflow-hidden">
-						<WindowImage
-							x={positions[0].currentPosition}
-							y={30}
-							className="w-[33vw] h-[40vh]"
-							title="DSC_0132"
-							img={clouds}
-						/>
-						<WindowImage
-							x={50}
-							y={positions[2].currentPosition}
-							className="w-[25vw] h-[50vh]"
-							title="IMG_8214"
-							img={flower}
-						/>
-						<WindowImage
-							x={positions[3].currentPosition}
-							y={45}
-							className="w-[25vw] aspect-square"
-							title="IMG_7823"
-							img={earth}
-						/>
-						<WindowImage
-							x={22}
-							y={positions[1].currentPosition}
-							className="w-[30vw] h-[45vh]"
-							title="DJI_5129"
-							img={reef}
-						/>
+						<WindowImage x={positions[0].currentPosition} y={30} className="w-[33vw] h-[40vh]" title="DSC_0132">
+							<img className={windowImageStyles} src={clouds} alt="Pixelated image of clouds" />
+						</WindowImage>
+						<WindowImage x={50} y={positions[2].currentPosition} className="w-[25vw] h-[50vh]" title="IMG_8214">
+							<img src={flower} className={windowImageStyles} alt="Pixelated image of a flower" />
+						</WindowImage>
+						<WindowImage x={positions[3].currentPosition} y={45} className="w-[25vw] aspect-square" title="IMG_7823">
+							<img src={earth} className={windowImageStyles} alt="Pixelated image of the planet Earth" />
+						</WindowImage>
+						<WindowImage x={22} y={positions[1].currentPosition} className="w-[30vw] h-[45vh]" title="DJI_5129">
+							<img src={reef} className={windowImageStyles} alt="Pixelated image of the Great Barrier Reef" />
+						</WindowImage>
 						<span
 							style={{
 								transform: `translate(${positions[0].currentPosition * 2}vw, 55vh)`,
