@@ -24,8 +24,8 @@ export default function WindowImage({ x, y, className, title, children }: Window
 			</div>
 			<div className="flex flex-col w-full h-full gap-2 px-3 py-2 border-[6px] text-dark bg-medium border-dark overflow-clip">
 				<div className="flex flex-row items-center justify-between w-full">
-					<h3 className="pt-3">{title.length > 12 ? title.slice(0, 12) + "..." : title}</h3>
-					<img className="h-8" src={icons} alt="" />
+					<h3 className="pt-3 overflow-hidden text-ellipsis">{title.slice(0, title.length - 4) + "_dithered.png"}</h3>
+					<img className="w-48 h-8" src={icons} alt="" />
 				</div>
 				{children}
 			</div>

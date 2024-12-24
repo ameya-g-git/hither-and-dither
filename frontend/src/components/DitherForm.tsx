@@ -1,16 +1,17 @@
-import { inputHandlerType, uploadHandlerType, UploadedImage } from "../hooks/useUploadedImages";
+import { inputHandlerType, uploadHandlerType, UploadedImage, openHandlerType } from "../hooks/useUploadedImages";
 import Dropdown, { OptionGroup } from "./Dropdown";
 import Slider from "./Slider";
 import ResButton from "./ResButton";
-import FileUpload from "./FileUpload";
 import { useEffect, useMemo, useRef, useState } from "react";
 import WindowImage from "./WindowImage";
 import { windowImageStyles } from "../App";
+import clsx from "clsx";
 
 interface DitherFormProps {
 	imgState: UploadedImage[];
 	onChange: inputHandlerType;
 	onUpload: uploadHandlerType;
+	onOpen: openHandlerType;
 }
 interface ImageFormProps {
 	img: UploadedImage;
@@ -20,9 +21,10 @@ interface ImageFormProps {
 
 function ImageForm({ img, onChange, open }: ImageFormProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [canvasImage, _] = useState(new Image());
+	const canvasImage = useMemo(() => new Image(), []);
 
 	useEffect(() => {
+		// brightness + contrast handler
 		if (canvasRef && canvasRef.current) {
 			if (!canvasImage.src) {
 				canvasImage.src = img.src;
@@ -30,9 +32,12 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 			const canvas = canvasRef.current;
 			const context = canvas.getContext("2d");
 			if (context) {
-				context.filter = `brightness(${img.brightness}%) contrast(${img.contrast}%)`;
+				context.filter = `grayscale(100%) brightness(${img.brightness}%) contrast(${img.contrast}%)`;
 				const vRatio = canvas.width / canvasImage.width;
 				const hRatio = canvas.height / canvasImage.height;
+				const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+				context.putImageData(imgData, 0, 0);
 
 				const ratio = Math.min(vRatio, hRatio);
 				var centerShift_x = (canvas.width - canvasImage.width * ratio) / 2;
@@ -106,10 +111,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 		},
 	];
 	return (
-		<div
-			// TODO: make the open property in an UploadedImage do   something
-			className="absolute flex flex-row w-full h-full p-12 pt-16 mt-16 "
-		>
+		<div className="absolute flex flex-row w-full h-full p-12 pt-16 mt-16 ">
 			<div className="flex flex-col gap-4 grow">
 				<Dropdown className="z-50" label="Algorithm" id={img.id} options={algOptions} onChange={onChange} />
 				<Dropdown className="z-40" label="Palette" id={img.id} options={paletteOptions} onChange={onChange} />
@@ -152,8 +154,16 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 	);
 }
 
-export default function DitherForm({ imgState, onChange, onUpload }: DitherFormProps) {
+export default function DitherForm({ imgState, onChange, onUpload, onOpen }: DitherFormProps) {
 	const [showForm, setShowForm] = useState(false);
+	console.log(imgState);
+
+	const buttonStyles = (open: boolean) =>
+		clsx({
+			"absolute h-20 text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark -top-16 border-medium text-glow":
+				true,
+			"brightness-50 hover:brightness-75": !open,
+		});
 
 	useEffect(() => {
 		if (imgState.length > 0) {
@@ -169,7 +179,25 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 			>
 				{showForm ? (
 					imgState.map((img, i) => {
-						return <ImageForm img={img} onChange={onChange} open={img.open} />;
+						return (
+							<>
+								<button
+									className={buttonStyles(img.open)}
+									onClick={(e) => {
+										e.stopPropagation();
+										e.preventDefault();
+										onOpen(img.id);
+									}}
+									style={{
+										left: `${i * 250 - 8}px`,
+										zIndex: img.open ? 999 : imgState.length - i,
+									}}
+								>
+									{img.fileName.slice(0, img.fileName.length - 4)}
+								</button>
+								{img.open && <ImageForm img={img} onChange={onChange} open={img.open} />}
+							</>
+						);
 					})
 				) : (
 					<div className="flex flex-col items-center gap-4 text-center">

@@ -41,7 +41,7 @@ interface UploadAction extends Action {
 	src: string;
 }
 
-interface SelectAction extends Action {
+interface OpenAction extends Action {
 	id: string;
 }
 
@@ -53,11 +53,11 @@ interface InputAction extends Action {
 
 export type uploadHandlerType = (file: File) => void;
 
-export type selectHandlerType = (id: string, value: boolean) => void;
+export type openHandlerType = (id: string) => void;
 
 export type inputHandlerType = (id: string, key: string, value: any) => void;
 
-type UploadedFilesHookReturn = [UploadedImage[], uploadHandlerType, selectHandlerType, inputHandlerType];
+type UploadedFilesHookReturn = [UploadedImage[], uploadHandlerType, openHandlerType, inputHandlerType];
 
 /**
  * Reads an inputted files data URL. Adapted from Joseph Zimmerman's drag-and-drop uploader linked below:
@@ -112,21 +112,22 @@ function fileToUploadedImage(file: File) {
  * @param action | The action defined by a given dispatch() call
  * @returns {UploadedImage[]} | The updated state after the reducer call finishes
  */
-function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | InputAction | SelectAction) {
+function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | InputAction | OpenAction) {
 	switch (action.type) {
 		case "UPLOAD_FILES": {
 			const { file, src } = action as UploadAction;
 			const uploadState = state as UploadedImage[];
-			const fileList: UploadedImage[] = [];
 
 			const image = fileToUploadedImage(file);
 			image.src = src;
-			fileList.push(image);
+			if (uploadState.length >= 1) {
+				image.open = false;
+			}
 
-			return [...uploadState, ...fileList];
+			return [...uploadState, image];
 		}
 		case "OPEN_MENU": {
-			const { id } = action as SelectAction;
+			const { id } = action as OpenAction;
 			const imageIndex = state!.findIndex((img) => img.id === id);
 			const newState: UploadedImage[] = state!.map((image) => {
 				return { ...image, open: false };

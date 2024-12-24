@@ -69,7 +69,7 @@ export default function App() {
 		(Math.min(100, (s - 900) / 3) / screenWidth) * 100,
 		(Math.max(400, -(s - 2000) / 3) / screenHeight) * 100,
 		(Math.min(250, (s + 200) / 3) / screenHeight) * 100,
-		(Math.max(950, -(s - 4100) / 3) / screenWidth) * 100,
+		(Math.max(1080, -(s - 4100) / 3) / screenWidth) * 100,
 	];
 
 	const waveElements = (n: number) => {
@@ -246,7 +246,7 @@ export default function App() {
 						<img src={bayer} />
 						<img src={bayer} />
 					</div>
-					<DitherForm imgState={imgState} onChange={formHandler} onUpload={uploadHandler} />
+					<DitherForm imgState={imgState} onChange={formHandler} onUpload={uploadHandler} onOpen={openHandler} />
 				</div>
 			</MousePosition.Provider>
 		</ScreenSize.Provider>

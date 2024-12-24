@@ -4,9 +4,11 @@ interface UploadButtonProps {
 	onUpload: uploadHandlerType;
 }
 
+// TODO: this shadow ugly please change it
+
 export default function UploadButton({ onUpload }: UploadButtonProps) {
 	return (
-		<div className="fixed rounded-xl transition-all shadow-medium/50 shadow-lg hover:shadow-2xl hover:shadow-medium pixel-corners-button--wrapper pixel-corners-button z-[999] w-24 h-24 bottom-8 right-8 bg-dark border-8 border-medium">
+		<div className="fixed rounded-xl transition-all shadow-medium/50 shadow-lg hover:shadow-2xl hover:shadow-medium pixel-corners-button--wrapper pixel-corners-button z-[999] w-24 h-24 bottom-8 right-8 bg-dark border-[6px] border-medium">
 			<input
 				type="file"
 				id="fileElem"
