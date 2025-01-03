@@ -27,10 +27,8 @@ def upload_images():
             return jsonify({"error": "Invalid upload"}), 400
         else:
             data: list[dict] = loads(form_data)
-            print(data[0].get("filename"))
 
         for image in data:
-            print(image)
             header_length = len("data:image/png;base64,")
             image_data = b64decode(image.get("src")[header_length:])
             decoded_image = Image.open(BytesIO(image_data))
@@ -48,7 +46,6 @@ def upload_images():
             )
             uploaded_images.push(uploaded_image)
 
-        print("hooray")
         return jsonify({"upload": "Succesful"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
