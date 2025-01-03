@@ -10,13 +10,17 @@ import clsx from "clsx";
 interface DitherFormProps {
 	imgState: UploadedImage[];
 	onChange: inputHandlerType;
-	onUpload: uploadHandlerType;
 	onOpen: openHandlerType;
 }
 interface ImageFormProps {
 	img: UploadedImage;
 	onChange: inputHandlerType;
 	open: boolean;
+}
+
+interface DitheredImage {
+	name: string;
+	data: string;
 }
 
 function ImageForm({ img, onChange, open }: ImageFormProps) {
@@ -103,7 +107,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 		},
 	];
 	return (
-		<div className="absolute flex flex-row w-full h-full p-12 pt-16 mt-2 bg-dark ">
+		<div className="absolute flex flex-col w-full h-full p-12 pt-16 mt-2 md:flex-row bg-dark ">
 			<div className="flex flex-col gap-4 grow">
 				<Dropdown
 					className="z-50"
@@ -140,6 +144,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 				</div>
 			</div>
 			<div className="w-1/2 p-8">
+				{/* TODO: fix the z indexing of this so that clicking on a window moves it up on z */}
 				<WindowImage className="w-2/3 h-2/3 top-8 left-8" title={img.fileName}>
 					<img src={img.src} className={windowImageStyles} alt="" />
 				</WindowImage>
@@ -151,13 +156,15 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 	);
 }
 
-export default function DitherForm({ imgState, onChange, onUpload, onOpen }: DitherFormProps) {
+export default function DitherForm({ imgState, onChange, onOpen }: DitherFormProps) {
 	const [showForm, setShowForm] = useState(false);
-	console.log(imgState);
+	const [loading, setLoading] = useState(false);
+	const [ditheredImages, setDitheredImages] = useState<DitheredImage[]>([]);
+	// TODO: erm do i want to put the submit handler within useUploadedImages.tsx ? if so i would need to store a loading variable as well. is that too much to have?
 
 	const buttonStyles = (open: boolean) =>
 		clsx({
-			"absolute h-20 before:bg-dark text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark -top-16":
+			"absolute small-pixel-corners h-20 before:bg-dark text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark -top-16":
 				true,
 			"border-medium text-glow": open,
 			"border-medium/50 text-medium hover:border-medium hover:text-glow": !open,
@@ -169,12 +176,44 @@ export default function DitherForm({ imgState, onChange, onUpload, onOpen }: Dit
 		}
 	}, [imgState]);
 
+	async function submitImages() {
+		const formData = new FormData();
+
+		formData.append("images", JSON.stringify(imgState));
+
+		try {
+			const response = await fetch("/api", { method: "POST", body: formData });
+
+			if (response.status === 200 || response.status === 201) {
+				console.log("Uploaded images to server");
+			} else {
+				console.error("Error:", response.statusText, response.status);
+			}
+		} catch (error) {
+			console.error("Error:", error);
+		}
+
+		// setLoading(true);
+
+		// fetch("/api/images")
+		// 	.then<DitheredImage[]>((res) => res.json())
+		// 	.then((data) => setDitheredImages(data))
+		// 	.then(() => setLoading(false))
+		// 	.catch((e) => console.error(e));
+	}
+
 	return (
 		<div id="form" className="flex items-center justify-center w-full h-full">
-			<form
-				className="flex items-center z-50 justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2"
-				action="proxy address"
-			>
+			<form className="flex items-center z-50 justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2">
+				<button
+					className="absolute top-0 right-0 z-50 flex items-center justify-center h-16 px-4 text-sm font-bold bg-medium text-dark"
+					onClick={(e) => {
+						e.preventDefault();
+						submitImages();
+					}}
+				>
+					DITHER IT!!
+				</button>
 				{showForm ? (
 					imgState.map((img, i) => {
 						return (

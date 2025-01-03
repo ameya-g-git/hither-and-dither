@@ -30,6 +30,7 @@ def upload_images():
             print(data[0].get("filename"))
 
         for image in data:
+            print(image)
             header_length = len("data:image/png;base64,")
             image_data = b64decode(image.get("src")[header_length:])
             decoded_image = Image.open(BytesIO(image_data))
@@ -38,11 +39,16 @@ def upload_images():
                 image_id=image.get("id"),
                 file_name=image.get("fileName"),
                 src=decoded_image,
-                dither=image.get("dither"),
-                dithered_image=image.get("ditheredImage"),
+                brightness=image.get("brightness"),
+                contrast=image.get("contrast"),
+                algorithm=image.get("algorithm"),
+                palette=image.get("palette"),
+                width=image.get("width"),
+                scale=image.get("scale"),
             )
             uploaded_images.push(uploaded_image)
 
+        print("hooray")
         return jsonify({"upload": "Succesful"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500

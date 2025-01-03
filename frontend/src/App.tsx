@@ -248,7 +248,7 @@ export default function App() {
 						<img src={bayer} />
 						<img src={bayer} />
 					</div>
-					<DitherForm imgState={imgState} onChange={formHandler} onUpload={uploadHandler} onOpen={openHandler} />
+					<DitherForm imgState={imgState} onChange={formHandler} onOpen={openHandler} />
 				</div>
 			</MousePosition.Provider>
 		</ScreenSize.Provider>
