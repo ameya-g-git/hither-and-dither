@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { MousePosition } from "../App";
+import { inputHandlerType } from "../hooks/useUploadedImages";
 
 interface SliderProps {
 	label: string;
@@ -9,7 +10,7 @@ interface SliderProps {
 	min: number;
 	max: number;
 	step: number;
-	onChange: (val: number) => void;
+	onChange: inputHandlerType;
 }
 
 export default function Slider({ label, id, value, min, max, step = 1, onChange }: SliderProps) {
@@ -34,7 +35,7 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 			const sliderWidth = sliderRect.width;
 			const value = ((mousePosition.x - sliderX) / sliderWidth) * max;
 			setSliderVal(value > 0.99 * max ? max : value);
-			onChange(value);
+			onChange(id, label.toLowerCase(), value);
 		}
 	}, [mouseDown, mousePosition]);
 
@@ -51,7 +52,7 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 					step={step}
 					onChange={(e) => {
 						setSliderVal(Number(e.target.value));
-						onChange(Number(e.target.value));
+						onChange(id, label.toLowerCase(), e.target.value);
 					}}
 				/>
 			</div>

@@ -64,6 +64,8 @@ export default function App() {
 		// },
 	]);
 
+	console.log(positions[3].currentPosition);
+
 	const targetPositionFunctions = (s: number) => [
 		// list of functions to calculate target position of window
 		(Math.min(100, (s - 900) / 3) / screenWidth) * 100,

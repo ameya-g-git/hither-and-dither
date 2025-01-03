@@ -58,14 +58,6 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 		}
 	}, [img]);
 
-	// useEffect(() => {
-	// 	if (canvasRef && canvasRef.current) {
-	// 		const canvas = canvasRef.current;
-	// 		const imageData = canvas.toDataURL();
-	// 		onChange(img.id, "src", imageData);
-	// 	}
-	// }, [open]);
-
 	const widthOptions: OptionGroup[] = [
 		{
 			name: "",
@@ -111,34 +103,39 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 		},
 	];
 	return (
-		<div className="absolute flex flex-row w-full h-full p-12 pt-16 mt-16 ">
+		<div className="absolute flex flex-row w-full h-full p-12 pt-16 mt-2 bg-dark ">
 			<div className="flex flex-col gap-4 grow">
-				<Dropdown className="z-50" label="Algorithm" id={img.id} options={algOptions} onChange={onChange} />
-				<Dropdown className="z-40" label="Palette" id={img.id} options={paletteOptions} onChange={onChange} />
+				<Dropdown
+					className="z-50"
+					current={img.algorithm}
+					dropFor="algorithm"
+					id={img.id}
+					options={algOptions}
+					onChange={onChange}
+					showLabel
+				/>
+				<Dropdown
+					className="z-40"
+					current={img.palette}
+					dropFor="palette"
+					id={img.id}
+					options={paletteOptions}
+					onChange={onChange}
+					showLabel
+				/>
 				<label className="text-lg">Image Adjustments</label>
-				<Slider
-					label="Brightness"
-					id={img.id}
-					value={img.brightness}
-					min={1}
-					max={200}
-					step={1}
-					onChange={(val) => {
-						onChange(img.id, "brightness", val);
-					}}
-				/>
-				<Slider
-					label="Contrast"
-					id={img.id}
-					value={img.contrast}
-					min={1}
-					max={200}
-					step={1}
-					onChange={(val) => onChange(img.id, "contrast", val)}
-				/>
+				<Slider label="Brightness" id={img.id} value={img.brightness} min={1} max={200} step={1} onChange={onChange} />
+				<Slider label="Contrast" id={img.id} value={img.contrast} min={1} max={200} step={1} onChange={onChange} />
 				<div className="flex flex-row items-center w-full gap-4 mt-4 max-h-16">
 					<label htmlFor="">Image Width</label>
-					<Dropdown className="z-30 -mt-6" id={img.id} options={widthOptions} onChange={onChange} />
+					<Dropdown
+						className="z-30 -mt-6"
+						dropFor="width"
+						current={img.width}
+						id={img.id}
+						options={widthOptions}
+						onChange={onChange}
+					/>
 					<ResButton id={img.id} onClick={onChange} />
 				</div>
 			</div>
@@ -160,9 +157,10 @@ export default function DitherForm({ imgState, onChange, onUpload, onOpen }: Dit
 
 	const buttonStyles = (open: boolean) =>
 		clsx({
-			"absolute h-20 text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark -top-16 border-medium text-glow":
+			"absolute h-20 before:bg-dark text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark -top-16":
 				true,
-			"brightness-50 hover:brightness-75": !open,
+			"border-medium text-glow": open,
+			"border-medium/50 text-medium hover:border-medium hover:text-glow": !open,
 		});
 
 	useEffect(() => {
@@ -190,7 +188,7 @@ export default function DitherForm({ imgState, onChange, onUpload, onOpen }: Dit
 									}}
 									style={{
 										left: `${i * 250 - 8}px`,
-										zIndex: img.open ? 999 : imgState.length - i,
+										zIndex: img.open ? 999 : imgState.length - i - 999,
 									}}
 								>
 									{img.fileName.slice(0, img.fileName.length - 4)}

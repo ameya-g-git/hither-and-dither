@@ -15,11 +15,13 @@ export interface OptionGroup {
 }
 
 interface DropdownProps {
-	label?: string; // label for dropdown
+	dropFor: string; // label for dropdown
+	current: any;
 	options: OptionGroup[];
 	id: string; // id of image its updating
 	onChange: inputHandlerType; // form state change handler function
 	className?: string;
+	showLabel?: boolean;
 }
 
 interface DropdownOptionProps {
@@ -38,18 +40,36 @@ function DropdownOption({ option, onClick }: DropdownOptionProps) {
 	);
 }
 
-export default function Dropdown({ label, options, id, onChange, className }: DropdownProps) {
+function findOptionFromVal(options: OptionGroup[], val: string): Option {
+	let foundOption: Option = { name: "", val: "" };
+
+	options.forEach((opGroup) => {
+		if (opGroup.options.findIndex((op) => op.val == val) >= 0) {
+			foundOption = opGroup.options.find((op) => op.val == val)!;
+		}
+	});
+
+	return foundOption;
+}
+export default function Dropdown({
+	dropFor,
+	current,
+	options,
+	id,
+	onChange,
+	className,
+	showLabel = false,
+}: DropdownProps) {
 	const [showDropdownList, setShowDropdownList] = useState(false);
-	const [currentOption, setCurrentOption] = useState(options[0].options[0]);
-	const [optionsList, setOptionsList] = useState<OptionGroup[]>([
+	const [currentOption, setCurrentOption] = useState(findOptionFromVal(options, current));
+	const [optionsList, setOptionsList] = useState<OptionGroup[]>(
 		// options list filtered without currentOption
-		{ ...options[0], options: options[0].options.slice(1) },
-		...options.slice(1),
-	]);
+		options.map((opGroup, i) => ({ ...opGroup, options: options[i].options.filter((op) => op.val !== current) }))
+	);
 	const dropdownRef = useRef(null);
 
 	function toggleDropdown(event: Event, option?: Option) {
-		// toggles dropdown and updates form state, currentOption, and optionsList simultaneously
+		// toggles dropdown and updates currentOption and optionsList simultaneously
 		event.stopPropagation();
 		event.preventDefault();
 		setShowDropdownList((prev) => !prev);
@@ -65,7 +85,7 @@ export default function Dropdown({ label, options, id, onChange, className }: Dr
 
 	function optionClick(e: Event, op: Option) {
 		toggleDropdown(e, op);
-		onChange(id, label ? label.toLowerCase() : "", op.val);
+		onChange(id, dropFor.toLowerCase(), op.val);
 	}
 
 	useClickOutside(dropdownRef, (_) => setShowDropdownList(false));
@@ -77,7 +97,7 @@ export default function Dropdown({ label, options, id, onChange, className }: Dr
 
 	return (
 		<div className={`min-h-32 min-w-48 ${className ? className : ""}`}>
-			{label && <label className="text-lg ">{label}</label>}
+			{showLabel && <label className="text-lg ">{dropFor.slice(0, 1).toUpperCase() + dropFor.slice(1)}</label>}
 			<div
 				ref={dropdownRef}
 				className={`${
