@@ -40,6 +40,8 @@ export const MousePosition = createContext<position>({ x: 0, y: 0 });
 export const ScreenSize = createContext({ screenWidth: 0, screenHeight: 0 });
 export const windowImageStyles = "object-cover h-full overflow-hidden border-4 border-box border-dark";
 
+// TODO: fix sliding window positioning this is annoying to figure out !!
+
 export default function App() {
 	const [positions, setPositions] = useState([
 		{ targetPosition: 0, currentPosition: 0 },
@@ -138,7 +140,7 @@ export default function App() {
 	return (
 		<ScreenSize.Provider value={useWindowSize()}>
 			<MousePosition.Provider value={useMousePosition()}>
-				{!imgState.length && <FileUpload onUpload={uploadHandler} />}
+				{/* {!imgState.length && <FileUpload onUpload={uploadHandler} />} */}
 				<UploadButton onUpload={uploadHandler} />
 				<div className="box-border flex items-center w-screen h-screen ">
 					<div
@@ -177,9 +179,9 @@ export default function App() {
 						</span>
 					</div>
 				</div>
-				<div className="mt-24 overflow-visible z-[99]">
+				<div className=" mt-24 overflow-visible z-[99]">
 					{/* <ParallaxLayer factor={0}> */}
-					<img src={webb} className="absolute h-80 -top-48 animate-float left-4 [--delay:1000ms]" alt="" />
+					<img src={webb} className="absolute h-80 -top-48 animate-float -left-8 [--delay:1000ms]" alt="" />
 					<img src={pearl} className="absolute w-96 -top-56 animate-float -right-24 [--delay:500ms]" alt="" />
 					<img src={venus} className="absolute w-96 -top-24 animate-float left-[60%] [--delay:1600ms]" alt="" />
 					{/* </ParallaxLayer> */}
@@ -248,7 +250,7 @@ export default function App() {
 						<img src={bayer} />
 						<img src={bayer} />
 					</div>
-					<DitherForm imgState={imgState} onChange={formHandler} onOpen={openHandler} />
+					<DitherForm imgState={imgState} onChange={formHandler} onOpen={openHandler} onUpload={uploadHandler} />
 				</div>
 			</MousePosition.Provider>
 		</ScreenSize.Provider>

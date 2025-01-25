@@ -6,11 +6,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import WindowImage from "./WindowImage";
 import { windowImageStyles } from "../App";
 import clsx from "clsx";
+import FileUpload from "./FileUpload";
 
 interface DitherFormProps {
 	imgState: UploadedImage[];
 	onChange: inputHandlerType;
 	onOpen: openHandlerType;
+	onUpload: uploadHandlerType;
 }
 interface ImageFormProps {
 	img: UploadedImage;
@@ -156,7 +158,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 	);
 }
 
-export default function DitherForm({ imgState, onChange, onOpen }: DitherFormProps) {
+export default function DitherForm({ imgState, onChange, onOpen, onUpload }: DitherFormProps) {
 	const [showForm, setShowForm] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [ditheredImages, setDitheredImages] = useState<DitheredImage[]>([]);
@@ -205,6 +207,7 @@ export default function DitherForm({ imgState, onChange, onOpen }: DitherFormPro
 	return (
 		<div id="form" className="flex items-center justify-center w-full h-full">
 			<form className="flex items-center z-50 justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2">
+				{!imgState.length && <FileUpload onUpload={onUpload} />}
 				<button
 					className="absolute top-0 right-0 z-50 flex items-center justify-center h-16 px-4 text-sm font-bold bg-medium text-dark"
 					onClick={(e) => {

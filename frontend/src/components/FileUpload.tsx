@@ -18,10 +18,8 @@ interface FileUploadType {
  * @returns | The JSX that displays the drag-and-drop uploader
  */
 
-export default function FileUpload({ className = "", onUpload, visible = false }: FileUploadType) {
+export default function FileUpload({ className = "", onUpload }: FileUploadType) {
 	const [isDraggedOver, setIsDraggedOver] = useState(false);
-
-	const screenPadding = 10;
 
 	// useEffect(() => {
 	// 	if (
@@ -37,10 +35,8 @@ export default function FileUpload({ className = "", onUpload, visible = false }
 	// TODO: use the `isDraggedOver` prop to do a framer motion animation
 	// TODO: create a little modal for when the file size is too big, don't push it to imgState either
 
-	const dragAreaStyles = clsx({
-		"transition-all fixed h-full w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2":
-			true,
-	});
+	const dragAreaStyles =
+		"absolute top-0 left-0 rounded-3xl transition-all h-full w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2";
 
 	function dragOverHandler(e: DragEvent) {
 		e.preventDefault();
@@ -78,7 +74,10 @@ export default function FileUpload({ className = "", onUpload, visible = false }
 		<div
 			className={`${className} absolute w-full h-full z-[999]`}
 			id="modal"
-			onDragEnter={(e) => dragOverHandler(e as unknown as DragEvent)}
+			onDragEnter={(e) => {
+				console.log("entered");
+				dragOverHandler(e as unknown as DragEvent);
+			}}
 			onDragOver={(e) => dragOverHandler(e as unknown as DragEvent)}
 			onDragLeave={(e) => dragLeaveHandler(e as unknown as DragEvent)}
 			onDrop={(e) => {
@@ -86,7 +85,7 @@ export default function FileUpload({ className = "", onUpload, visible = false }
 				dropHandler(e as unknown as DragEvent);
 			}}
 		>
-			{(visible || isDraggedOver) && (
+			{true && (
 				<div id="drag-area" className={dragAreaStyles}>
 					{/* <img alt="upload" className="w-32 -m-4" /> */}
 					<span className="flex flex-col items-center gap-8 ">
