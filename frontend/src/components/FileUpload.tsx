@@ -35,9 +35,6 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 	// TODO: use the `isDraggedOver` prop to do a framer motion animation
 	// TODO: create a little modal for when the file size is too big, don't push it to imgState either
 
-	const dragAreaStyles =
-		"absolute top-0 left-0 rounded-3xl transition-all h-full w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2";
-
 	function dragOverHandler(e: DragEvent) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -67,12 +64,12 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 				console.error("Error in uploading file, try uploading a file saved on your computer");
 			}
 		},
-		[onUpload]
+		[onUpload],
 	);
 
 	return (
 		<div
-			className={`${className} absolute w-full h-full z-[999]`}
+			className={`${className} absolute h-full w-5/6 z-[999]`}
 			id="modal"
 			onDragEnter={(e) => {
 				console.log("entered");
@@ -85,8 +82,11 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 				dropHandler(e as unknown as DragEvent);
 			}}
 		>
-			{true && (
-				<div id="drag-area" className={dragAreaStyles}>
+			{isDraggedOver && (
+				<div
+					id="drag-area"
+					className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 rounded-[9rem] transition-all h-1/3 w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2"
+				>
 					{/* <img alt="upload" className="w-32 -m-4" /> */}
 					<span className="flex flex-col items-center gap-8 ">
 						<h2 className="text-3xl">let go of your file!</h2>

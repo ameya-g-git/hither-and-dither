@@ -33,7 +33,6 @@ import WindowImage from "./components/WindowImage";
 import useWindowSize from "./hooks/useWindowSize";
 import useUploadedFiles from "./hooks/useUploadedImages";
 import DitherForm from "./components/DitherForm";
-import FileUpload from "./components/FileUpload";
 import UploadButton from "./components/UploadButton";
 
 export const MousePosition = createContext<position>({ x: 0, y: 0 });
@@ -107,7 +106,7 @@ export default function App() {
 				prevPositions.map((pos, i) => ({
 					...pos,
 					targetPosition: targetPositionFunctions(scrollLength)[i], // use a predefined function to decide the window's target position
-				}))
+				})),
 			);
 		}
 
@@ -129,7 +128,7 @@ export default function App() {
 							Math.abs(pos.currentPosition - pos.targetPosition) <= 0.1
 								? pos.targetPosition // clamp value to target position when the position is close enough
 								: pos.currentPosition + (pos.targetPosition - pos.currentPosition) * 0.1,
-					}))
+					})),
 				);
 			}
 		}, 8);
@@ -142,7 +141,10 @@ export default function App() {
 			<MousePosition.Provider value={useMousePosition()}>
 				{/* {!imgState.length && <FileUpload onUpload={uploadHandler} />} */}
 				<UploadButton onUpload={uploadHandler} />
-				<div className="box-border flex items-center w-screen h-screen ">
+				<div
+					onClick={(_) => document.getElementById("form")!.scrollIntoView({ behavior: "smooth" })}
+					className="box-border cursor-pointer flex items-center w-screen h-screen "
+				>
 					<div
 						id="bayer"
 						className="absolute left-0 flex flex-row items-center justify-center w-full -top-96 animate-float [--float-dist:2rem] overflow-hidden -z-[99] opacity-25"

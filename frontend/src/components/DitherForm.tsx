@@ -1,11 +1,12 @@
-import { inputHandlerType, uploadHandlerType, UploadedImage, openHandlerType } from "../hooks/useUploadedImages";
+import clsx from "clsx";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { UploadedImage, inputHandlerType, uploadHandlerType, openHandlerType } from "../hooks/useUploadedImages";
 import Dropdown, { OptionGroup } from "./Dropdown";
 import Slider from "./Slider";
 import ResButton from "./ResButton";
-import { useEffect, useMemo, useRef, useState } from "react";
 import WindowImage from "./WindowImage";
 import { windowImageStyles } from "../App";
-import clsx from "clsx";
 import FileUpload from "./FileUpload";
 
 interface DitherFormProps {
@@ -58,7 +59,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 					centerShift_x,
 					centerShift_y,
 					canvasImage.width * ratio,
-					canvasImage.height * ratio
+					canvasImage.height * ratio,
 				);
 			}
 		}
