@@ -1,14 +1,6 @@
 import numpy as np
 from PIL import Image
 
-"""
-WEIGHT MATRIX
-	X   7
-3   5   1
-	
-	1/16
-"""
-
 # For RGB images, the following might give better colour-matching.
 # p = np.linspace(0, 1, nc)
 # p = np.array(list(product(p,p,p)))
@@ -16,25 +8,28 @@ WEIGHT MATRIX
 #    idx = np.argmin(np.sum((old_val[None,:] - p)**2, axis=1))
 #    return p[idx]
 
-# TODO: ok so i still need to work on this implementation
 # do some more reading on how to do FS dithering with RGB just so i can adjust this implementation appropriately
 # TODO: also  fetching b64 encoded images from the server  decoding them   and zipping them with JSZip or whatever
 
-fs_matrix = np.array([[0, 0, 7 / 16], [3 / 16, 5 / 16, 1 / 16]])
 
-"""Generalized version of the dithering function that takes in a palette code, finds the respective weight matrix, and applies that weight matrix for error diffusion"""  # i guess bayering too but idk how to word that and my brain is OFF im DONE this is MIND NUMBING LOL
-
-
-def dither_general(img: Image, img_width: int, scale: int, algo: str, palette: str):
+def dither_general(img: Image, img_width: int, scale: int, algo: list, palette: str):
     width, height = img.size
+    weight_matrix, factor = algo
+
     img = img.convert("L")
     fwd_arr = np.zeros(width)
     fwd_arr2 = np.zeros(width)
-    weight_h = fs_matrix.shape[0]
-    weight_w = fs_matrix.shape[1]
+    weight_h, weight_w = weight_matrix.shape
     weight_center = weight_w // 2
 
-    img_height = (img_width // width) * height
+    # TODO: also  make sure the largest dimension is set to the value defined by img_width
+
+    if width > height:
+        img_height = round((img_width / width) * height)
+    else:
+        img_width = round((img_height / height) * width)
+
+    print(img_width, img_height, width, height)
 
     img_resize = img.resize((img_width, img_height), Image.Resampling.LANCZOS)
     img_arr = np.array(img_resize, dtype=float) / 255
@@ -46,7 +41,7 @@ def dither_general(img: Image, img_width: int, scale: int, algo: str, palette: s
         for ic in range(img_width):
             for row in range(weight_h):
                 for col in range(weight_w):
-                    if fs_matrix[row, col]:  # TODO: replace fs_matrix with  the actual weight matrix generalized
+                    if not (weight_matrix[row, col]):
                         continue
                     else:
                         old_val = img_arr[ir, ic].copy()
@@ -55,11 +50,13 @@ def dither_general(img: Image, img_width: int, scale: int, algo: str, palette: s
                         img_arr[ir, ic] = new_val
                         err = old_val - new_val  # TODO: and as such, the error format will change
 
-                        if (ic + col - weight_center < img_width) or (ir + row < img_height):
+                        if ic + col - weight_center < img_width:
                             if row == 0:
-                                img_arr[ir, ic + col] += (
-                                    err * fs_matrix[row, col]
-                                )  # TODO: this will stay basically the same since the weight matrix item is just a scalar
+                                img_arr[ir, ic + col - weight_center] += err * weight_matrix[row, col] / factor
+                            if row == 1:
+                                fwd_arr[ic + col - weight_center] += err * weight_matrix[row, col] / factor
+                            if row == 2:
+                                fwd_arr2[ic + col - weight_center] += err * weight_matrix[row, col] / factor
 
     img_arr = np.clip(img_arr, 0, 1)
     carr = np.array(img_arr / np.max(img_arr, axis=(0, 1)) * 255, dtype=np.uint8)
