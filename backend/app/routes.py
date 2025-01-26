@@ -5,7 +5,7 @@ from base64 import b64decode, b64encode
 from PIL import Image
 
 from .models import UploadedImage, UploadedImageList
-from .utils.floydsteinberg import floyd_steinberg
+from .utils.dither import floyd_steinberg
 
 uploaded_images = UploadedImageList([])
 

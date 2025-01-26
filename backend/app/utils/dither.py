@@ -65,47 +65,6 @@ def dither_general(img: Image, img_width: int, scale: int, algo: list, palette: 
     # TODO: okay im done for today Ough   i guess i should test this out next   receive the image from this function and display it in a modal maybe
 
 
-def floyd_steinberg(img: Image):
-    """
-    Floyd-Steinberg dither the image img into a palette with nc colours per
-    channel.
-
-    """
-
-    width, height = img.size
-    img = img.convert("L")
-    fwd_arr = np.zeros(width)
-
-    img_arr = np.array(img, dtype=float) / 255
-
-    for ir in range(height):
-        for ic in range(width):
-            # NB need to copy here for RGB arrays otherwise err will be (0,0,0)!
-            old_val = img_arr[ir, ic].copy()
-            new_val = round(img_arr[ir, ic])
-
-            img_arr[ir, ic] = new_val
-
-            err = old_val - new_val
-
-            if ic < width - 1:
-                img_arr[ir, ic + 1] += (err / 16) * 7
-            if ir < height - 1:
-                if ic > 0:
-                    fwd_arr[ic - 1] += (err / 16) * 3
-                fwd_arr[ic] += (err / 16) * 5
-                if ic < width - 1:
-                    fwd_arr[ic + 1] += err / 16
-        if ir < height - 1:
-            img_arr[ir + 1] += fwd_arr
-
-        fwd_arr = np.zeros(width)
-
-    img_arr = np.clip(img_arr, 0, 1)
-    carr = np.array(img_arr / np.max(img_arr, axis=(0, 1)) * 255, dtype=np.uint8)
-    return Image.fromarray(carr)
-
-
 # def palette_reduce(img, nc):
 #     """Simple palette reduction without dithering."""
 #     arr = np.array(img, dtype=float) / 255
