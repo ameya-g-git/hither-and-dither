@@ -26,6 +26,9 @@ interface DitheredImage {
 	data: string;
 }
 
+// TODO: i really want to do this    because of how easy the dither_general algorithm works, i want to make an interface to let people create their own weight matrices
+// this hopefully isn't me going too crazy with scope but!! doesn't seem too hard to implement. at this point, do i just send the weight matrix over the request? i think that could be fine    yeah it's fine json.loads() does the job for me nicely
+
 function ImageForm({ img, onChange, open }: ImageFormProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const canvasImage = useMemo(() => new Image(), []);
@@ -69,9 +72,9 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 		{
 			name: "",
 			options: [
-				{ val: 360, name: "360px" },
-				{ val: 480, name: "480px" },
-				{ val: 720, name: "720px" },
+				{ id: "360", val: 360, name: "360px" },
+				{ id: "480", val: 480, name: "480px" },
+				{ id: "720", val: 720, name: "720px" },
 			],
 		},
 	];
@@ -80,32 +83,148 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 		{
 			name: "Diffusion",
 			options: [
-				{ val: "fs", name: "Floyd-Steinberg" },
-				{ val: "fs2", name: "Floyd-Steinberg2" },
+				{ id: "s", val: [[[0, 1]], 1], name: "Simple" },
+				{
+					id: "fs",
+					val: [
+						[
+							[0, 0, 7],
+							[3, 5, 1],
+						],
+						16,
+					],
+					name: "Floyd-Steinberg",
+				},
+				{
+					id: "jjn",
+					val: [
+						[
+							[0, 0, 0, 7, 5],
+							[3, 5, 7, 5, 3],
+							[1, 3, 5, 3, 1],
+						],
+						48,
+					],
+					name: "JJN",
+				},
+				{
+					id: "stk",
+					val: [
+						[
+							[0, 0, 0, 8, 4],
+							[2, 4, 8, 4, 2],
+							[1, 2, 4, 2, 1],
+						],
+						42,
+					],
+					name: "Stucki",
+				},
+				{
+					id: "atk",
+					val: [
+						[
+							[0, 0, 0, 1, 1],
+							[0, 1, 1, 1, 0],
+							[0, 0, 1, 0, 0],
+						],
+						8,
+					],
+					name: "Atkinson",
+				},
+				{
+					id: "urk",
+					val: [
+						[
+							[0, 0, 0, 8, 4],
+							[2, 4, 8, 4, 2],
+						],
+						32,
+					],
+					name: "Burkes",
+				},
+				{
+					id: "2sra",
+					val: [
+						[
+							[0, 0, 0, 5, 3],
+							[2, 4, 5, 4, 2],
+							[0, 2, 3, 2, 0],
+						],
+						16,
+					],
+					name: "Two-Row Sierra",
+				},
+				{
+					id: "sra",
+					val: [
+						[
+							[0, 0, 0, 4, 3],
+							[1, 2, 3, 2, 1],
+						],
+						16,
+					],
+					name: "Sierra",
+				},
+				{
+					id: "sra_l",
+					val: [
+						[
+							[0, 0, 2],
+							[1, 1, 0],
+						],
+						4,
+					],
+					name: "Sierra Lite",
+				},
 			],
 		},
 		{
 			name: "Ordered",
 			options: [
-				{ val: "b2x2", name: "Bayer 2x2" },
-				{ val: "b4x4", name: "Bayer 4x4" },
+				{
+					id: "b2x2",
+					val: [
+						[
+							[0, 2],
+							[3, 1],
+						],
+						4,
+					],
+					name: "Bayer 2x2",
+				},
+				{
+					id: "b4x4",
+					val: [
+						[
+							[0, 8, 2, 10],
+							[12, 4, 14, 6],
+							[3, 11, 1, 9],
+							[15, 7, 13, 5],
+						],
+						16,
+					],
+					name: "Bayer 4x4",
+				},
 			],
 		},
 	];
+
+	// TODO: with this new Option interface, i need to change up the UploadedImage type to allow me to send matrices over, as well as the algo id so i can determine whether to bayer or diffusion
+	// TODO: means i also have to code up a quick thing to check for bayer or diffusion, easy enough, bayers all start with "b".
 
 	const paletteOptions: OptionGroup[] = [
 		{
 			name: "Standard",
 			options: [
-				{ val: "bw", name: "B&W" },
-				{ val: "cmyk", name: "CMYK" },
+				{ id: "bw", name: "B&W" },
+				{ id: "cmyk", name: "CMYK" },
 			],
 		},
 		{
 			name: "Retro",
 			options: [
-				{ val: "gboy", name: "Gameboy" },
-				{ val: "gboy2", name: "Gameboy2" },
+				{ id: "gboy", name: "Gameboy" },
+				{ id: "gboy2", name: "Gameboy2" },
 			],
 		},
 	];
