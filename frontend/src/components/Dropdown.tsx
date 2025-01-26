@@ -5,7 +5,8 @@ import { useClickOutside } from "../hooks/useClickOutside";
 import { useKeyPress } from "../hooks/useKeyPress";
 
 interface Option {
-	val: any;
+	id: string;
+	val?: any;
 	name: string;
 }
 
@@ -40,12 +41,12 @@ function DropdownOption({ option, onClick }: DropdownOptionProps) {
 	);
 }
 
-function findOptionFromVal(options: OptionGroup[], val: string): Option {
-	let foundOption: Option = { name: "", val: "" };
+function findOptionFromId(options: OptionGroup[], id: string): Option {
+	let foundOption: Option = { id: "", name: "", val: "" };
 
 	options.forEach((opGroup) => {
-		if (opGroup.options.findIndex((op) => op.val == val) >= 0) {
-			foundOption = opGroup.options.find((op) => op.val == val)!;
+		if (opGroup.options.findIndex((op) => op.id === id) >= 0) {
+			foundOption = opGroup.options.find((op) => op.id === id)!;
 		}
 	});
 
@@ -61,10 +62,10 @@ export default function Dropdown({
 	showLabel = false,
 }: DropdownProps) {
 	const [showDropdownList, setShowDropdownList] = useState(false);
-	const [currentOption, setCurrentOption] = useState(findOptionFromVal(options, current));
+	const [currentOption, setCurrentOption] = useState(findOptionFromId(options, current));
 	const [optionsList, setOptionsList] = useState<OptionGroup[]>(
 		// options list filtered without currentOption
-		options.map((opGroup, i) => ({ ...opGroup, options: options[i].options.filter((op) => op.val !== current) }))
+		options.map((opGroup, i) => ({ ...opGroup, options: options[i].options.filter((op) => op.id !== current) })),
 	);
 	const dropdownRef = useRef(null);
 
@@ -77,7 +78,7 @@ export default function Dropdown({
 			setCurrentOption(option);
 			setOptionsList((prev) => {
 				return prev.map((group, i) => {
-					return { ...group, options: options[i].options.filter((op) => op.val !== option.val) };
+					return { ...group, options: options[i].options.filter((op) => op.id !== option.id) };
 				});
 			});
 		}
@@ -85,7 +86,8 @@ export default function Dropdown({
 
 	function optionClick(e: Event, op: Option) {
 		toggleDropdown(e, op);
-		onChange(id, dropFor.toLowerCase(), op.val);
+		onChange(id, dropFor.toLowerCase(), op.id);
+		// TODO: this is where i would also use onChange for whatever field is going to hold the weight matrix
 	}
 
 	useClickOutside(dropdownRef, (_) => setShowDropdownList(false));
