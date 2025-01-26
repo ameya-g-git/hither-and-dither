@@ -69,12 +69,9 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 
 	return (
 		<div
-			className={`${className} absolute h-full w-5/6 z-[999]`}
+			className={`${className} absolute h-full w-full z-[999]`}
 			id="modal"
-			onDragEnter={(e) => {
-				console.log("entered");
-				dragOverHandler(e as unknown as DragEvent);
-			}}
+			onDragEnter={(e) => dragOverHandler(e as unknown as DragEvent)}
 			onDragOver={(e) => dragOverHandler(e as unknown as DragEvent)}
 			onDragLeave={(e) => dragLeaveHandler(e as unknown as DragEvent)}
 			onDrop={(e) => {
@@ -85,7 +82,7 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 			{isDraggedOver && (
 				<div
 					id="drag-area"
-					className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 rounded-[9rem] transition-all h-1/3 w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2"
+					className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 rounded-[2rem] transition-all h-[90%] w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2"
 				>
 					{/* <img alt="upload" className="w-32 -m-4" /> */}
 					<span className="flex flex-col items-center gap-8 ">
