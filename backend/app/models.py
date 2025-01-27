@@ -1,18 +1,5 @@
 from PIL import Image
 
-# id: nanoid(),
-# fileName: file.name,
-# src: "",
-# open: true,
-
-# brightness: 100,
-# contrast: 100,
-
-# algorithm: "fs",
-# palette: "bw", // TODO: figure out a better way to encode this maybe ???
-# width: 480,
-# scale: 1,
-
 
 class UploadedImage:
     def __init__(

@@ -87,7 +87,6 @@ export default function Dropdown({
 	function optionClick(e: Event, op: Option) {
 		toggleDropdown(e, op);
 		onChange(id, dropFor.toLowerCase(), [op.id, op!.val]);
-		// TODO: this is where i would also use onChange for whatever field is going to hold the weight matrix
 	}
 
 	useClickOutside(dropdownRef, (_) => setShowDropdownList(false));

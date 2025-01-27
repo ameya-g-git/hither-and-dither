@@ -9,6 +9,7 @@ from PIL import Image
 #    return p[idx]
 
 # do some more reading on how to do FS dithering with RGB just so i can adjust this implementation appropriately
+# i mean i figure its just   find the closest colour based on euclidean distance. the most effective means of that is unknown but ! we shall see
 # TODO: also  fetching b64 encoded images from the server  decoding them   and zipping them with JSZip or whatever
 
 
@@ -21,8 +22,6 @@ def dither_general(img: Image, img_width: int, scale: int, weights: list, palett
     weight_h, weight_w = weights.shape
     weight_center = weight_w // 2
 
-    # TODO: also  make sure the largest dimension is set to the value defined by img_width
-
     if width > height:
         img_height = round((img_width / width) * height)
     else:
@@ -33,7 +32,6 @@ def dither_general(img: Image, img_width: int, scale: int, weights: list, palett
     img_resize = img.resize((img_width, img_height), Image.Resampling.LANCZOS)
     img_arr = np.array(img_resize, dtype=float) / 255
 
-    # TODO: figure out palette implementation, figuring just euclidean distance is good enough, but need to figure out how
     # for now, im just doing black and white schtuff
 
     for ir in range(img_height):

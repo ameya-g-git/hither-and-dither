@@ -38,8 +38,6 @@ import UploadButton from "./components/UploadButton";
 export const ScreenSize = createContext({ screenWidth: 0, screenHeight: 0 });
 export const windowImageStyles = "object-cover h-full overflow-hidden border-4 border-box border-dark";
 
-// TODO: fix sliding window positioning this is annoying to figure out !!
-
 export default function App() {
 	const [positions, setPositions] = useState([
 		{ targetPosition: 0, currentPosition: 0 },
@@ -170,7 +168,6 @@ export default function App() {
 					<span className="inline-flex items-end gap-2">
 						<h2 className="h-[3.5rem] mt-6">pursue your pixelated dreams...</h2>
 						<h4 className="mb-2">(click to begin!)</h4>
-						{/* TODO: add the click functionality to scroll to the form smoothly */}
 					</span>
 				</div>
 			</div>

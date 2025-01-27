@@ -32,6 +32,15 @@ interface DitheredImage {
 function ImageForm({ img, onChange, open }: ImageFormProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const canvasImage = useMemo(() => new Image(), []);
+	const [windowAbove, setWindowAbove] = useState(true);
+	const windowStyles = (num: number, above: boolean) =>
+		clsx({
+			"w-2/3 h-2/3": true,
+			"top-8 left-8": num == 1,
+			"bottom-8 right-8": num == 2,
+			"z-[999]": above,
+			"z-0": !above,
+		});
 
 	useEffect(() => {
 		// brightness + contrast handler
@@ -180,9 +189,6 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 		},
 	];
 
-	// TODO: with this new Option interface, i need to change up the UploadedImage type to allow me to send matrices over, as well as the algo id so i can determine whether to bayer or diffusion
-	// TODO: means i also have to code up a quick thing to check for bayer or diffusion, easy enough, bayers all start with "b".
-
 	const paletteOptions: OptionGroup[] = [
 		{
 			name: "Standard",
@@ -240,11 +246,18 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 				</div>
 			</div>
 			<div className="w-1/2 p-8">
-				{/* TODO: fix the z indexing of this so that clicking on a window moves it up on z */}
-				<WindowImage className="w-2/3 h-2/3 top-8 left-8" title={img.fileName}>
+				<WindowImage
+					onClick={() => setWindowAbove(false)}
+					className={windowStyles(1, !windowAbove)}
+					title={img.fileName}
+				>
 					<img src={img.src} className={windowImageStyles} alt="" />
 				</WindowImage>
-				<WindowImage className="w-2/3 h-2/3 bottom-8 right-8" title={img.fileName}>
+				<WindowImage
+					onClick={() => setWindowAbove(true)}
+					className={windowStyles(2, windowAbove)}
+					title={`${img.fileName.slice(0, -4)}_dithered_${img.algorithm}.png`}
+				>
 					<canvas className={windowImageStyles} ref={canvasRef} />
 				</WindowImage>
 			</div>
