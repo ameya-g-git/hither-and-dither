@@ -87,92 +87,68 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 				{
 					id: "fs",
 					val: [
-						[
-							[0, 0, 7],
-							[3, 5, 1],
-						],
-						16,
+						[0, 0, 7 / 16],
+						[3 / 16, 5 / 16, 1 / 16],
 					],
 					name: "Floyd-Steinberg",
 				},
 				{
 					id: "jjn",
 					val: [
-						[
-							[0, 0, 0, 7, 5],
-							[3, 5, 7, 5, 3],
-							[1, 3, 5, 3, 1],
-						],
-						48,
+						[0, 0, 0, 7 / 48, 5 / 48],
+						[3 / 48, 5 / 48, 7 / 48, 5 / 48, 3 / 48],
+						[1 / 48, 3 / 48, 5 / 48, 3 / 48, 1 / 48],
 					],
 					name: "JJN",
 				},
 				{
 					id: "stk",
 					val: [
-						[
-							[0, 0, 0, 8, 4],
-							[2, 4, 8, 4, 2],
-							[1, 2, 4, 2, 1],
-						],
-						42,
+						[0, 0, 0, 8 / 42, 4 / 42],
+						[2 / 42, 4 / 42, 8 / 42, 4 / 42, 2 / 42],
+						[1 / 42, 2 / 42, 4 / 42, 2 / 42, 1 / 42],
 					],
 					name: "Stucki",
 				},
 				{
 					id: "atk",
 					val: [
-						[
-							[0, 0, 0, 1, 1],
-							[0, 1, 1, 1, 0],
-							[0, 0, 1, 0, 0],
-						],
-						8,
+						[0, 0, 0, 1 / 8, 1 / 8],
+						[0, 1 / 8, 1 / 8, 1 / 8, 0],
+						[0, 0, 1 / 8, 0, 0],
 					],
 					name: "Atkinson",
 				},
 				{
 					id: "urk",
 					val: [
-						[
-							[0, 0, 0, 8, 4],
-							[2, 4, 8, 4, 2],
-						],
-						32,
+						[0, 0, 0, 8 / 32, 4 / 32],
+						[2 / 32, 4 / 32, 8 / 32, 4 / 32, 2 / 32],
 					],
 					name: "Burkes",
 				},
 				{
 					id: "2sra",
 					val: [
-						[
-							[0, 0, 0, 5, 3],
-							[2, 4, 5, 4, 2],
-							[0, 2, 3, 2, 0],
-						],
-						16,
+						[0, 0, 0, 5 / 32, 3 / 32],
+						[2 / 32, 4 / 32, 5 / 32, 4 / 32, 2 / 32],
+						[0, 2 / 32, 3 / 32, 2 / 32, 0],
 					],
 					name: "Two-Row Sierra",
 				},
 				{
 					id: "sra",
 					val: [
-						[
-							[0, 0, 0, 4, 3],
-							[1, 2, 3, 2, 1],
-						],
-						16,
+						[0, 0, 0, 4 / 16, 3 / 16],
+						[1 / 16, 2 / 16, 3 / 16, 2 / 16, 1 / 16],
 					],
 					name: "Sierra",
 				},
 				{
 					id: "sra_l",
 					val: [
-						[
-							[0, 0, 2],
-							[1, 1, 0],
-						],
-						4,
+						[0, 0, 2 / 4],
+						[1 / 4, 1 / 4, 0],
 					],
 					name: "Sierra Lite",
 				},
@@ -184,24 +160,19 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 				{
 					id: "b2x2",
 					val: [
-						[
-							[0, 2],
-							[3, 1],
-						],
-						4,
+						[0, 2 / 4],
+						[3 / 4, 1 / 4],
 					],
 					name: "Bayer 2x2",
 				},
 				{
 					id: "b4x4",
 					val: [
-						[
-							[0, 8, 2, 10],
-							[12, 4, 14, 6],
-							[3, 11, 1, 9],
-							[15, 7, 13, 5],
-						],
-						16,
+						[0, 8 / 16, 2 / 16, 10 / 16],
+						[12 / 16, 4 / 16, 14 / 16, 6 / 16],
+						[3 / 16, 11 / 16, 1 / 16, 9 / 16],
+						[15 / 16, 7 / 16, 13 / 16, 5 / 16],
+						,
 					],
 					name: "Bayer 4x4",
 				},
@@ -237,7 +208,10 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 					dropFor="algorithm"
 					id={img.id}
 					options={algOptions}
-					onChange={onChange}
+					onChange={(id, _, [opId, opVal]) => {
+						onChange(id, "algorithm", opId);
+						onChange(id, "weights", opVal);
+					}}
 					showLabel
 				/>
 				<Dropdown
@@ -246,7 +220,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 					dropFor="palette"
 					id={img.id}
 					options={paletteOptions}
-					onChange={onChange}
+					onChange={(id, key, [opId, _]) => onChange(id, key, opId)}
 					showLabel
 				/>
 				<label className="text-lg">Image Adjustments</label>
@@ -257,10 +231,10 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 					<Dropdown
 						className="z-30 -mt-6"
 						dropFor="width"
-						current={img.width}
+						current={String(img.width)}
 						id={img.id}
 						options={widthOptions}
-						onChange={onChange}
+						onChange={(id, key, [_, opVal]) => onChange(id, key, opVal)}
 					/>
 					<ResButton id={img.id} onClick={onChange} />
 				</div>
@@ -342,6 +316,7 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 						return (
 							<>
 								<button
+									title={img.fileName}
 									className={buttonStyles(img.open)}
 									onClick={(e) => {
 										e.stopPropagation();

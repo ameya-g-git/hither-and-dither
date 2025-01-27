@@ -6,7 +6,7 @@ import { useKeyPress } from "../hooks/useKeyPress";
 
 interface Option {
 	id: string;
-	val?: any;
+	val: any;
 	name: string;
 }
 
@@ -86,7 +86,7 @@ export default function Dropdown({
 
 	function optionClick(e: Event, op: Option) {
 		toggleDropdown(e, op);
-		onChange(id, dropFor.toLowerCase(), op.id);
+		onChange(id, dropFor.toLowerCase(), [op.id, op!.val]);
 		// TODO: this is where i would also use onChange for whatever field is going to hold the weight matrix
 	}
 
