@@ -12,14 +12,13 @@ from PIL import Image
 # TODO: also  fetching b64 encoded images from the server  decoding them   and zipping them with JSZip or whatever
 
 
-def dither_general(img: Image, img_width: int, scale: int, algo: list, palette: str):
+def dither_general(img: Image, img_width: int, scale: int, weights: list, palette: str):
     width, height = img.size
-    weight_matrix, factor = algo
 
     img = img.convert("L")
     fwd_arr = np.zeros(width)
     fwd_arr2 = np.zeros(width)
-    weight_h, weight_w = weight_matrix.shape
+    weight_h, weight_w = weights.shape
     weight_center = weight_w // 2
 
     # TODO: also  make sure the largest dimension is set to the value defined by img_width
@@ -41,7 +40,7 @@ def dither_general(img: Image, img_width: int, scale: int, algo: list, palette: 
         for ic in range(img_width):
             for row in range(weight_h):
                 for col in range(weight_w):
-                    if not (weight_matrix[row, col]):
+                    if not (weights[row, col]):
                         continue
                     else:
                         old_val = img_arr[ir, ic].copy()
@@ -52,11 +51,11 @@ def dither_general(img: Image, img_width: int, scale: int, algo: list, palette: 
 
                         if ic + col - weight_center < img_width:
                             if row == 0:
-                                img_arr[ir, ic + col - weight_center] += err * weight_matrix[row, col] / factor
+                                img_arr[ir, ic + col - weight_center] += err * weights[row, col]
                             if row == 1:
-                                fwd_arr[ic + col - weight_center] += err * weight_matrix[row, col] / factor
+                                fwd_arr[ic + col - weight_center] += err * weights[row, col]
                             if row == 2:
-                                fwd_arr2[ic + col - weight_center] += err * weight_matrix[row, col] / factor
+                                fwd_arr2[ic + col - weight_center] += err * weights[row, col]
 
     img_arr = np.clip(img_arr, 0, 1)
     carr = np.array(img_arr / np.max(img_arr, axis=(0, 1)) * 255, dtype=np.uint8)
