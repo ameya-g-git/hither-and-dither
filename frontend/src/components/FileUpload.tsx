@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import clsx from "clsx";
+import upload from "../assets/img/upload.svg";
 import { uploadHandlerType } from "../hooks/useUploadedImages";
 
 interface FileUploadType {
@@ -86,6 +86,7 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 				>
 					{/* <img alt="upload" className="w-32 -m-4" /> */}
 					<span className="flex flex-col items-center gap-8 ">
+						<img src={upload} alt="Upload icon" />
 						<h2 className="text-3xl">let go of your file!</h2>
 						<span className="text-sm opacity-50 text-medium">(all will be taken care of!)</span>
 					</span>

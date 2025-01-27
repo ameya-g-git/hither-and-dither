@@ -12,8 +12,9 @@ import { useCallback, useReducer } from "react";
  * @property {number} brightness
  * @property {number} contrast
  * DITHERING OPTIONS
- * @property {string} algorithm | Dithering algorithm of choice
- * @property {string} palette
+ * @property {string} algorithm | Dithering algorithm of choice, represented by a short string ID
+ * @property {number[][]} weights | weight matrix for respective algorithm
+ * @property {string[]} palette | List of hex colour codes for palette
  * @property {string} width
  * @property {number} scale
  */
@@ -27,6 +28,7 @@ export interface UploadedImage {
 	contrast: number;
 
 	algorithm: string;
+	weights: number[][];
 	palette: string;
 	width: number;
 	scale: number;
@@ -98,7 +100,8 @@ function fileToUploadedImage(file: File) {
 		contrast: 100,
 
 		algorithm: "fs",
-		palette: "bw", // TODO: figure out a better way to encode this maybe ???
+		weights: [],
+		palette: "bw",
 		width: 480,
 		scale: 1,
 	};
@@ -153,6 +156,7 @@ function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | I
 				[key]: value,
 			};
 
+			console.log(newState);
 			return newState;
 		}
 		default: {

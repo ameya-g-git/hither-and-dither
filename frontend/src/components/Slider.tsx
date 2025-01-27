@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import { MousePosition } from "../App";
+import useMousePosition from "../hooks/useMousePosition";
 import { inputHandlerType } from "../hooks/useUploadedImages";
 
 interface SliderProps {
@@ -21,7 +21,7 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 			"text-sm pl-4 select-none pointer-events-none": true,
 		});
 
-	const mousePosition = useContext(MousePosition);
+	const mousePosition = useMousePosition();
 	const sliderRef = useRef<HTMLObjectElement>(null);
 
 	const [mouseDown, setMouseDown] = useState(false);

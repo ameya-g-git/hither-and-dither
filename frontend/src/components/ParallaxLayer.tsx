@@ -1,5 +1,5 @@
 import { ReactNode, useContext } from "react";
-import { MousePosition } from "../App";
+import useMousePosition from "../hooks/useMousePosition";
 
 interface ParallaxLayerType {
 	children: ReactNode;
@@ -7,14 +7,14 @@ interface ParallaxLayerType {
 }
 
 export default function ParallaxLayer({ children, factor }: ParallaxLayerType) {
-	const mousePosition = useContext(MousePosition);
+	// const mousePosition = useMousePosition();
 
 	return (
 		<div
 			className="absolute flex items-center justify-center w-full h-full"
-			style={{
-				transform: `translate(calc(${mousePosition.x * factor}px - 80px), calc(${mousePosition.y * factor}px - 80px)`,
-			}}
+			// style={{
+			// 	transform: `translate(calc(${mousePosition.x * factor}px - 80px), calc(${mousePosition.y * factor}px - 80px)`,
+			// }}
 		>
 			{children}
 		</div>
