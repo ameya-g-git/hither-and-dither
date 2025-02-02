@@ -33,6 +33,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const canvasImage = useMemo(() => new Image(), []);
 	const [windowAbove, setWindowAbove] = useState(true);
+	const [paletteList, setPaletteList] = useState<string[]>([]);
 	const windowStyles = (num: number, above: boolean) =>
 		clsx({
 			"w-2/3 h-2/3": true,
@@ -181,7 +182,6 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 						[12 / 16, 4 / 16, 14 / 16, 6 / 16],
 						[3 / 16, 11 / 16, 1 / 16, 9 / 16],
 						[15 / 16, 7 / 16, 13 / 16, 5 / 16],
-						,
 					],
 					name: "Bayer 4x4",
 				},
@@ -193,20 +193,26 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 		{
 			name: "Standard",
 			options: [
-				{ id: "bw", name: "B&W" },
-				{ id: "cmyk", name: "CMYK" },
+				{ id: "bw_1", val: ["#000000", "#ffffff"], name: "1-Bit Grayscale" },
+				{ id: "bw_2", val: ["#000000", "#565656", "#acacac", "#ffffff"], name: "2-Bit Grayscale" },
+				{
+					id: "rgb_3",
+					val: ["#000000", "#0000ff", "#00ffff", "#00ff00", "#ffff00", "#ff0000", "#ff00ff", "#ffffff"],
+					name: "3-Bit RGB",
+				},
+				{ id: "cmyk", val: ["#ffff00", "#00ffff", "#ff00ff", "#000000"], name: "CMYK" },
 			],
 		},
 		{
 			name: "Retro",
 			options: [
-				{ id: "gboy", name: "Gameboy" },
-				{ id: "gboy2", name: "Gameboy2" },
+				{ id: "gboy", val: ["#294139", "#39594a", "#5a7942", "#7b8210"], name: "Game Boy" },
+				{ id: "gboy_l", val: ["#181818", "#4a5138", "#8c926b", "#c5caa4"], name: "Game Boy Pocket" },
 			],
 		},
 	];
 	return (
-		<div className="absolute flex flex-col w-full h-full p-12 pt-16 mt-2 md:flex-row bg-dark ">
+		<div className="absolute flex flex-col w-full h-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
 			<div className="flex flex-col gap-4 grow">
 				<Dropdown
 					className="z-50"
@@ -226,9 +232,21 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 					dropFor="palette"
 					id={img.id}
 					options={paletteOptions}
-					onChange={(id, key, [opId, _]) => onChange(id, key, opId)}
+					onChange={(id, key, [opId, opVal]) => {
+						setPaletteList(opVal);
+						onChange(id, key, opId);
+					}}
 					showLabel
 				/>
+				<div className="flex flex-wrap gap-2 mb-2 -mt-4 *:rounded-full *:border-medium *:border-4">
+					{paletteList.map((col) => {
+						return (
+							<div className="p-1">
+								<div className="w-12 h-12 rounded-full" style={{ backgroundColor: col }}></div>
+							</div>
+						);
+					})}
+				</div>
 				<label className="text-lg">Image Adjustments</label>
 				<Slider label="Brightness" id={img.id} value={img.brightness} min={1} max={200} step={1} onChange={onChange} />
 				<Slider label="Contrast" id={img.id} value={img.contrast} min={1} max={200} step={1} onChange={onChange} />
@@ -313,7 +331,7 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 
 	return (
 		<div id="form" className="flex items-center justify-center w-full h-full">
-			<form className="flex items-center z-50 justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2">
+			<form className="flex items-center z-50 justify-center rounded-[4rem] w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2">
 				{!imgState.length && <FileUpload onUpload={onUpload} />}
 				<button
 					className="absolute top-0 right-0 z-50 flex items-center justify-center h-16 px-4 text-sm font-bold bg-medium text-dark"

@@ -50,9 +50,9 @@ def dither_general(img: Image, img_width: int, scale: int, weights: list, palett
                         if ic + col - weight_center < img_width:
                             if row == 0:
                                 img_arr[ir, ic + col - weight_center] += err * weights[row, col]
-                            if row == 1:
+                            elif row == 1:
                                 fwd_arr[ic + col - weight_center] += err * weights[row, col]
-                            if row == 2:
+                            else:
                                 fwd_arr2[ic + col - weight_center] += err * weights[row, col]
 
     img_arr = np.clip(img_arr, 0, 1)

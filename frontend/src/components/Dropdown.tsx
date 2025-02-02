@@ -6,7 +6,7 @@ import { useKeyPress } from "../hooks/useKeyPress";
 
 interface Option {
 	id: string;
-	val: any;
+	val?: any;
 	name: string;
 }
 
