@@ -13,47 +13,64 @@ from PIL import Image
 # TODO: also  fetching b64 encoded images from the server  decoding them   and zipping them with JSZip or whatever
 
 
-def dither_general(img: Image, img_width: int, scale: int, weights: list, palette: str):
+def dither_general(img: Image, img_size: int, scale: int, weights: list[list[float]], palette: str):
     width, height = img.size
+    weight_matrix = np.array(weights)
+    print(weights)
 
     img = img.convert("L")
-    fwd_arr = np.zeros(width)
-    fwd_arr2 = np.zeros(width)
-    weight_h, weight_w = weights.shape
+
+    weight_h, weight_w = weight_matrix.shape
     weight_center = weight_w // 2
 
     if width > height:
-        img_height = round((img_width / width) * height)
+        img_width = img_size
+        img_height = round((img_size / width) * height)
     else:
-        img_width = round((img_height / height) * width)
+        img_width = round((img_size / height) * width)
+        img_height = img_size
 
-    print(img_width, img_height, width, height)
+    fwd_arr = np.zeros(img_width)
+    fwd_arr2 = np.zeros(img_width)
 
     img_resize = img.resize((img_width, img_height), Image.Resampling.LANCZOS)
     img_arr = np.array(img_resize, dtype=float) / 255
 
     # for now, im just doing black and white schtuff
+    print(weight_matrix)
 
     for ir in range(img_height):
         for ic in range(img_width):
+            old_val = img_arr[ir, ic].copy()
+            new_val = (
+                round(old_val) if old_val < 1 else 1
+            )  # TODO: this is where the replacement for the palette thing comes in
+
+            img_arr[ir, ic] = new_val
+            err = old_val - new_val  # TODO: and as such, the error format will change
+            print(err)
+
             for row in range(weight_h):
                 for col in range(weight_w):
-                    if not (weights[row, col]):
+                    if not (weight_matrix[row, col]):
                         continue
                     else:
-                        old_val = img_arr[ir, ic].copy()
-                        new_val = round(old_val)  # TODO: this is where the replacement for the palette thing comes in
-
-                        img_arr[ir, ic] = new_val
-                        err = old_val - new_val  # TODO: and as such, the error format will change
-
                         if ic + col - weight_center < img_width:
+                            # TODO IDK what is happening but the error is happening somewhere here    errors aren't propagating appropriately which is Strange
                             if row == 0:
-                                img_arr[ir, ic + col - weight_center] += err * weights[row, col]
+                                img_arr[ir, ic + col - weight_center] += err * weight_matrix[row, col]
                             elif row == 1:
-                                fwd_arr[ic + col - weight_center] += err * weights[row, col]
+                                fwd_arr[ic + col - weight_center] += err * weight_matrix[row, col]
+
                             else:
-                                fwd_arr2[ic + col - weight_center] += err * weights[row, col]
+                                fwd_arr2[ic + col - weight_center] += err * weight_matrix[row, col]
+        if ir < (img_height - 1):
+            img_arr[ir + 1] += fwd_arr
+        if ir < (img_height - 2):
+            img_arr[ir + 2] += fwd_arr2
+        # print(fwd_arr)
+        fwd_arr = np.zeros(img_width)
+        fwd_arr2 = np.zeros(img_width)
 
     img_arr = np.clip(img_arr, 0, 1)
     carr = np.array(img_arr / np.max(img_arr, axis=(0, 1)) * 255, dtype=np.uint8)

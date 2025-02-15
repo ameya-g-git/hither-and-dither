@@ -1,6 +1,22 @@
 from PIL import Image
 
 
+# export interface UploadedImage {
+# 	id: string;
+# 	fileName: string;
+# 	src: string;
+
+# 	brightness: number;
+# 	contrast: number;
+
+# 	algorithm: string;
+# 	weights: number[][];
+# 	palette: string;
+# 	width: number;
+# 	scale: number;
+# }
+
+
 class UploadedImage:
     def __init__(
         self,
@@ -10,6 +26,7 @@ class UploadedImage:
         brightness: float,
         contrast: float,
         algorithm: str,
+        weights: list[list[int]],
         palette: str,
         width: int,
         scale: float,
@@ -20,6 +37,7 @@ class UploadedImage:
         self.brightness: float = brightness
         self.contrast: float = contrast
         self.algorithm: str = algorithm
+        self.weights: list[list[float]] = weights
         self.palette: str = palette
         self.width: int = width
         self.scale: float = scale
@@ -32,6 +50,7 @@ class UploadedImage:
             "brightness": self.brightness,
             "contrast": self.contrast,
             "algorithm": self.algorithm,
+            "weights": self.weights,
             "palette": self.palette,
             "width": self.width,
             "scale": self.scale,

@@ -5,7 +5,7 @@ from base64 import b64decode, b64encode
 from PIL import Image
 
 from .models import UploadedImage, UploadedImageList
-from .utils.dither import floyd_steinberg
+from .utils.dither import dither_general
 
 uploaded_images = UploadedImageList([])
 
@@ -40,12 +40,12 @@ def upload_images():
                 brightness=image.get("brightness"),
                 contrast=image.get("contrast"),
                 algorithm=image.get("algorithm"),
+                weights=image.get("weights"),
                 palette=image.get("palette"),
                 width=image.get("width"),
                 scale=image.get("scale"),
             )
             uploaded_images.push(uploaded_image)
-
         return jsonify({"upload": "Succesful"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -64,22 +64,23 @@ def dither_images():
         return jsonify({"error": "No images to dither"}), 500
 
     for image in uploaded_images.images:
-        if image.dither:
-            # apply dithering algorithm
-            dithered_image = floyd_steinberg(image.src)
+        # apply dithering algorithm
+        dithered_image = dither_general(
+            image.src, img_size=image.width, scale=image.scale, weights=image.weights, palette="bw"
+        )
 
-            # save image to in-memory file and encode it into a base-64 string
-            mem_file = BytesIO()
-            dithered_image.save(mem_file, format="PNG")
-            data_url_bytes = b64encode(mem_file.getvalue())
-            data_url_str = data_url_bytes.decode("utf-8")
-            data_url = f"data:image/png;base64,{data_url_str}"
+        # save image to in-memory file and encode it into a base-64 string
+        mem_file = BytesIO()
+        dithered_image.save(mem_file, format="PNG")
+        data_url_bytes = b64encode(mem_file.getvalue())
+        data_url_str = data_url_bytes.decode("utf-8")
+        data_url = f"data:image/png;base64,{data_url_str}"
 
-            dithered_image_json = {
-                "name": f"{image.file_name.split('.')[0]}_dither_fs",
-                "data": data_url,
-            }
+        dithered_image_json = {
+            "name": f"{image.file_name.split('.')[0]}_dither_fs",
+            "data": data_url,
+        }
 
-            dithered_images.append(dithered_image_json)
+        dithered_images.append(dithered_image_json)
 
     return jsonify(dithered_images), 201

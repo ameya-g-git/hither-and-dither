@@ -100,7 +100,10 @@ function fileToUploadedImage(file: File) {
 		contrast: 100,
 
 		algorithm: "fs",
-		weights: [],
+		weights: [
+			[0, 0, 7 / 16],
+			[3 / 16, 5 / 16, 1 / 16],
+		],
 		palette: "bw_1",
 		width: 480,
 		scale: 1,
@@ -156,7 +159,6 @@ function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | I
 				[key]: value,
 			};
 
-			console.log(newState);
 			return newState;
 		}
 		default: {

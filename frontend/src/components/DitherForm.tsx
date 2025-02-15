@@ -8,6 +8,7 @@ import ResButton from "./ResButton";
 import WindowImage from "./WindowImage";
 import { windowImageStyles } from "../App";
 import FileUpload from "./FileUpload";
+import DitheredImages from "./DitheredImages";
 
 interface DitherFormProps {
 	imgState: UploadedImage[];
@@ -18,10 +19,9 @@ interface DitherFormProps {
 interface ImageFormProps {
 	img: UploadedImage;
 	onChange: inputHandlerType;
-	open: boolean;
 }
 
-interface DitheredImage {
+export interface DitheredImage {
 	name: string;
 	data: string;
 }
@@ -29,7 +29,7 @@ interface DitheredImage {
 // TODO: i really want to do this    because of how easy the dither_general algorithm works, i want to make an interface to let people create their own weight matrices
 // this hopefully isn't me going too crazy with scope but!! doesn't seem too hard to implement. at this point, do i just send the weight matrix over the request? i think that could be fine    yeah it's fine json.loads() does the job for me nicely
 
-function ImageForm({ img, onChange, open }: ImageFormProps) {
+function ImageForm({ img, onChange }: ImageFormProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const canvasImage = useMemo(() => new Image(), []);
 	const [windowAbove, setWindowAbove] = useState(true);
@@ -193,6 +193,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 		{
 			name: "Standard",
 			options: [
+				{ id: "h&d", val: ["#140428", "#79468a"], name: "Hither & Dither" },
 				{ id: "bw_1", val: ["#000000", "#ffffff"], name: "1-Bit Grayscale" },
 				{ id: "bw_2", val: ["#000000", "#565656", "#acacac", "#ffffff"], name: "2-Bit Grayscale" },
 				{
@@ -200,7 +201,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 					val: ["#000000", "#0000ff", "#00ffff", "#00ff00", "#ffff00", "#ff0000", "#ff00ff", "#ffffff"],
 					name: "3-Bit RGB",
 				},
-				{ id: "cmyk", val: ["#ffff00", "#00ffff", "#ff00ff", "#000000"], name: "CMYK" },
+				{ id: "cmyk", val: ["#00ffff", "#ff00ff", "#ffff00", "#000000"], name: "CMYK" },
 			],
 		},
 		{
@@ -284,7 +285,7 @@ function ImageForm({ img, onChange, open }: ImageFormProps) {
 }
 
 export default function DitherForm({ imgState, onChange, onOpen, onUpload }: DitherFormProps) {
-	const [showForm, setShowForm] = useState(false);
+	const [showForm, setShowForm] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const [ditheredImages, setDitheredImages] = useState<DitheredImage[]>([]);
 	// TODO: erm do i want to put the submit handler within useUploadedImages.tsx ? if so i would need to store a loading variable as well. is that too much to have?
@@ -296,12 +297,6 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 			"border-medium text-glow": open,
 			"border-medium/50 text-medium hover:border-medium hover:text-glow": !open,
 		});
-
-	useEffect(() => {
-		if (imgState.length > 0) {
-			setShowForm(true);
-		}
-	}, [imgState]);
 
 	async function submitImages() {
 		const formData = new FormData();
@@ -319,14 +314,16 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 		} catch (error) {
 			console.error("Error:", error);
 		}
+		setShowForm(false);
+		setLoading(true);
 
-		// setLoading(true);
-
-		// fetch("/api/images")
-		// 	.then<DitheredImage[]>((res) => res.json())
-		// 	.then((data) => setDitheredImages(data))
-		// 	.then(() => setLoading(false))
-		// 	.catch((e) => console.error(e));
+		fetch("/api/images")
+			.then<DitheredImage[]>((res) => res.json())
+			.then((data) => {
+				setDitheredImages(data);
+			})
+			.then(() => setLoading(false))
+			.catch((e) => console.error(e));
 	}
 
 	return (
@@ -343,35 +340,39 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 					DITHER IT!!
 				</button>
 				{showForm ? (
-					imgState.map((img, i) => {
-						return (
-							<>
-								<button
-									title={img.fileName}
-									className={buttonStyles(img.open)}
-									onClick={(e) => {
-										e.stopPropagation();
-										e.preventDefault();
-										onOpen(img.id);
-									}}
-									style={{
-										left: `${i * 250 - 8}px`,
-										zIndex: img.open ? 999 : imgState.length - i - 999,
-									}}
-								>
-									{img.fileName.slice(0, img.fileName.length - 4)}
-								</button>
-								{img.open && <ImageForm img={img} onChange={onChange} open={img.open} />}
-							</>
-						);
-					})
+					imgState.length > 0 ? (
+						<div className="flex flex-col items-center gap-4 text-center">
+							<h2 className="">no images have been uploaded!</h2>
+							<span className="inline-flex gap-2 text-center text-medium">
+								feel free to drag n' drop or click the + icon below to add images!
+							</span>
+						</div>
+					) : (
+						imgState.map((img, i) => {
+							return (
+								<>
+									<button
+										title={img.fileName}
+										className={buttonStyles(img.open)}
+										onClick={(e) => {
+											e.stopPropagation();
+											e.preventDefault();
+											onOpen(img.id);
+										}}
+										style={{
+											left: `${i * 250 - 8}px`,
+											zIndex: img.open ? 999 : imgState.length - i - 999,
+										}}
+									>
+										{img.fileName.slice(0, img.fileName.length - 4)}
+									</button>
+									{img.open && <ImageForm img={img} onChange={onChange} />}
+								</>
+							);
+						})
+					)
 				) : (
-					<div className="flex flex-col items-center gap-4 text-center">
-						<h2 className="">no images have been uploaded!</h2>
-						<span className="inline-flex gap-2 text-center text-medium">
-							feel free to drag n' drop or click the + icon below to add images!
-						</span>
-					</div>
+					<DitheredImages loading={loading} ditheredImages={ditheredImages} />
 				)}
 			</form>
 		</div>

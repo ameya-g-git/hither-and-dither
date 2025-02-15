@@ -103,7 +103,7 @@ export default function Dropdown({
 				ref={dropdownRef}
 				className={`${
 					showDropdownList && "overflow-y-auto"
-				} absolute top-10 scrollbar-thin scrollbar-track-dark scrollbar-thumb-medium scrollbar-track-rounded-full mb-8 flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
+				} absolute top-10 scrollbar-thin bg-dark scrollbar-track-dark scrollbar-thumb-medium scrollbar-track-rounded-full mb-8 flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
 			>
 				<div className="sticky top-0 z-10 bg-dark rounded-2xl">
 					<button
