@@ -26,7 +26,7 @@ export default function WindowImage({ x, y, className, title, children, onClick 
 			</div>
 			<div className="flex flex-col w-full h-full gap-2 px-3 py-2 border-[6px] text-dark bg-medium border-dark overflow-clip">
 				<div className="flex flex-row items-center justify-between w-full">
-					<h3 title={title} className="pt-3 overflow-hidden text-ellipsis">
+					<h3 title={title} className="pt-3 overflow-hidden text-nowrap text-ellipsis">
 						{title}
 					</h3>
 					<img className="w-48 h-8" src={icons} alt="" />

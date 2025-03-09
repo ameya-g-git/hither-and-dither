@@ -119,7 +119,7 @@ export default function Dropdown({
 				{showDropdownList && (
 					<div className="flex flex-col gap-4 px-4 bg-dark">
 						{optionsList.map((group, i) => (
-							<div className="w-full min-h-16">
+							<div key={i} className="w-full min-h-16">
 								<label className="text-sm text-medium/50">{group.name}</label>
 								<ol className="flex flex-col items-center">
 									{group.options.map((op) => (
