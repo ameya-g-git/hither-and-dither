@@ -69,7 +69,7 @@ export default function App() {
 		(Math.min(100, (s - 900) / 3) / screenWidth) * 100,
 		(Math.max(400, -(s - 2000) / 3) / screenHeight) * 100,
 		(Math.min(250, (s + 200) / 3) / screenHeight) * 100,
-		(Math.max(1080, -(s - 5200) / 3) / screenWidth) * 100,
+		(Math.max(1080, -(s - 5800) / 3) / screenWidth) * 100,
 	];
 
 	const waveElements = (n: number) => {
@@ -139,7 +139,7 @@ export default function App() {
 			<UploadButton onUpload={uploadHandler} />
 			<div
 				onClick={(_) => document.getElementById("form")!.scrollIntoView({ behavior: "smooth" })}
-				className="box-border cursor-pointer flex items-center w-screen h-screen "
+				className="box-border flex items-center w-screen h-screen cursor-pointer "
 			>
 				<div
 					id="bayer"
