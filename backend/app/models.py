@@ -23,8 +23,6 @@ class UploadedImage:
         image_id,
         file_name,
         src: Image,
-        brightness: float,
-        contrast: float,
         algorithm: str,
         weights: list[list[int]],
         palette: str,
@@ -34,8 +32,6 @@ class UploadedImage:
         self.image_id: str = image_id
         self.file_name: str = file_name
         self.src: Image = src
-        self.brightness: float = brightness
-        self.contrast: float = contrast
         self.algorithm: str = algorithm
         self.weights: list[list[float]] = weights
         self.palette: str = palette
@@ -47,8 +43,6 @@ class UploadedImage:
             "image_id": self.image_id,
             "file_name": self.file_name,
             "src": [self.src.format, self.src.size],
-            "brightness": self.brightness,
-            "contrast": self.contrast,
             "algorithm": self.algorithm,
             "weights": self.weights,
             "palette": self.palette,

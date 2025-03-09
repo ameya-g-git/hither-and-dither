@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from io import BytesIO
 from json import loads
 from base64 import b64decode, b64encode
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 from .models import UploadedImage, UploadedImageList
 from .utils.dither import dither_general
@@ -33,18 +33,30 @@ def upload_images():
             image_data = b64decode(image.get("src")[header_length:])
             decoded_image = Image.open(BytesIO(image_data))
 
+            image_brightness = image.get("brightness")
+            image_contrast = image.get("contrast")
+
+            print(image_brightness, image_contrast)
+
+            brightness = ImageEnhance.Brightness(decoded_image)
+            brightened = brightness.enhance(image_brightness / 100)
+
+            contrast = ImageEnhance.Contrast(brightened)
+            edited_image = contrast.enhance(image_contrast / 100)
+
+            print(edited_image.size)
+
             uploaded_image = UploadedImage(
                 image_id=image.get("id"),
                 file_name=image.get("fileName"),
-                src=decoded_image,
-                brightness=image.get("brightness"),
-                contrast=image.get("contrast"),
+                src=edited_image,
                 algorithm=image.get("algorithm"),
                 weights=image.get("weights"),
                 palette=image.get("palette"),
                 width=image.get("width"),
                 scale=image.get("scale"),
             )
+
             uploaded_images.push(uploaded_image)
         return jsonify({"upload": "Succesful"}), 201
     except Exception as e:
@@ -66,7 +78,7 @@ def dither_images():
     for image in uploaded_images.images:
         # apply dithering algorithm
         dithered_image = dither_general(
-            image.src, img_size=image.width, scale=image.scale, weights=image.weights, palette="bw"
+            image.src, img_size=image.width, scale=image.scale, weights=image.weights, palette=image.palette
         )
 
         # save image to in-memory file and encode it into a base-64 string
@@ -77,7 +89,7 @@ def dither_images():
         data_url = f"data:image/png;base64,{data_url_str}"
 
         dithered_image_json = {
-            "name": f"{image.file_name.split('.')[0]}_dither_fs",
+            "name": f"{image.file_name.split('.')[0]}_dither_{image.algorithm}",
             "data": data_url,
         }
 

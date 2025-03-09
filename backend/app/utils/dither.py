@@ -15,6 +15,7 @@ from PIL import Image
 
 def dither_general(img: Image, img_size: int, scale: int, weights: list[list[float]], palette: str):
     width, height = img.size
+    print(weights)
     weight_matrix = np.array(weights)
     print(weights)
 
@@ -37,7 +38,6 @@ def dither_general(img: Image, img_size: int, scale: int, weights: list[list[flo
     img_arr = np.array(img_resize, dtype=float) / 255
 
     # for now, im just doing black and white schtuff
-    print(weight_matrix)
 
     for ir in range(img_height):
         for ic in range(img_width):
@@ -56,7 +56,6 @@ def dither_general(img: Image, img_size: int, scale: int, weights: list[list[flo
                         continue
                     else:
                         if ic + col - weight_center < img_width:
-                            # TODO IDK what is happening but the error is happening somewhere here    errors aren't propagating appropriately which is Strange
                             if row == 0:
                                 img_arr[ir, ic + col - weight_center] += err * weight_matrix[row, col]
                             elif row == 1:
@@ -74,7 +73,7 @@ def dither_general(img: Image, img_size: int, scale: int, weights: list[list[flo
 
     img_arr = np.clip(img_arr, 0, 1)
     carr = np.array(img_arr / np.max(img_arr, axis=(0, 1)) * 255, dtype=np.uint8)
-    return Image.fromarray(carr)
+    return Image.fromarray(carr).resize((img_width * scale, img_height * scale))
 
     # TODO: okay im done for today Ough   i guess i should test this out next   receive the image from this function and display it in a modal maybe
 
