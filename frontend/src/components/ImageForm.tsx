@@ -233,7 +233,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 				</div>
 				<label className="text-lg">Image Adjustments</label>
 				<Slider label="Brightness" id={img.id} value={img.brightness} min={1} max={200} step={1} onChange={onChange} />
-				<Slider label="Contrast" id={img.id} value={img.contrast} min={1} max={200} step={1} onChange={onChange} />
+				<Slider label="Contrast" id={img.id} value={img.contrast} min={1} max={400} step={1} onChange={onChange} />
 				<div className="flex flex-row items-center w-full gap-4 mt-4 max-h-16">
 					<label htmlFor="">Image Width</label>
 					<Dropdown
