@@ -24,8 +24,8 @@ class UploadedImage:
         file_name,
         src: Image,
         algorithm: str,
-        weights: list[list[int]],
-        palette: str,
+        weights: list[list[float]],
+        palette: list[str],
         width: int,
         scale: float,
     ) -> None:
@@ -34,7 +34,7 @@ class UploadedImage:
         self.src: Image = src
         self.algorithm: str = algorithm
         self.weights: list[list[float]] = weights
-        self.palette: str = palette
+        self.palette: list[str] = palette
         self.width: int = width
         self.scale: float = scale
 

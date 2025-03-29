@@ -38,15 +38,9 @@ def upload_images():
 
             brightness = ImageEnhance.Brightness(decoded_image)
             brightened = brightness.enhance(image_brightness / 100)
-            print("just brightened")
 
             contrast = ImageEnhance.Contrast(brightened)
             edited_image = contrast.enhance(image_contrast / 100)
-            print("just edited")
-
-            edited_image.save("./test.png")
-
-            print(edited_image.size)
 
             uploaded_image = UploadedImage(
                 image_id=image.get("id"),
@@ -54,7 +48,7 @@ def upload_images():
                 src=edited_image,
                 algorithm=image.get("algorithm"),
                 weights=image.get("weights"),
-                palette=image.get("palette"),
+                palette=image.get("colours"),
                 width=image.get("width"),
                 scale=image.get("scale"),
             )

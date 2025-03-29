@@ -15,6 +15,7 @@ import { useCallback, useReducer } from "react";
  * @property {string} algorithm | Dithering algorithm of choice, represented by a short string ID
  * @property {number[][]} weights | weight matrix for respective algorithm
  * @property {string} palette | Palette ID
+ * @property {string[]} colours | Palette in list format
  * @property {string} width
  * @property {number} scale
  */
@@ -30,6 +31,7 @@ export interface UploadedImage {
 	algorithm: string;
 	weights: number[][];
 	palette: string;
+	colours: string[];
 	width: number;
 	scale: number;
 }
@@ -105,6 +107,7 @@ function fileToUploadedImage(file: File) {
 			[3 / 16, 5 / 16, 1 / 16],
 		],
 		palette: "bw_1",
+		colours: ["#000000", "#ffffff"],
 		width: 480,
 		scale: 1,
 	};

@@ -219,6 +219,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					onChange={(id, key, [opId, opVal]) => {
 						setPaletteList(opVal);
 						onChange(id, key, opId);
+						onChange(id, "colours", opVal);
 					}}
 					showLabel
 				/>

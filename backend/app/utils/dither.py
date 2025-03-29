@@ -13,11 +13,9 @@ from PIL import Image
 # TODO: also  fetching b64 encoded images from the server  decoding them   and zipping them with JSZip or whatever
 
 
-def dither_general(img: Image, img_size: int, scale: int, weights: list[list[float]], palette: str):
+def dither_general(img: Image, img_size: int, scale: int, weights: list[list[float]], palette: list[str]):
     width, height = img.size
     weight_matrix = np.array(weights)
-
-    print(scale)
 
     img = img.convert("L")
 
