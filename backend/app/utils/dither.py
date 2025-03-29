@@ -15,9 +15,9 @@ from PIL import Image
 
 def dither_general(img: Image, img_size: int, scale: int, weights: list[list[float]], palette: str):
     width, height = img.size
-    print(weights)
     weight_matrix = np.array(weights)
-    print(weights)
+
+    print(scale)
 
     img = img.convert("L")
 
@@ -48,7 +48,6 @@ def dither_general(img: Image, img_size: int, scale: int, weights: list[list[flo
 
             img_arr[ir, ic] = new_val
             err = old_val - new_val  # TODO: and as such, the error format will change
-            print(err)
 
             for row in range(weight_h):
                 for col in range(weight_w):
@@ -67,13 +66,14 @@ def dither_general(img: Image, img_size: int, scale: int, weights: list[list[flo
             img_arr[ir + 1] += fwd_arr
         if ir < (img_height - 2):
             img_arr[ir + 2] += fwd_arr2
-        # print(fwd_arr)
         fwd_arr = np.zeros(img_width)
         fwd_arr2 = np.zeros(img_width)
 
     img_arr = np.clip(img_arr, 0, 1)
-    carr = np.array(img_arr / np.max(img_arr, axis=(0, 1)) * 255, dtype=np.uint8)
-    return Image.fromarray(carr).resize((img_width * scale, img_height * scale))
+    carr = np.array(img_arr * 255, dtype=np.uint8)
+    dithered_image = Image.fromarray(carr)
+    dithered_image_resize = dithered_image.resize((img_width * scale, img_height * scale), Image.Resampling.NEAREST)
+    return dithered_image_resize
 
     # TODO: okay im done for today Ough   i guess i should test this out next   receive the image from this function and display it in a modal maybe
 

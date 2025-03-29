@@ -126,6 +126,7 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 							onClick={() => {
 								setShowForm(true);
 								setDitheredImages([]);
+								console.log(imgState);
 							}}
 						>
 							<img src={arrow} className="w-full h-full" alt="Back" />

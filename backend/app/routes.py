@@ -36,13 +36,13 @@ def upload_images():
             image_brightness = image.get("brightness")
             image_contrast = image.get("contrast")
 
-            print(image_brightness, image_contrast)
-
             brightness = ImageEnhance.Brightness(decoded_image)
-            brightened = brightness.enhance(image_brightness / 100)
+            brightened = brightness.enhance(image_brightness / 100).show("brightness")
 
             contrast = ImageEnhance.Contrast(brightened)
             edited_image = contrast.enhance(image_contrast / 100)
+
+            edited_image.save("test.png")
 
             print(edited_image.size)
 

@@ -26,26 +26,6 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			"z-0": !above,
 		});
 
-	function dither(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-		let data = imageData.data;
-		const length = data.length;
-
-		console.log(data.length, canvas.width, canvas.height);
-		for (let i = 0; i < canvas.height; i += 4) {
-			for (let j = 0; j < canvas.width * 4; i += 4) {
-				const value = data[i * canvas.width * 4 + j] / 255;
-				const newVal = Math.round(value);
-				const error = (newVal - value) * 255;
-				data[i * canvas.width * 4 + (j + 4)] += (error * 7) / 16;
-				data[(i + 1) * canvas.width * 4 + (j - 4)] += (error * 3) / 16;
-				data[(i + 1) * canvas.width * 4 + j] += (error * 5) / 16;
-				data[(i + 1) * canvas.width * 4 + (j + 4)] += (error * 1) / 16;
-			}
-		}
-		data = data.slice(0, length);
-		ctx.putImageData(imageData, 0, 0);
-	}
 	useEffect(() => {
 		// brightness + contrast handler
 		if (canvasRef && canvasRef.current) {

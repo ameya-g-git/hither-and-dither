@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { inputHandlerType } from "../hooks/useUploadedImages";
 
 interface ResButtonProps {
@@ -19,23 +19,17 @@ export default function ResButton({ id, onClick }: ResButtonProps) {
 		"scale-115 text-xl": counter === 2,
 	});
 
-	function incrementCounter(e: Event) {
+	function incrementCounter(e: SyntheticEvent) {
 		e.preventDefault();
 		e.stopPropagation();
-		setCounter((prev) => prev + 1);
-		if (counter >= 2) {
-			setCounter(0);
-		}
+		setCounter((prev) => {
+			const nextCount = prev + 1 > 2 ? 0 : prev + 1;
+			onClick(id, "scale", resolution[nextCount]);
+			return nextCount;
+		});
 	}
 	return (
-		<button
-			id="width"
-			onClick={(e) => {
-				incrementCounter(e as unknown as Event);
-				onClick(id, "width", resolution[counter]);
-			}}
-			className={buttonStyles}
-		>
+		<button id="width" onClick={(e: SyntheticEvent) => incrementCounter(e)} className={buttonStyles}>
 			{resolution[counter]}x
 		</button>
 	);
