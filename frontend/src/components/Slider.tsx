@@ -41,7 +41,7 @@ export default function Slider({ label, id, value, min, max, step = 5, onChange 
 
 	return (
 		<div>
-			<div className="">
+			<div className="overflow-hidden">
 				<input
 					className="absolute z-[99] right-0 w-full"
 					type="range"
