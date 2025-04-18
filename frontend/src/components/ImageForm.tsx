@@ -1,11 +1,12 @@
 import clsx from "clsx";
-import { useRef, useMemo, useState, useEffect } from "react";
+import { useRef, useMemo, useState, useEffect, memo } from "react";
 import { windowImageStyles } from "../App";
 import Dropdown, { OptionGroup } from "./Dropdown";
 import ResButton from "./ResButton";
 import Slider from "./Slider";
 import WindowImage from "./WindowImage";
 import { UploadedImage, inputHandlerType } from "../hooks/useUploadedImages";
+import { useClickOutside } from "../hooks/useClickOutside";
 
 interface ImageFormProps {
 	img: UploadedImage;
@@ -17,6 +18,9 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	const canvasImage = useMemo(() => new Image(), []);
 	const [windowAbove, setWindowAbove] = useState(true);
 	const [paletteList, setPaletteList] = useState<string[]>(["#000000", "#ffffff"]);
+	const [tempColor, setTempColor] = useState<string>("");
+	// TODO: need new state variable to hold whether or not a custom palette is being used, will show text box input to name it
+
 	const windowStyles = (num: number, above: boolean) =>
 		clsx({
 			"w-2/3 h-2/3": true,
@@ -195,6 +199,19 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			],
 		},
 	];
+
+	interface ColorChipProps {
+		imgId: string;
+		col: string;
+		i: number;
+	}
+
+	// const ColorChip = function ColorChip({ imgId, col, i }: ColorChipProps) {
+	// 	return (
+
+	// 	);
+	// };
+
 	return (
 		<div className="absolute flex flex-col w-full h-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
 			<div className="flex flex-col gap-4 grow">
@@ -223,14 +240,36 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					}}
 					showLabel
 				/>
+
+				{/* // TODO: implement custom palette nonsense cause im crazy in the head */}
 				<div className="flex flex-wrap gap-2 mb-2 -mt-4 *:rounded-full *:border-medium *:border-4">
-					{paletteList.map((col) => {
+					{paletteList.map((col, i) => {
+						// TODO: also add like  a little X icon to delete a colour
 						return (
-							<div className="p-1">
-								<div className="w-12 h-12 rounded-full" style={{ backgroundColor: col }}></div>
+							<div className="relative items-center p-1 *:cursor-pointer" key={i}>
+								<div className="w-12 h-12 rounded-full " style={{ backgroundColor: col }}></div>
+								<input
+									className="absolute top-0 left-0 w-12 h-12 border-none rounded-full outline-none opacity-0"
+									type="color"
+									value={col}
+									id={`${img.id}-col${i}`}
+									name={`${img.id}-col${i}`}
+									onChange={(e) => {
+										setTempColor(e.target.value);
+										let newPaletteList = [...paletteList];
+										newPaletteList[i] = tempColor;
+										setPaletteList(newPaletteList);
+										console.log(tempColor);
+									}}
+									onBlur={() => {
+										onChange(img.id, "colours", paletteList);
+										console.log(img);
+									}}
+								/>
 							</div>
 						);
 					})}
+					{/* // TODO: also add a little plus icon to add a colour */}
 				</div>
 				<label className="text-lg">Image Adjustments</label>
 				<Slider label="Brightness" id={img.id} value={img.brightness} min={1} max={200} step={1} onChange={onChange} />
