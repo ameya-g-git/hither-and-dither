@@ -12,7 +12,7 @@ interface DitheredImagesProps {
 }
 
 export default function DitheredImages({ ditheredImages, loading }: DitheredImagesProps) {
-	const [downloadInterface, setDownloadInterface] = useState(<></>);
+	const [ditherBlob, setDitherBlob] = useState<Blob>();
 
 	/**
 	 * Converts a data URL to a UInt8Array for ease of downloading via JSZip
@@ -44,26 +44,7 @@ export default function DitheredImages({ ditheredImages, loading }: DitheredImag
 			// TODO: work on download interface
 
 			zip.generateAsync({ type: "blob" }).then((blob) => {
-				setDownloadInterface(
-					<div className="flex flex-col items-center gap-2">
-						{ditheredImages.map((dImg) => (
-							<img className="absolute w-24 h-24" src={dImg.data}></img>
-						))}
-						<h2 className="text-4xl">your images are ready!</h2>
-						<h4 className="mb-4 text-sm opacity-50 pl-36 text-medium">have a splendid day!</h4>
-						<button
-							id="width"
-							onClick={(e) => {
-								e.preventDefault();
-								saveAs(blob, `dithered-images-${moment().format("YYYYMMDD-HHmmss")}.zip`);
-							}}
-							className="flex flex-row items-center h-16 gap-4 px-4 py-8 border-4 rounded-lg text-light bg-dark border-medium"
-						>
-							<img src={download} className="h-8" alt="" />
-							<span className="mt-2 text-xl">download!</span>
-						</button>
-					</div>,
-				);
+				setDitherBlob(blob);
 			});
 		}
 	}, [ditheredImages]);
@@ -74,6 +55,27 @@ export default function DitheredImages({ ditheredImages, loading }: DitheredImag
 	return loading ? (
 		<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fc.tenor.com%2FGw-jI11oSC8AAAAC%2Floading-now-loading.gif&f=1&nofb=1&ipt=5c3d4012a11463564c7534d1376fd80bfddd20ce2ba945615b8e35f04264226a&ipo=images"></img>
 	) : (
-		<div id="dithered-images">{downloadInterface}</div>
+		<div id="dithered-images">
+			{ditherBlob && (
+				<div className="flex flex-col items-center gap-2">
+					{ditheredImages.map((dImg) => (
+						<img className="absolute w-24 h-24" src={dImg.data}></img>
+					))}
+					<h2 className="text-4xl">your images are ready!</h2>
+					<h4 className="mb-4 text-sm opacity-50 pl-36 text-medium">have a splendid day!</h4>
+					<button
+						id="width"
+						onClick={(e) => {
+							e.preventDefault();
+							saveAs(ditherBlob, `dithered-images-${moment().format("YYYYMMDD-HHmmss")}.zip`);
+						}}
+						className="flex flex-row items-center h-16 gap-4 px-4 py-8 border-4 rounded-lg text-light bg-dark border-medium"
+					>
+						<img src={download} className="h-8" alt="" />
+						<span className="mt-2 text-xl">download!</span>
+					</button>
+				</div>
+			)}
+		</div>
 	);
 }

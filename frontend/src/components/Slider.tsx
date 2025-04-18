@@ -13,7 +13,7 @@ interface SliderProps {
 	onChange: inputHandlerType;
 }
 
-export default function Slider({ label, id, value, min, max, step = 1, onChange }: SliderProps) {
+export default function Slider({ label, id, value, min, max, step = 5, onChange }: SliderProps) {
 	const labelStyles = (dark: boolean) =>
 		clsx({
 			absolute: !dark,
@@ -41,15 +41,15 @@ export default function Slider({ label, id, value, min, max, step = 1, onChange 
 
 	return (
 		<div>
-			<div className="overflow-hidden">
+			<div className="">
 				<input
-					className="absolute right-0 w-full"
+					className="absolute z-[99] right-0 w-full"
 					type="range"
 					name={label.toLowerCase()}
 					min={min}
 					max={max}
-					value={(min + max) / 2}
-					step={step}
+					value={sliderVal}
+					step={(min - max) / 25}
 					onChange={(e) => {
 						setSliderVal(Number(e.target.value));
 						onChange(id, label.toLowerCase(), e.target.value);
