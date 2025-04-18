@@ -18,9 +18,11 @@ export default function UploadButton({ onUpload }: UploadButtonProps) {
 				onChange={(e) => {
 					if (e.target.files && e.target.files.length > 0) {
 						for (const file of e.target.files) {
-							if (true) {
-								// TODO: ADD FILE SIZE LIMIT, THE CODE IS HERE JUST ADD SOME ARBITRARY LIMIT
+							if (file.size < 25e6) {
+								// 25 MB limit, no need to be egregious with it
 								onUpload(file); // handle file upload via a handler function prop
+							} else {
+								alert("file is too big! be nice to the servers!");
 							}
 						}
 					}
@@ -28,7 +30,7 @@ export default function UploadButton({ onUpload }: UploadButtonProps) {
 			/>
 			<label
 				htmlFor="fileElem"
-				className="text-3xl pt-4 flex text-glow items-center justify-center w-full h-full cursor-pointer"
+				className="flex items-center justify-center w-full h-full pt-4 text-3xl cursor-pointer text-glow"
 			>
 				+
 			</label>

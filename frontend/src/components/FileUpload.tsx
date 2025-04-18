@@ -55,9 +55,11 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 			const files = dt!.files; // get files from drag event
 			if (files.length > 0) {
 				for (const file of files) {
-					if (true) {
-						// TODO: ADD FILE SIZE LIMIT, THE CODE IS HERE JUST ADD SOME ARBITRARY LIMIT
+					if (file.size < 25e6) {
+						// 25 MB limit, no need to be egregious with it
 						onUpload(file); // handle file upload via a handler function prop
+					} else {
+						alert("file is too big! be nice to the servers!");
 					}
 				}
 			} else {
