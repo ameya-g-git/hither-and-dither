@@ -6,6 +6,7 @@ from PIL import Image, ImageEnhance
 
 from .models import UploadedImage, UploadedImageList
 from .utils.dither import dither_general
+from .utils.hex_to_array import hex_to_array
 
 uploaded_images = UploadedImageList([])
 
@@ -14,6 +15,7 @@ main = Blueprint("main", __name__)
 """Uploading images TODO
  - Accepts 
 """
+# TODO: i guess make a clear_dithered_images route for when the user goes back, otherwise that's a lot of internal state used for no reason
 
 
 @main.route("/", methods=["POST"])
@@ -32,6 +34,7 @@ def upload_images():
             header_length = len("data:image/png;base64,")
             image_data = b64decode(image.get("src")[header_length:])
             decoded_image = Image.open(BytesIO(image_data))
+            decoded_image = decoded_image.convert("RGB")
 
             image_brightness = image.get("brightness")
             image_contrast = image.get("contrast")
@@ -42,13 +45,15 @@ def upload_images():
             contrast = ImageEnhance.Contrast(brightened)
             edited_image = contrast.enhance(image_contrast / 100)
 
+            palette_list = [hex_to_array(x) for x in image.get("colours")]  # RGB encoding
+
             uploaded_image = UploadedImage(
                 image_id=image.get("id"),
                 file_name=image.get("fileName"),
                 src=edited_image,
                 algorithm=image.get("algorithm"),
                 weights=image.get("weights"),
-                palette=image.get("colours"),
+                palette=palette_list,
                 width=image.get("width"),
                 scale=image.get("scale"),
             )

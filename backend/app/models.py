@@ -1,22 +1,6 @@
 from PIL import Image
 
 
-# export interface UploadedImage {
-# 	id: string;
-# 	fileName: string;
-# 	src: string;
-
-# 	brightness: number;
-# 	contrast: number;
-
-# 	algorithm: string;
-# 	weights: number[][];
-# 	palette: string;
-# 	width: number;
-# 	scale: number;
-# }
-
-
 class UploadedImage:
     def __init__(
         self,
