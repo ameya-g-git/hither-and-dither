@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { inputHandlerType } from "../hooks/useUploadedImages";
 import { motion } from "framer-motion";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useKeyPress } from "../hooks/useKeyPress";
 
-interface Option {
+export interface Option {
 	id: string;
 	val?: any;
 	name: string;
@@ -43,6 +43,9 @@ function DropdownOption({ option, onClick }: DropdownOptionProps) {
 
 function findOptionFromId(options: OptionGroup[], id: string): Option {
 	let foundOption: Option = { id: "", name: "", val: "" };
+	if (options.length <= 0) {
+		return foundOption;
+	}
 
 	options.forEach((opGroup) => {
 		if (opGroup.options.findIndex((op) => op.id === id) >= 0) {
@@ -63,11 +66,15 @@ export default function Dropdown({
 }: DropdownProps) {
 	const [showDropdownList, setShowDropdownList] = useState(false);
 	const [currentOption, setCurrentOption] = useState(findOptionFromId(options, current));
-	const [optionsList, setOptionsList] = useState<OptionGroup[]>(
-		// options list filtered without currentOption
-		options.map((opGroup, i) => ({ ...opGroup, options: options[i].options.filter((op) => op.id !== current) })),
-	);
+	const [optionsList, setOptionsList] = useState<OptionGroup[]>(options);
 	const dropdownRef = useRef(null);
+
+	useEffect(() => {
+		setOptionsList((prev) =>
+			prev.map((opGroup, i) => ({ ...opGroup, options: options[i].options.filter((op) => op.id !== current) })),
+		);
+		console.log(optionsList);
+	}, [options, current]);
 
 	function toggleDropdown(event: Event, option?: Option) {
 		// toggles dropdown and updates currentOption and optionsList simultaneously
@@ -76,11 +83,6 @@ export default function Dropdown({
 		setShowDropdownList((prev) => !prev);
 		if (option) {
 			setCurrentOption(option);
-			setOptionsList((prev) => {
-				return prev.map((group, i) => {
-					return { ...group, options: options[i].options.filter((op) => op.id !== option.id) };
-				});
-			});
 		}
 	}
 
@@ -105,7 +107,7 @@ export default function Dropdown({
 					showDropdownList && "overflow-y-auto"
 				} absolute top-10 scrollbar-thin bg-dark scrollbar-track-dark scrollbar-thumb-medium scrollbar-track-rounded-full mb-8 flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
 			>
-				<div className="sticky top-0 z-10 bg-dark rounded-2xl">
+				<div className="sticky top-0 z-50 bg-dark rounded-2xl">
 					<button
 						className="flex flex-row items-center h-16 gap-6 select"
 						onClick={(e) => {
@@ -122,9 +124,13 @@ export default function Dropdown({
 							<div key={i} className="w-full min-h-16">
 								<label className="text-sm text-medium/50">{group.name}</label>
 								<ol className="flex flex-col items-center">
-									{group.options.map((op) => (
-										<DropdownOption option={op} onClick={(e) => optionClick(e, op)} />
-									))}
+									{group.options ? (
+										group.options.map((op, j) => (
+											<DropdownOption key={j} option={op} onClick={(e) => optionClick(e, op)} />
+										))
+									) : (
+										<></>
+									)}
 								</ol>
 								{i != optionsList.length - 1 && <hr />}
 							</div>
