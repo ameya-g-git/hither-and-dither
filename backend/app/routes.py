@@ -15,7 +15,6 @@ main = Blueprint("main", __name__)
 """Uploading images TODO
  - Accepts 
 """
-# TODO: i guess make a clear_dithered_images route for when the user goes back, otherwise that's a lot of internal state used for no reason
 
 
 @main.route("/", methods=["POST"])
@@ -69,31 +68,41 @@ def get_images():
     return jsonify(uploaded_images.to_dict_list()), 200
 
 
+# @main.route("/delete", methods=["POST"])
+# def delete_uploaded_images():
+#     uploaded_images.clear()
+#     raise ReferenceError("Going back")
+
+
 @main.route("/images", methods=["GET"])
 def dither_images():
-    dithered_images = []
+    try:
+        dithered_images = []
 
-    if len(uploaded_images.images) == 0:
-        return jsonify({"error": "No images to dither"}), 500
+        if len(uploaded_images.images) == 0:
+            return jsonify({"error": "No images to dither"}), 500
 
-    for image in uploaded_images.images:
-        # apply dithering algorithm
-        dithered_image = dither_general(
-            image.src, img_size=image.width, scale=image.scale, weights=image.weights, palette=image.palette
-        )
+        for image in uploaded_images.images:
+            # apply dithering algorithm
+            dithered_image = dither_general(
+                image.src, img_size=image.width, scale=image.scale, weights=image.weights, palette=image.palette
+            )
 
-        # save image to in-memory file and encode it into a base-64 string
-        mem_file = BytesIO()
-        dithered_image.save(mem_file, format="PNG")
-        data_url_bytes = b64encode(mem_file.getvalue())
-        data_url_str = data_url_bytes.decode("utf-8")
-        data_url = f"data:image/png;base64,{data_url_str}"
+            # save image to in-memory file and encode it into a base-64 string
+            mem_file = BytesIO()
+            dithered_image.save(mem_file, format="PNG")
+            data_url_bytes = b64encode(mem_file.getvalue())
+            data_url_str = data_url_bytes.decode("utf-8")
+            data_url = f"data:image/png;base64,{data_url_str}"
 
-        dithered_image_json = {
-            "name": f"{image.file_name.split('.')[0]}_dither_{image.algorithm}",
-            "data": data_url,
-        }
+            dithered_image_json = {
+                "name": f"{image.file_name.split('.')[0]}_dither_{image.algorithm}",
+                "data": data_url,
+            }
 
-        dithered_images.append(dithered_image_json)
+            dithered_images.append(dithered_image_json)
+            uploaded_images.clear()
 
-    return jsonify(dithered_images), 201
+        return jsonify(dithered_images), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

@@ -39,6 +39,9 @@ class UploadedImageList:
     def __init__(self, images: list[UploadedImage]) -> None:
         self.images = images
 
+    def clear(self):
+        self.images = []
+
     def push(self, image: UploadedImage):
         self.images.append(image)
         return self.images
