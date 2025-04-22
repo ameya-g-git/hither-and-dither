@@ -106,7 +106,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 		{
 			name: "Diffusion",
 			options: [
-				{ id: "s", val: [[0, 1]], name: "Simple" },
+				{ id: "s", val: [[0, 0, 1]], name: "Simple" },
 				{
 					id: "fs",
 					val: [
