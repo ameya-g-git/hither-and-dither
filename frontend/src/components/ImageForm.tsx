@@ -1,12 +1,14 @@
 import clsx from "clsx";
 import { useRef, useMemo, useState, useEffect, memo } from "react";
 import { windowImageStyles } from "../App";
-import Dropdown, { OptionGroup } from "./Dropdown";
+import Dropdown, { Option, OptionGroup } from "./Dropdown";
 import ResButton from "./ResButton";
 import Slider from "./Slider";
 import WindowImage from "./WindowImage";
 import { UploadedImage, inputHandlerType } from "../hooks/useUploadedImages";
 import { useClickOutside } from "../hooks/useClickOutside";
+import { nanoid } from "nanoid";
+import { isPaletteOption } from "../utils/isA";
 
 interface ImageFormProps {
 	img: UploadedImage;
@@ -17,9 +19,33 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const canvasImage = useMemo(() => new Image(), []);
 	const [windowAbove, setWindowAbove] = useState(true);
-	const [paletteList, setPaletteList] = useState<string[]>(["#000000", "#ffffff"]);
+	const [paletteList, setPaletteList] = useState<string[]>(img.colours);
 	const [tempColor, setTempColor] = useState<string>("");
-	// TODO: need new state variable to hold whether or not a custom palette is being used, will show text box input to name it
+	const [customPaletteName, setCustomPaletteName] = useState(false);
+
+	const customInd = 2;
+
+	function loadCustomPalettes(): Option[] {
+		const customPalettes: Option[] = [];
+
+		for (const name of Object.keys(localStorage)) {
+			// check if palette with the same name already exists, don't load it again if so
+			let loadedPalette: unknown = JSON.parse(localStorage!.getItem(name) as string);
+
+			// check if the data loaded from localStorage is the right type to be an Option
+			if (!isPaletteOption(loadedPalette)) continue;
+
+			// make sure palette name isn't taken already
+			if (customPalettes.some((op) => op.name === loadedPalette.name)) continue;
+
+			// make sure palette doesn't already exist
+			if (customPalettes.some((op) => op.id === loadedPalette.id)) continue;
+
+			customPalettes.push(loadedPalette);
+		}
+
+		return customPalettes;
+	}
 
 	const windowStyles = (num: number, above: boolean) =>
 		clsx({
@@ -176,7 +202,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 		},
 	];
 
-	const paletteOptions: OptionGroup[] = [
+	const [paletteOptions, setPaletteOptions] = useState<OptionGroup[]>([
 		{
 			name: "Standard",
 			options: [
@@ -198,19 +224,28 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 				{ id: "gboy_l", val: ["#181818", "#4a5138", "#8c926b", "#c5caa4"], name: "Game Boy Pocket" },
 			],
 		},
-	];
+		{
+			name: "Custom",
+			options: loadCustomPalettes().map((op) => ({ ...op, deletable: true })),
+		},
+	]);
 
-	interface ColorChipProps {
-		imgId: string;
-		col: string;
-		i: number;
-	}
+	console.log(img);
 
-	// const ColorChip = function ColorChip({ imgId, col, i }: ColorChipProps) {
-	// 	return (
+	// useEffect(() => {
+	// 	console.log("did its thing");
+	// 	setPaletteOptions((prev) => prev.map((opGroup) => ({ name: "test", options: [] })));
+	// }, []);
 
-	// 	);
-	// };
+	// useEffect(() => {
+
+	// 	setPaletteOptions((prev) => {
+	// 		const updated = [...prev];
+	// 		updated[customInd] = { ...updated[customInd], options: [...customPalettes] };
+
+	// 		return updated;
+	// 	});
+	// }, []);
 
 	return (
 		<div className="absolute flex flex-col w-full h-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
@@ -234,17 +269,34 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					id={img.id}
 					options={paletteOptions}
 					onChange={(id, key, [opId, opVal]) => {
+						setCustomPaletteName(false); // hide custom palette name on palette change
 						setPaletteList(opVal);
 						onChange(id, key, opId);
 						onChange(id, "colours", opVal);
 					}}
+					onDelete={(id) => {
+						let newCustomOptions: Option[] = [...paletteOptions[customInd].options];
+
+						const deleteIndex = newCustomOptions.findIndex((op) => op.id === id);
+						newCustomOptions.splice(deleteIndex, 1);
+
+						localStorage.removeItem(id);
+						setPaletteOptions((prev) => {
+							const updated = [...prev];
+
+							updated[customInd] = {
+								...updated[customInd],
+								options: newCustomOptions,
+							};
+
+							return updated;
+						});
+					}}
 					showLabel
 				/>
 
-				{/* // TODO: implement custom palette nonsense cause im crazy in the head */}
 				<div className="flex flex-wrap gap-2 mb-2 -mt-4 *:rounded-full *:border-medium *:border-4">
 					{paletteList.map((col, i) => {
-						// TODO: also add like  a little X icon to delete a colour
 						return (
 							<div className="relative items-center p-1 *:cursor-pointer" key={i}>
 								<div className="w-12 h-12 rounded-full " style={{ backgroundColor: col }}></div>
@@ -256,20 +308,73 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 									name={`${img.id}-col${i}`}
 									onChange={(e) => {
 										setTempColor(e.target.value);
+
 										let newPaletteList = [...paletteList];
 										newPaletteList[i] = tempColor;
 										setPaletteList(newPaletteList);
-										console.log(tempColor);
 									}}
 									onBlur={() => {
+										setCustomPaletteName(true);
 										onChange(img.id, "colours", paletteList);
-										console.log(img);
 									}}
 								/>
+								<button
+									className="absolute flex items-center justify-center text-medium w-8 h-8 border-[3px] text-sm border-medium rounded-full -bottom-2 -right-2 bg-dark [&&]:p-0"
+									onClick={(e) => {
+										e.preventDefault();
+										setCustomPaletteName(true);
+
+										let newPaletteList = [...paletteList];
+										newPaletteList.splice(i, 1);
+
+										setPaletteList(newPaletteList);
+										onChange(img.id, "colours", newPaletteList);
+									}}
+								>
+									x
+								</button>
 							</div>
 						);
 					})}
-					{/* // TODO: also add a little plus icon to add a colour */}
+					<div className="flex items-center p-1 text-4xl *:cursor-pointer">
+						<button
+							className="flex items-center justify-center w-12 h-12 rounded-full [&&]:p-0 bg-dark hover:brightness-125"
+							onClick={(e) => {
+								e.preventDefault();
+								setCustomPaletteName(true);
+
+								const newPaletteList = [...paletteList, "#ffffff"];
+								setPaletteList(newPaletteList);
+								onChange(img.id, "colours", newPaletteList);
+							}}
+						>
+							<span className="[&&]:text-4xl italic w-full text-center h-fit pl-1 pt-5 text-medium">+</span>
+						</button>
+					</div>
+					{customPaletteName && (
+						// name custom palette
+						<input
+							onBlur={(e) => {
+								if (!e.target.value) return;
+								const existingPalette = localStorage.getItem(img.palette);
+								console.log(existingPalette, isPaletteOption(existingPalette));
+								if (existingPalette && isPaletteOption(JSON.parse(existingPalette))) {
+									const existingPaletteOp: Option = JSON.parse(existingPalette);
+									localStorage.setItem(
+										e.target.value,
+										JSON.stringify({ ...existingPaletteOp, name: e.target.value, val: img.colours }),
+									);
+								} else {
+									const newPaletteOp: Option = { id: `hnd-${nanoid()}`, name: e.target.value, val: img.colours };
+									localStorage.setItem(newPaletteOp.id, JSON.stringify(newPaletteOp));
+									onChange(img.id, "palette", newPaletteOp.id);
+								}
+							}}
+							type="text"
+							placeholder="name your palette!"
+							className="h-16 px-4 border-4 w-72 bg-dark"
+						/>
+					)}
 				</div>
 				<label className="text-lg">Image Adjustments</label>
 				<Slider label="Brightness" id={img.id} value={img.brightness} min={1} max={200} step={1} onChange={onChange} />

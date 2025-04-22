@@ -8,6 +8,7 @@ export interface Option {
 	id: string;
 	val?: any;
 	name: string;
+	deletable?: boolean;
 }
 
 export interface OptionGroup {
@@ -20,6 +21,7 @@ interface DropdownProps {
 	current: any;
 	options: OptionGroup[];
 	id: string; // id of image its updating
+	onDelete?: (id: string) => void;
 	onChange: inputHandlerType; // form state change handler function
 	className?: string;
 	showLabel?: boolean;
@@ -28,15 +30,27 @@ interface DropdownProps {
 interface DropdownOptionProps {
 	option: Option;
 	onClick: (e: Event) => void;
+	onDelete: (id: string) => void;
 }
 
 // simple component for a single dropdown option just to make component code a little Cleaner
-function DropdownOption({ option, onClick }: DropdownOptionProps) {
+function DropdownOption({ option, onClick, onDelete }: DropdownOptionProps) {
 	return (
-		<li className="w-full h-12">
+		<li className="relative w-full h-12">
 			<button className="flex flex-row items-center h-12 gap-6 select" onClick={(e) => onClick(e as unknown as Event)}>
 				{option.name}
 			</button>
+			{option.deletable && (
+				<button
+					className="absolute top-0 right-0 h-10 [&&]:p-2 mx-2 border-4 rounded-md aspect-square bg-dark text-medium border-medium"
+					onClick={(e) => {
+						e.preventDefault();
+						onDelete(option.id);
+					}}
+				>
+					delete
+				</button>
+			)}
 		</li>
 	);
 }
@@ -61,20 +75,13 @@ export default function Dropdown({
 	options,
 	id,
 	onChange,
+	onDelete,
 	className,
 	showLabel = false,
 }: DropdownProps) {
 	const [showDropdownList, setShowDropdownList] = useState(false);
 	const [currentOption, setCurrentOption] = useState(findOptionFromId(options, current));
-	const [optionsList, setOptionsList] = useState<OptionGroup[]>(options);
 	const dropdownRef = useRef(null);
-
-	useEffect(() => {
-		setOptionsList((prev) =>
-			prev.map((opGroup, i) => ({ ...opGroup, options: options[i].options.filter((op) => op.id !== current) })),
-		);
-		console.log(optionsList);
-	}, [options, current]);
 
 	function toggleDropdown(event: Event, option?: Option) {
 		// toggles dropdown and updates currentOption and optionsList simultaneously
@@ -120,19 +127,24 @@ export default function Dropdown({
 				</div>
 				{showDropdownList && (
 					<div className="flex flex-col gap-4 px-4 bg-dark">
-						{optionsList.map((group, i) => (
+						{options.map((group, i) => (
 							<div key={i} className="w-full min-h-16">
 								<label className="text-sm text-medium/50">{group.name}</label>
 								<ol className="flex flex-col items-center">
-									{group.options ? (
-										group.options.map((op, j) => (
-											<DropdownOption key={j} option={op} onClick={(e) => optionClick(e, op)} />
-										))
-									) : (
-										<></>
+									{group.options.map((op, j) =>
+										op.id !== current ? (
+											<DropdownOption
+												key={j}
+												option={op}
+												onClick={(e) => optionClick(e, op)}
+												onDelete={op.deletable && onDelete ? onDelete : () => {}}
+											/>
+										) : (
+											<></>
+										),
 									)}
 								</ol>
-								{i != optionsList.length - 1 && <hr />}
+								{i != options.length - 1 && <hr />}
 							</div>
 						))}
 					</div>
