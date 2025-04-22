@@ -22,14 +22,10 @@ export interface DitheredImage {
 	data: string;
 }
 
-// TODO: i really want to do this    because of how easy the dither_general algorithm works, i want to make an interface to let people create their own weight matrices
-// this hopefully isn't me going too crazy with scope but!! doesn't seem too hard to implement. at this point, do i just send the weight matrix over the request? i think that could be fine    yeah it's fine json.loads() does the job for me nicely
-
 export default function DitherForm({ imgState, onChange, onOpen, onUpload }: DitherFormProps) {
 	const [showForm, setShowForm] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const [ditheredImages, setDitheredImages] = useState<DitheredImage[]>([]);
-	// TODO: erm do i want to put the submit handler within useUploadedImages.tsx ? if so i would need to store a loading variable as well. is that too much to have?
 
 	const buttonStyles = (open: boolean) =>
 		clsx({
@@ -52,19 +48,20 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 			} else {
 				console.error("Error:", response.statusText, response.status);
 			}
+
+			setShowForm(false);
+			setLoading(true);
+
+			fetch("/api/images")
+				.then<DitheredImage[]>((res) => res.json())
+				.then((data) => {
+					setDitheredImages(data);
+				})
+				.then(() => setLoading(false))
+				.catch((e) => console.error(e));
 		} catch (error) {
 			console.error("Error:", error);
 		}
-		setShowForm(false);
-		setLoading(true);
-
-		fetch("/api/images")
-			.then<DitheredImage[]>((res) => res.json())
-			.then((data) => {
-				setDitheredImages(data);
-			})
-			.then(() => setLoading(false))
-			.catch((e) => console.error(e));
 	}
 
 	return (
@@ -73,8 +70,9 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 				{!imgState.length && <FileUpload onUpload={onUpload} />}
 				{imgState.length > 0 && (
 					<button
+						// disabled={loading}
 						id="width"
-						className="absolute z-[999] flex items-center justify-center w-24 h-24 p-4 text-sm font-bold -translate-y-1/2 border-[6px] -right-12 top-1/2 bg-dark border-medium rounded-xl"
+						className="absolute z-[999] disabled:brightness-75 disabled:hover:brightness-75 flex items-center justify-center w-24 h-24 p-4 text-sm font-bold -translate-y-1/2 border-[6px] -right-12 top-1/2 bg-dark border-medium rounded-xl"
 						onClick={(e) => {
 							e.preventDefault();
 							submitImages();
@@ -96,7 +94,7 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 					) : (
 						imgState.map((img, i) => {
 							return (
-								<>
+								<div key={img.id} className="absolute top-0 left-0 w-full h-full">
 									<button
 										title={img.fileName}
 										className={buttonStyles(img.open)}
@@ -112,8 +110,8 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 									>
 										{img.fileName.slice(0, img.fileName.length - 4)}
 									</button>
-									{img.open && <ImageForm key={i} img={img} onChange={onChange} />}
-								</>
+									{img.open && <ImageForm key={img.id} img={img} onChange={onChange} />}
+								</div>
 							);
 						})
 					)
@@ -126,7 +124,7 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 							onClick={() => {
 								setShowForm(true);
 								setDitheredImages([]);
-								console.log(imgState);
+								fetch("/api/delete", { method: "POST" });
 							}}
 						>
 							<img src={arrow} className="w-full h-full" alt="Back" />
