@@ -1,7 +1,12 @@
 import clsx from "clsx";
 import { useState } from "react";
 
-import { UploadedImage, inputHandlerType, uploadHandlerType, openHandlerType } from "../hooks/useUploadedImages";
+import {
+	UploadedImage,
+	inputHandlerType,
+	uploadHandlerType,
+	openHandlerType,
+} from "../hooks/useUploadedImages";
 import FileUpload from "./FileUpload";
 import DitheredImages from "./DitheredImages";
 import ImageForm from "./ImageForm";
@@ -22,7 +27,12 @@ export interface DitheredImage {
 	data: string;
 }
 
-export default function DitherForm({ imgState, onChange, onOpen, onUpload }: DitherFormProps) {
+export default function DitherForm({
+	imgState,
+	onChange,
+	onOpen,
+	onUpload,
+}: DitherFormProps) {
 	const [showForm, setShowForm] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const [ditheredImages, setDitheredImages] = useState<DitheredImage[]>([]);
@@ -65,12 +75,12 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 	}
 
 	return (
-		<div id="form" className="flex items-center justify-center w-full h-full">
-			<form className="flex items-center z-50 justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97.5%] before:-top-1 before:-left-2">
+		<div id="form" className="flex items-center justify-center w-full h-full ">
+			<form className="flex items-center justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97%] before: before:-top-1 before:-left-2">
 				{!imgState.length && <FileUpload onUpload={onUpload} />}
 				{imgState.length > 0 && (
 					<button
-						// disabled={loading}
+						disabled={loading || ditheredImages.length > 0}
 						id="width"
 						className="absolute z-[999] disabled:brightness-75 disabled:hover:brightness-75 flex items-center justify-center w-24 h-24 p-4 text-sm font-bold -translate-y-1/2 border-[6px] -right-12 top-1/2 bg-dark border-medium rounded-xl"
 						onClick={(e) => {
@@ -88,13 +98,17 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 							<img className="w-48" src={upload} alt="Upload icon" />
 							<h2 className="">no images have been uploaded!</h2>
 							<span className="inline-flex gap-2 text-center text-medium">
-								feel free to drag n' drop or click the + icon below to add images!
+								feel free to drag n' drop or click the + icon below to add
+								images!
 							</span>
 						</div>
 					) : (
 						imgState.map((img, i) => {
 							return (
-								<div key={img.id} className="absolute top-0 left-0 w-full h-full">
+								<div
+									key={img.id}
+									className="absolute top-0 left-0 w-full h-full"
+								>
 									<button
 										title={img.fileName}
 										className={buttonStyles(img.open)}
@@ -104,13 +118,15 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 											onOpen(img.id);
 										}}
 										style={{
-											left: `${i * 250 - 8}px`,
-											zIndex: img.open ? 999 : imgState.length - i - 999,
+											left: `${i * (75 / Math.max(imgState.length, 6)) - 0.5}%`,
+											zIndex: img.open ? 999 : imgState.length - i,
 										}}
 									>
 										{img.fileName.slice(0, img.fileName.length - 4)}
 									</button>
-									{img.open && <ImageForm key={img.id} img={img} onChange={onChange} />}
+									{img.open && (
+										<ImageForm key={img.id} img={img} onChange={onChange} />
+									)}
 								</div>
 							);
 						})
@@ -118,6 +134,7 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 				) : (
 					<>
 						<button
+							disabled={loading}
 							id="width"
 							title="go back to editing"
 							className="absolute flex items-center justify-center w-16 h-16 p-4 border-4 rounded-lg shadow-xl shadow-light/10 top-8 left-8 border-medium bg-dark"

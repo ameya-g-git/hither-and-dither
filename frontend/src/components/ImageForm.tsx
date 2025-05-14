@@ -30,7 +30,9 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 
 		for (const name of Object.keys(localStorage)) {
 			// check if palette with the same name already exists, don't load it again if so
-			let loadedPalette: unknown = JSON.parse(localStorage!.getItem(name) as string);
+			let loadedPalette: unknown = JSON.parse(
+				localStorage!.getItem(name) as string,
+			);
 
 			// check if the data loaded from localStorage is the right type to be an Option
 			if (!isPaletteOption(loadedPalette)) continue;
@@ -208,20 +210,45 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			options: [
 				{ id: "h&d", val: ["#140428", "#79468a"], name: "Hither & Dither" },
 				{ id: "bw_1", val: ["#000000", "#ffffff"], name: "1-Bit Grayscale" },
-				{ id: "bw_2", val: ["#000000", "#565656", "#acacac", "#ffffff"], name: "2-Bit Grayscale" },
+				{
+					id: "bw_2",
+					val: ["#000000", "#565656", "#acacac", "#ffffff"],
+					name: "2-Bit Grayscale",
+				},
 				{
 					id: "rgb_3",
-					val: ["#000000", "#0000ff", "#00ffff", "#00ff00", "#ffff00", "#ff0000", "#ff00ff", "#ffffff"],
+					val: [
+						"#000000",
+						"#0000ff",
+						"#00ffff",
+						"#00ff00",
+						"#ffff00",
+						"#ff0000",
+						"#ff00ff",
+						"#ffffff",
+					],
 					name: "3-Bit RGB",
 				},
-				{ id: "cmyk", val: ["#00ffff", "#ff00ff", "#ffff00", "#000000"], name: "CMYK" },
+				{
+					id: "cmyk",
+					val: ["#00ffff", "#ff00ff", "#ffff00", "#000000"],
+					name: "CMYK",
+				},
 			],
 		},
 		{
 			name: "Retro",
 			options: [
-				{ id: "gboy", val: ["#294139", "#39594a", "#5a7942", "#7b8210"], name: "Game Boy" },
-				{ id: "gboy_l", val: ["#181818", "#4a5138", "#8c926b", "#c5caa4"], name: "Game Boy Pocket" },
+				{
+					id: "gboy",
+					val: ["#294139", "#39594a", "#5a7942", "#7b8210"],
+					name: "Game Boy",
+				},
+				{
+					id: "gboy_l",
+					val: ["#181818", "#4a5138", "#8c926b", "#c5caa4"],
+					name: "Game Boy Pocket",
+				},
 			],
 		},
 		{
@@ -229,23 +256,6 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			options: loadCustomPalettes().map((op) => ({ ...op, deletable: true })),
 		},
 	]);
-
-	console.log(img);
-
-	// useEffect(() => {
-	// 	console.log("did its thing");
-	// 	setPaletteOptions((prev) => prev.map((opGroup) => ({ name: "test", options: [] })));
-	// }, []);
-
-	// useEffect(() => {
-
-	// 	setPaletteOptions((prev) => {
-	// 		const updated = [...prev];
-	// 		updated[customInd] = { ...updated[customInd], options: [...customPalettes] };
-
-	// 		return updated;
-	// 	});
-	// }, []);
 
 	return (
 		<div className="absolute flex flex-col w-full h-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
@@ -275,9 +285,13 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 						onChange(id, "colours", opVal);
 					}}
 					onDelete={(id) => {
-						let newCustomOptions: Option[] = [...paletteOptions[customInd].options];
+						let newCustomOptions: Option[] = [
+							...paletteOptions[customInd].options,
+						];
 
-						const deleteIndex = newCustomOptions.findIndex((op) => op.id === id);
+						const deleteIndex = newCustomOptions.findIndex(
+							(op) => op.id === id,
+						);
 						newCustomOptions.splice(deleteIndex, 1);
 
 						localStorage.removeItem(id);
@@ -298,8 +312,14 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 				<div className="flex flex-wrap gap-2 mb-2 -mt-4 *:rounded-full *:border-medium *:border-4">
 					{paletteList.map((col, i) => {
 						return (
-							<div className="relative items-center p-1 *:cursor-pointer" key={i}>
-								<div className="w-12 h-12 rounded-full " style={{ backgroundColor: col }}></div>
+							<div
+								className="relative items-center p-1 *:cursor-pointer"
+								key={i}
+							>
+								<div
+									className="w-12 h-12 rounded-full "
+									style={{ backgroundColor: col }}
+								></div>
 								<input
 									className="absolute top-0 left-0 w-12 h-12 border-none rounded-full outline-none opacity-0"
 									type="color"
@@ -348,26 +368,53 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 								onChange(img.id, "colours", newPaletteList);
 							}}
 						>
-							<span className="[&&]:text-4xl italic w-full text-center h-fit pl-1 pt-5 text-medium">+</span>
+							<span className="[&&]:text-4xl italic w-full text-center h-fit pl-1 pt-5 text-medium">
+								+
+							</span>
 						</button>
 					</div>
 					{customPaletteName && (
 						// name custom palette
 						<input
 							onBlur={(e) => {
+								// TODO: add save animation when the user defocuses
 								if (!e.target.value) return;
 								const existingPalette = localStorage.getItem(img.palette);
-								console.log(existingPalette, isPaletteOption(existingPalette));
-								if (existingPalette && isPaletteOption(JSON.parse(existingPalette))) {
+								if (
+									existingPalette &&
+									isPaletteOption(JSON.parse(existingPalette))
+								) {
 									const existingPaletteOp: Option = JSON.parse(existingPalette);
 									localStorage.setItem(
 										e.target.value,
-										JSON.stringify({ ...existingPaletteOp, name: e.target.value, val: img.colours }),
+										JSON.stringify({
+											...existingPaletteOp,
+											name: e.target.value,
+											val: img.colours,
+										}),
 									);
 								} else {
-									const newPaletteOp: Option = { id: `hnd-${nanoid()}`, name: e.target.value, val: img.colours };
-									localStorage.setItem(newPaletteOp.id, JSON.stringify(newPaletteOp));
+									const newPaletteOp: Option = {
+										id: `hnd-${nanoid()}`,
+										name: e.target.value,
+										val: img.colours,
+										deletable: true,
+									};
+									localStorage.setItem(
+										newPaletteOp.id,
+										JSON.stringify(newPaletteOp),
+									);
 									onChange(img.id, "palette", newPaletteOp.id);
+									setPaletteOptions((prev) => {
+										const updated = [...prev];
+
+										updated[customInd] = {
+											...updated[customInd],
+											options: [...updated[customInd].options, newPaletteOp],
+										};
+
+										return updated;
+									});
 								}
 							}}
 							type="text"
@@ -377,8 +424,24 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					)}
 				</div>
 				<label className="text-lg">Image Adjustments</label>
-				<Slider label="Brightness" id={img.id} value={img.brightness} min={1} max={200} step={1} onChange={onChange} />
-				<Slider label="Contrast" id={img.id} value={img.contrast} min={1} max={400} step={1} onChange={onChange} />
+				<Slider
+					label="Brightness"
+					id={img.id}
+					value={img.brightness}
+					min={1}
+					max={200}
+					step={1}
+					onChange={onChange}
+				/>
+				<Slider
+					label="Contrast"
+					id={img.id}
+					value={img.contrast}
+					min={1}
+					max={400}
+					step={1}
+					onChange={onChange}
+				/>
 				<div className="flex flex-row items-center w-full gap-4 mt-4 max-h-16">
 					<label htmlFor="">Image Width</label>
 					<Dropdown

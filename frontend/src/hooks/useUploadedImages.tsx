@@ -15,7 +15,7 @@ import { useCallback, useReducer } from "react";
  * @property {string} algorithm | Dithering algorithm of choice, represented by a short string ID
  * @property {number[][]} weights | weight matrix for respective algorithm
  * @property {string} palette | Palette ID
- * @property {string[]} colours | Palette in list format
+ * @property {string[]} colours | Colour palette in list format, colours represented in hexadecimal
  * @property {string} width
  * @property {number} scale
  */

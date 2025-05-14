@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import upload from "../assets/img/upload.svg";
 import { uploadHandlerType } from "../hooks/useUploadedImages";
+import { AnimatePresence, motion, Variant, Variants } from "framer-motion";
 
 interface FileUploadType {
 	className?: string;
@@ -18,7 +19,10 @@ interface FileUploadType {
  * @returns | The JSX that displays the drag-and-drop uploader
  */
 
-export default function FileUpload({ className = "", onUpload }: FileUploadType) {
+export default function FileUpload({
+	className = "",
+	onUpload,
+}: FileUploadType) {
 	const [isDraggedOver, setIsDraggedOver] = useState(false);
 
 	// useEffect(() => {
@@ -63,11 +67,37 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 					}
 				}
 			} else {
-				console.error("Error in uploading file, try uploading a file saved on your computer");
+				console.error(
+					"Error in uploading file, try uploading a file saved on your computer",
+				);
 			}
 		},
 		[onUpload],
 	);
+
+	const modal: Variants = {
+		start: { opacity: 0 },
+		end: { opacity: 1 },
+		exit: { opacity: 0 },
+	};
+
+	const textContainer: Variants = {
+		start: {
+			opacity: 1,
+		},
+		end: {
+			opacity: 1,
+			transition: {
+				staggerChildren: 0.25,
+			},
+		},
+	};
+
+	const text: Variants = {
+		start: { opacity: 0, translateY: "3rem" },
+		end: { opacity: 1, translateY: "0" },
+		exit: { opacity: 0, translateY: "3rem" },
+	};
 
 	return (
 		<div
@@ -81,19 +111,44 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 				dropHandler(e as unknown as DragEvent);
 			}}
 		>
-			{isDraggedOver && (
-				<div
-					id="drag-area"
-					className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 rounded-[2rem] transition-all h-[90%] w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2"
-				>
-					{/* <img alt="upload" className="w-32 -m-4" /> */}
-					<span className="flex flex-col items-center gap-8 ">
-						<img src={upload} alt="Upload icon" />
-						<h2 className="text-3xl">let go of your file!</h2>
-						<span className="text-sm opacity-50 text-medium">(all will be taken care of!)</span>
-					</span>
-				</div>
-			)}
+			<AnimatePresence>
+				{isDraggedOver && (
+					<motion.div
+						id="drag-area"
+						variants={modal}
+						initial="start"
+						animate="end"
+						exit="exit"
+						transition={{ duration: 0.1 }}
+						className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 rounded-[2rem] h-[90%] w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2"
+					>
+						{/* <img alt="upload" className="w-32 -m-4" /> */}
+						<motion.span
+							variants={textContainer}
+							initial="start"
+							animate="end"
+							exit="exit"
+							className="flex flex-col items-center gap-8 "
+						>
+							<motion.img
+								className="-mb-4"
+								variants={text}
+								src={upload}
+								alt="Upload icon"
+							/>
+							<motion.h2 variants={text} className="text-3xl">
+								let go of your file!
+							</motion.h2>
+							<motion.span
+								variants={text}
+								className="text-sm opacity-50 text-medium"
+							>
+								(all will be taken care of!)
+							</motion.span>
+						</motion.span>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }

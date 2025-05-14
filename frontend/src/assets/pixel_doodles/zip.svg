@@ -1,0 +1,23 @@
+<svg width="388" height="532" viewBox="0 0 388 532" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_di_492_438)">
+<path d="M154 10V266H234V10H250V122H266V138H378V490H362V506H346V522H42V506H26V490H10V42H26V26H42V10H154ZM346 154V474H330V490H58V474H42V490H58V506H330V490H346V474H362V154H346ZM58 26V42H42V58H26V474H42V58H58V42H138V26H58ZM106 298V314H122V330H106V362H90V394H106V362H138V394H154V346H122V330H138V298H106ZM170 330V346H186V362H170V394H186V362H218V394H234V346H202V330H170ZM282 298V314H298V330H282V346H266V362H250V394H282V378H298V330H314V298H282ZM298 378V394H314V378H298ZM282 362V378H266V362H282ZM218 186V250H170V186H218ZM186 202V234H202V202H186ZM218 154V170H170V154H218ZM202 106V138H186V106H202ZM282 26V42H298V58H314V74H330V90H346V106H362V122H282V106H266V26H282ZM202 58V90H186V58H202ZM202 10V42H186V10H202Z" fill="#F8A4F0" style="fill:#F8A4F0;fill:color(display-p3 0.9725 0.6431 0.9412);fill-opacity:1;"/>
+</g>
+<defs>
+<filter id="filter0_di_492_438" x="0" y="0" width="388" height="532" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset/>
+<feGaussianBlur stdDeviation="5"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.862455 0 0 0 0 0.47098 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_492_438"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_492_438" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset/>
+<feGaussianBlur stdDeviation="4.65"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.862455 0 0 0 0 0.47098 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect2_innerShadow_492_438"/>
+</filter>
+</defs>
+</svg>

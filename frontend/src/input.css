@@ -77,6 +77,28 @@ h4 {
 	filter: brightness(0.75);
 }
 
+pre {
+	font-family: "Courier New", Courier, monospace;
+	line-height: 3rem;
+	color: var(--medium);
+}
+
+input {
+	color: var(--medium);
+}
+
+form::before {
+	pointer-events: none;
+}
+
+::placeholder,
+::-moz-placeholder,
+::-webkit-input-placeholder {
+	appearance: none;
+	color: var(--medium) !important;
+	opacity: 0.6 !important;
+}
+
 #bayer {
 	image-rendering: pixelated;
 }
@@ -121,11 +143,11 @@ hr {
 	stroke-linecap: round;
 }
 
-body::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
 	background: var(--dark) !important;
 }
 
-body::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
 	background: var(--medium) !important;
 }
 
@@ -159,7 +181,12 @@ select:focus {
 	bottom: 0;
 	right: 0;
 	background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-		linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgb a(0, 0, 255, 0.06));
+		linear-gradient(
+			90deg,
+			rgba(255, 0, 0, 0.06),
+			rgba(0, 255, 0, 0.02),
+			rgb a(0, 0, 255, 0.06)
+		);
 	z-index: 2;
 	background-size:
 		100% 4px,
