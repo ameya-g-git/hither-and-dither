@@ -86,12 +86,10 @@ def dither_images():
             return jsonify({"error": "No images to dither"}), 500
 
         for image in uploaded_images.images:
-            # print(image.src.size)
             prepared_image = prepare_image(img=image.src, img_size=image.width)
             print(len(prepared_image))
             # apply dithering algorithm
             if image.algorithm[0] == "b":
-                print("Bayer")
                 dithered_image = dither_bayer(
                     img=prepared_image,
                     weights=image.weights,
