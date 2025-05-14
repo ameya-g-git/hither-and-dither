@@ -4,9 +4,12 @@ from json import loads
 from base64 import b64decode, b64encode
 from PIL import Image, ImageEnhance
 
+
 from .models import UploadedImage, UploadedImageList
 from .utils.dither import dither_general
+from .utils.bayer import dither_bayer
 from .utils.hex_to_array import hex_to_array
+from .utils.prepare_image import prepare_image
 
 uploaded_images = UploadedImageList([])
 
@@ -44,7 +47,7 @@ def upload_images():
             contrast = ImageEnhance.Contrast(brightened)
             edited_image = contrast.enhance(image_contrast / 100)
 
-            palette_list = [hex_to_array(x) for x in image.get("colours")]  # RGB encoding
+            palette_list = [hex_to_array(x) for x in image.get("colours")]  # [R,G,B] encoding
 
             uploaded_image = UploadedImage(
                 image_id=image.get("id"),
@@ -83,14 +86,33 @@ def dither_images():
             return jsonify({"error": "No images to dither"}), 500
 
         for image in uploaded_images.images:
+            # print(image.src.size)
+            prepared_image = prepare_image(img=image.src, img_size=image.width)
+            print(len(prepared_image))
             # apply dithering algorithm
-            dithered_image = dither_general(
-                image.src, img_size=image.width, scale=image.scale, weights=image.weights, palette=image.palette
+            if image.algorithm[0] == "b":
+                print("Bayer")
+                dithered_image = dither_bayer(
+                    img=prepared_image,
+                    weights=image.weights,
+                    palette=image.palette,
+                )
+            else:
+                dithered_image = dither_general(
+                    img=prepared_image,
+                    weights=image.weights,
+                    palette=image.palette,
+                )
+
+            print(f"Image {image.file_name} dithered with {image.algorithm}")
+            d_width, d_height = dithered_image.size
+            dithered_image_resize = dithered_image.resize(
+                (d_width * image.scale, d_height * image.scale), Image.Resampling.NEAREST
             )
 
             # save image to in-memory file and encode it into a base-64 string
             mem_file = BytesIO()
-            dithered_image.save(mem_file, format="PNG")
+            dithered_image_resize.save(mem_file, format="PNG")
             data_url_bytes = b64encode(mem_file.getvalue())
             data_url_str = data_url_bytes.decode("utf-8")
             data_url = f"data:image/png;base64,{data_url_str}"
@@ -101,7 +123,8 @@ def dither_images():
             }
 
             dithered_images.append(dithered_image_json)
-            uploaded_images.clear()
+
+        uploaded_images.clear()
 
         return jsonify(dithered_images), 201
     except Exception as e:

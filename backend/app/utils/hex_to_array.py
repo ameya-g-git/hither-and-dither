@@ -9,8 +9,6 @@ def hex_to_array(hex: str):
     G = hex[3:5]
     B = hex[5:7]
 
-    # #140428
-
     R_val = hex_to_dec(R[1]) + (hex_to_dec(R[0]) * 16)
     G_val = hex_to_dec(G[1]) + (hex_to_dec(G[0]) * 16)
     B_val = hex_to_dec(B[1]) + (hex_to_dec(B[0]) * 16)
