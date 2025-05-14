@@ -41,9 +41,6 @@ def dither_general(img: np.ndarray, weights: list[list[float]], palette: list[li
                     if not (weight_matrix[row, col]):
                         continue
                     else:
-                        # print(
-                        #     f"weight ({img_width}, {img_height} at {ir}, {ic}) pos: {ic + col - weight_center} {row} {col}"
-                        # )
                         if 0 <= ic + col - weight_center < img_width:
                             if row == 0:
                                 np.add(
@@ -63,8 +60,6 @@ def dither_general(img: np.ndarray, weights: list[list[float]], palette: list[li
                                     err * weight_matrix[row, col],
                                     out=fwd_arr2[ic + col - weight_center],
                                 )
-        print(img.shape, fwd_arr.shape)
-        print(fwd_arr)
         if ir < (img_height - 1):
             np.add(img[ir + 1], fwd_arr, out=img[ir + 1])
         if ir < (img_height - 2):
