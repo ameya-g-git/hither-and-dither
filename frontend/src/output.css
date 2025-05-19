@@ -756,6 +756,10 @@ video {
   margin-bottom: -2.5rem;
 }
 
+.-mb-4 {
+  margin-bottom: -1rem;
+}
+
 .-mb-7 {
   margin-bottom: -1.75rem;
 }
@@ -820,8 +824,12 @@ video {
   margin-top: 2rem;
 }
 
-.-mb-4 {
-  margin-bottom: -1rem;
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.ml-6 {
+  margin-left: 1.5rem;
 }
 
 .box-border {
@@ -945,6 +953,18 @@ video {
   height: 100vh;
 }
 
+.h-\[200\%\] {
+  height: 200%;
+}
+
+.h-\[full\] {
+  height: full;
+}
+
+.h-96 {
+  height: 24rem;
+}
+
 .max-h-16 {
   max-height: 4rem;
 }
@@ -963,6 +983,10 @@ video {
 
 .min-h-32 {
   min-height: 8rem;
+}
+
+.min-h-64 {
+  min-height: 16rem;
 }
 
 .w-1\/2 {
@@ -1172,6 +1196,10 @@ video {
 
 .gap-8 {
   gap: 2rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
 }
 
 .overflow-hidden {
@@ -1462,10 +1490,6 @@ video {
   opacity: 0.6;
 }
 
-.opacity-100 {
-  opacity: 1;
-}
-
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
@@ -1549,10 +1573,6 @@ video {
 
 .ease-out {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-}
-
-.ease-in {
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
