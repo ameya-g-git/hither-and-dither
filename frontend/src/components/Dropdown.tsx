@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { inputHandlerType } from "../hooks/useUploadedImages";
-import { motion, Variants } from "motion/react";
+import { AnimatePresence, motion, Variants } from "motion/react";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useKeyPress } from "../hooks/useKeyPress";
 
@@ -42,15 +42,20 @@ function DropdownOption({
 	variants,
 }: DropdownOptionProps) {
 	return (
-		<motion.li variants={variants} className="relative w-full h-12">
-			<button
+		<motion.li variants={{ ...variants }} className="relative w-full h-12">
+			<motion.button
 				className="flex flex-row items-center h-12 gap-6 select"
+				exit={{ fontSize: 0 }}
+				transition={{ delay: 0.25 }}
 				onClick={(e) => onClick(e as unknown as Event)}
 			>
 				{option.name}
-			</button>
+			</motion.button>
 			{option.deletable && (
-				<button
+				<motion.button
+					initial={{ translateX: 0 }}
+					exit={{ translateX: "10rem" }}
+					transition={{ ease: "easeIn", duration: 0.5 }}
 					className="absolute top-0 right-0 h-10 [&&]:p-2 mx-2 border-4 rounded-md aspect-square bg-dark text-medium border-medium"
 					onClick={(e) => {
 						e.preventDefault();
@@ -58,7 +63,7 @@ function DropdownOption({
 					}}
 				>
 					delete
-				</button>
+				</motion.button>
 			)}
 		</motion.li>
 	);
@@ -116,11 +121,6 @@ export default function Dropdown({
 	// TODO: add framer motion animation for this   although this can come later during the  Polishing state tbh
 	// i should   check these TODOs one day
 
-	const dropdown: Variants = {
-		start: { height: "6rem" },
-		end: { height: "16rem" },
-	};
-
 	const opt: Variants = {
 		start: { translateX: "-2rem", opacity: 0 },
 		end: { translateX: "0", opacity: 1 },
@@ -176,32 +176,36 @@ export default function Dropdown({
 					<motion.div
 						initial="start"
 						animate="end"
-						transition={{ delayChildren: 0.2, staggerChildren: 0.5 }}
+						exit="exit"
+						transition={{ delayChildren: 0.1, staggerChildren: 0.2 }}
 						className="flex flex-col gap-4 px-4 bg-dark"
 					>
 						{options.map((group, i) => (
 							<motion.div variants={opt} key={i} className="w-full min-h-16">
 								<label className="text-sm text-medium/50">{group.name}</label>
 								<motion.ol
-									transition={{ delayChildren: 0.25, staggerChildren: 0.25 }}
+									transition={{ delayChildren: 0.25, staggerChildren: 0.1 }}
 									variants={opt}
 									className="flex flex-col items-center"
+									layout
 								>
-									{group.options.map((op, j) =>
-										op.id !== current ? (
-											<DropdownOption
-												key={j}
-												option={op}
-												onClick={(e) => optionClick(e, op)}
-												variants={opt}
-												onDelete={
-													op.deletable && onDelete ? onDelete : () => {}
-												}
-											/>
-										) : (
-											<></>
-										),
-									)}
+									<AnimatePresence>
+										{group.options.map((op, j) =>
+											op.id !== current ? (
+												<DropdownOption
+													key={j}
+													option={op}
+													onClick={(e) => optionClick(e, op)}
+													variants={opt}
+													onDelete={
+														op.deletable && onDelete ? onDelete : () => {}
+													}
+												/>
+											) : (
+												<></>
+											),
+										)}
+									</AnimatePresence>
 								</motion.ol>
 								{i != options.length - 1 && <hr />}
 							</motion.div>

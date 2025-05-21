@@ -1,5 +1,12 @@
 import clsx from "clsx";
-import { useRef, useMemo, useState, useEffect, memo } from "react";
+import {
+	useRef,
+	useMemo,
+	useState,
+	useEffect,
+	memo,
+	FocusEventHandler,
+} from "react";
 import { windowImageStyles } from "../App";
 import Dropdown, { Option, OptionGroup } from "./Dropdown";
 import ResButton from "./ResButton";
@@ -29,8 +36,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	function loadCustomPalettes(): Option[] {
 		const customPalettes: Option[] = [];
 
-		for (const name of Object.keys(localStorage)) {
-			// check if palette with the same name already exists, don't load it again if so
+		for (const name of Object.keys(localStorage).reverse()) {
 			let loadedPalette: unknown = JSON.parse(
 				localStorage!.getItem(name) as string,
 			);
@@ -39,10 +45,16 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			if (!isPaletteOption(loadedPalette)) continue;
 
 			// make sure palette name isn't taken already
-			if (customPalettes.some((op) => op.name === loadedPalette.name)) continue;
+			if (customPalettes.some((op) => op.name === loadedPalette.name)) {
+				localStorage.removeItem(loadedPalette.id);
+				continue;
+			}
 
 			// make sure palette doesn't already exist
-			if (customPalettes.some((op) => op.id === loadedPalette.id)) continue;
+			if (customPalettes.some((op) => op.id === loadedPalette.id)) {
+				localStorage.removeItem(loadedPalette.id);
+				continue;
+			}
 
 			customPalettes.push(loadedPalette);
 		}
@@ -62,6 +74,8 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	// TODO: make the canvas its own component to solve the image not showing on render of ImageForm
 	// TODO: please improve the loading animation LMAO (maybe save a list of messages and have them scroll down? also improve spacing on multi-line spinners)
 	// TODO: add the freaking zip file animation Lol
+	// TODO; also just general   change of Interface animations (close windows, hide input elements, etc.)
+	// TODO: add the bayer 8x8 and special bayer matrices
 
 	useEffect(() => {
 		if (!canvasImage.src) {
@@ -95,7 +109,6 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					canvasImage.width * ratio,
 					canvasImage.height * ratio,
 				);
-				console.log("i");
 			}
 		}
 	}, [img]);
@@ -264,7 +277,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 		},
 	]);
 
-	function deleteColour(id: string) {
+	function deletePalette(id: string) {
 		let newCustomOptions: Option[] = [...paletteOptions[customInd].options];
 
 		const deleteIndex = newCustomOptions.findIndex((op) => op.id === id);
@@ -283,6 +296,43 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 		});
 	}
 
+	function saveLocalPalette(e: React.FocusEvent<HTMLInputElement>) {
+		// TODO: add save animation when the user defocuses
+		if (!e.target.value) return;
+
+		const existingPalette = localStorage.getItem(img.palette);
+
+		if (existingPalette && isPaletteOption(JSON.parse(existingPalette))) {
+			const existingPaletteOp: Option = JSON.parse(existingPalette);
+			localStorage.setItem(
+				e.target.value,
+				JSON.stringify({
+					...existingPaletteOp,
+					name: e.target.value,
+					val: img.colours,
+				}),
+			);
+		} else {
+			const newPaletteOp: Option = {
+				id: `hnd-${nanoid()}`,
+				name: e.target.value,
+				val: img.colours,
+				deletable: true,
+			};
+			localStorage.setItem(newPaletteOp.id, JSON.stringify(newPaletteOp));
+			onChange(img.id, "palette", newPaletteOp.id);
+			setPaletteOptions((prev) => {
+				const updated = [...prev];
+
+				updated[customInd] = {
+					...updated[customInd],
+					options: [...updated[customInd].options, newPaletteOp],
+				};
+
+				return updated;
+			});
+		}
+	}
 	return (
 		<div className="absolute flex flex-col w-full h-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
 			<div className="flex flex-col gap-4 grow">
@@ -310,7 +360,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 						onChange(id, key, opId);
 						onChange(id, "colours", opVal);
 					}}
-					onDelete={deleteColour}
+					onDelete={deletePalette}
 					showLabel
 				/>
 
@@ -331,7 +381,10 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 									newPaletteList.splice(i, 1);
 
 									setPaletteList(newPaletteList);
-									onChange(img.id, "colours", newPaletteList);
+								}}
+								onBlur={() => {
+									setCustomPaletteName(true);
+									onChange(img.id, "colours", paletteList);
 								}}
 							/>
 						);
@@ -356,47 +409,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					{customPaletteName && (
 						// name custom palette
 						<input
-							onBlur={(e) => {
-								// TODO: add save animation when the user defocuses
-								if (!e.target.value) return;
-								const existingPalette = localStorage.getItem(img.palette);
-								if (
-									existingPalette &&
-									isPaletteOption(JSON.parse(existingPalette))
-								) {
-									const existingPaletteOp: Option = JSON.parse(existingPalette);
-									localStorage.setItem(
-										e.target.value,
-										JSON.stringify({
-											...existingPaletteOp,
-											name: e.target.value,
-											val: img.colours,
-										}),
-									);
-								} else {
-									const newPaletteOp: Option = {
-										id: `hnd-${nanoid()}`,
-										name: e.target.value,
-										val: img.colours,
-										deletable: true,
-									};
-									localStorage.setItem(
-										newPaletteOp.id,
-										JSON.stringify(newPaletteOp),
-									);
-									onChange(img.id, "palette", newPaletteOp.id);
-									setPaletteOptions((prev) => {
-										const updated = [...prev];
-
-										updated[customInd] = {
-											...updated[customInd],
-											options: [...updated[customInd].options, newPaletteOp],
-										};
-
-										return updated;
-									});
-								}
-							}}
+							onBlur={saveLocalPalette}
 							type="text"
 							placeholder="name your palette!"
 							className="h-16 px-4 border-4 w-72 bg-dark"

@@ -1,19 +1,32 @@
 import icons from "../assets/pixel_doodles/icons.svg";
 import shadow from "../assets/img/bayershadow.webp";
 import { ReactNode } from "react";
+import { motion } from "motion/react";
 
 interface WindowImageProps {
 	x?: number;
 	y?: number;
 	className: string;
 	title: string;
+	height: string;
 	children: ReactNode;
 	onClick?: () => void;
 }
 
-export default function WindowImage({ x, y, className, title, children, onClick }: WindowImageProps) {
+export default function WindowImage({
+	x,
+	y,
+	className,
+	title,
+	height,
+	children,
+	onClick,
+}: WindowImageProps) {
 	return (
-		<div
+		<motion.div
+			initial={{ height: "8%" }}
+			animate={{ height: height }}
+			transition={{ delay: 0.5, ease: "easeInOut", duration: 0.5 }}
 			onClick={onClick}
 			className={`${className} absolute flex justify-center`}
 			style={{
@@ -26,13 +39,16 @@ export default function WindowImage({ x, y, className, title, children, onClick 
 			</div>
 			<div className="flex flex-col w-full h-full gap-2 px-3 py-2 border-[6px] text-dark bg-medium border-dark overflow-clip">
 				<div className="flex flex-row items-center justify-between w-full">
-					<h3 title={title} className="pt-3 overflow-hidden text-nowrap text-ellipsis">
+					<h3
+						title={title}
+						className="pt-3 overflow-hidden text-nowrap text-ellipsis"
+					>
 						{title}
 					</h3>
 					<img className="w-48 h-8" src={icons} alt="" />
 				</div>
 				{children}
 			</div>
-		</div>
+		</motion.div>
 	);
 }

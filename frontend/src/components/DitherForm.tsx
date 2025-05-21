@@ -76,7 +76,7 @@ export default function DitherForm({
 
 	return (
 		<div id="form" className="flex items-center justify-center w-full h-full ">
-			<form className="flex items-center justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97%] before: before:-top-1 before:-left-2">
+			<form className="flex after:z-50 items-center justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97%] before: before:-top-1 before:-left-2">
 				{!imgState.length && <FileUpload onUpload={onUpload} />}
 				{imgState.length > 0 && (
 					<button
@@ -107,6 +107,9 @@ export default function DitherForm({
 							return (
 								<div
 									key={img.id}
+									style={{
+										zIndex: img.open ? imgState.length : imgState.length - i,
+									}}
 									className="absolute top-0 left-0 w-full h-full"
 								>
 									<button
@@ -119,7 +122,6 @@ export default function DitherForm({
 										}}
 										style={{
 											left: `${i * (75 / Math.max(imgState.length, 6)) - 0.5}%`,
-											zIndex: img.open ? 999 : imgState.length - i,
 										}}
 									>
 										{img.fileName.slice(0, img.fileName.length - 4)}
