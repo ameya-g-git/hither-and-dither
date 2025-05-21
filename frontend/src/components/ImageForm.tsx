@@ -9,6 +9,7 @@ import { UploadedImage, inputHandlerType } from "../hooks/useUploadedImages";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { nanoid } from "nanoid";
 import { isPaletteOption } from "../utils/isA";
+import ColourChip from "./ColourChip";
 
 interface ImageFormProps {
 	img: UploadedImage;
@@ -19,8 +20,8 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const canvasImage = useMemo(() => new Image(), []);
 	const [windowAbove, setWindowAbove] = useState(true);
-	const [paletteList, setPaletteList] = useState<string[]>(img.colours);
 	const [tempColor, setTempColor] = useState<string>("");
+	const [paletteList, setPaletteList] = useState<string[]>(img.colours);
 	const [customPaletteName, setCustomPaletteName] = useState(false);
 
 	const customInd = 2;
@@ -58,12 +59,17 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			"z-0": !above,
 		});
 
+	// TODO: make the canvas its own component to solve the image not showing on render of ImageForm
+	// TODO: please improve the loading animation LMAO (maybe save a list of messages and have them scroll down? also improve spacing on multi-line spinners)
+	// TODO: add the freaking zip file animation Lol
+
 	useEffect(() => {
+		if (!canvasImage.src) {
+			canvasImage.src = img.src;
+		}
+
 		// brightness + contrast handler
 		if (canvasRef && canvasRef.current) {
-			if (!canvasImage.src) {
-				canvasImage.src = img.src;
-			}
 			const canvas = canvasRef.current;
 			const context = canvas.getContext("2d");
 			if (context) {
@@ -89,6 +95,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					canvasImage.width * ratio,
 					canvasImage.height * ratio,
 				);
+				console.log("i");
 			}
 		}
 	}, [img]);
@@ -257,6 +264,25 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 		},
 	]);
 
+	function deleteColour(id: string) {
+		let newCustomOptions: Option[] = [...paletteOptions[customInd].options];
+
+		const deleteIndex = newCustomOptions.findIndex((op) => op.id === id);
+		newCustomOptions.splice(deleteIndex, 1);
+
+		localStorage.removeItem(id);
+		setPaletteOptions((prev) => {
+			const updated = [...prev];
+
+			updated[customInd] = {
+				...updated[customInd],
+				options: newCustomOptions,
+			};
+
+			return updated;
+		});
+	}
+
 	return (
 		<div className="absolute flex flex-col w-full h-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
 			<div className="flex flex-col gap-4 grow">
@@ -284,76 +310,30 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 						onChange(id, key, opId);
 						onChange(id, "colours", opVal);
 					}}
-					onDelete={(id) => {
-						let newCustomOptions: Option[] = [
-							...paletteOptions[customInd].options,
-						];
-
-						const deleteIndex = newCustomOptions.findIndex(
-							(op) => op.id === id,
-						);
-						newCustomOptions.splice(deleteIndex, 1);
-
-						localStorage.removeItem(id);
-						setPaletteOptions((prev) => {
-							const updated = [...prev];
-
-							updated[customInd] = {
-								...updated[customInd],
-								options: newCustomOptions,
-							};
-
-							return updated;
-						});
-					}}
+					onDelete={deleteColour}
 					showLabel
 				/>
 
 				<div className="flex flex-wrap gap-2 mb-2 -mt-4 *:rounded-full *:border-medium *:border-4">
 					{paletteList.map((col, i) => {
 						return (
-							<div
-								className="relative items-center p-1 *:cursor-pointer"
-								key={i}
-							>
-								<div
-									className="w-12 h-12 rounded-full "
-									style={{ backgroundColor: col }}
-								></div>
-								<input
-									className="absolute top-0 left-0 w-12 h-12 border-none rounded-full outline-none opacity-0"
-									type="color"
-									value={col}
-									id={`${img.id}-col${i}`}
-									name={`${img.id}-col${i}`}
-									onChange={(e) => {
-										setTempColor(e.target.value);
+							<ColourChip
+								col={col}
+								onChange={(e) => {
+									let newPaletteList = [...paletteList];
+									newPaletteList[i] = e.target.value;
+									setPaletteList(newPaletteList);
+								}}
+								onDelete={() => {
+									setCustomPaletteName(true);
 
-										let newPaletteList = [...paletteList];
-										newPaletteList[i] = tempColor;
-										setPaletteList(newPaletteList);
-									}}
-									onBlur={() => {
-										setCustomPaletteName(true);
-										onChange(img.id, "colours", paletteList);
-									}}
-								/>
-								<button
-									className="absolute flex items-center justify-center text-medium w-8 h-8 border-[3px] text-sm border-medium rounded-full -bottom-2 -right-2 bg-dark [&&]:p-0"
-									onClick={(e) => {
-										e.preventDefault();
-										setCustomPaletteName(true);
+									let newPaletteList = [...paletteList];
+									newPaletteList.splice(i, 1);
 
-										let newPaletteList = [...paletteList];
-										newPaletteList.splice(i, 1);
-
-										setPaletteList(newPaletteList);
-										onChange(img.id, "colours", newPaletteList);
-									}}
-								>
-									x
-								</button>
-							</div>
+									setPaletteList(newPaletteList);
+									onChange(img.id, "colours", newPaletteList);
+								}}
+							/>
 						);
 					})}
 					<div className="flex items-center p-1 text-4xl *:cursor-pointer">
@@ -460,6 +440,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					onClick={() => setWindowAbove(false)}
 					className={windowStyles(1, !windowAbove)}
 					title={img.fileName}
+					height="66%"
 				>
 					<img src={img.src} className={windowImageStyles} alt="" />
 				</WindowImage>
@@ -467,6 +448,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					onClick={() => setWindowAbove(true)}
 					className={windowStyles(2, windowAbove)}
 					title={`${img.fileName.slice(0, -4)}_dithered_${img.algorithm}.png`}
+					height="66%"
 				>
 					<canvas className={windowImageStyles} ref={canvasRef} />
 				</WindowImage>
