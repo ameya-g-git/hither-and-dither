@@ -16,7 +16,6 @@ def dither_bayer(img: np.ndarray, weights: list[list[float]], palette: list[list
         Image: The dithered image.
     """
     weight_matrix = np.array(weights)
-    print(weight_matrix)
 
     img_height, img_width, _ = img.shape
     weight_h, _ = weight_matrix.shape
@@ -27,7 +26,6 @@ def dither_bayer(img: np.ndarray, weights: list[list[float]], palette: list[list
         for ic in range(img_width):
             old_val = img[ir, ic].copy()
             thresh_old_val = old_val + weight_matrix[ir % weight_h, ic % weight_h]
-            print(thresh_old_val)
             new_val = min(palette, key=lambda c: euclidean_dist(thresh_old_val, c))
 
             img[ir, ic] = new_val
