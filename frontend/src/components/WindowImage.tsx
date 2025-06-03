@@ -1,7 +1,7 @@
 import icons from "../assets/pixel_doodles/icons.svg";
 import shadow from "../assets/img/bayershadow.webp";
-import { ReactNode } from "react";
-import { motion } from "motion/react";
+import { ReactNode, useState } from "react";
+import { motion, Variants } from "motion/react";
 
 interface WindowImageProps {
 	x?: number;
@@ -22,15 +22,30 @@ export default function WindowImage({
 	children,
 	onClick,
 }: WindowImageProps) {
+	const [loaded, setLoaded] = useState(false);
+
+	const windowVar: Variants = {
+		start: { height: "8%" },
+		end: { height: height },
+	};
+
 	return (
 		<motion.div
-			initial={{ height: "8%" }}
-			animate={{ height: height }}
-			transition={{ delay: 0.5, ease: "easeInOut", duration: 0.5 }}
+			variants={windowVar}
+			initial={loaded ? "end" : "start"}
+			animate="end"
+			transition={{
+				delay: 0.5,
+				ease: "easeInOut",
+				duration: 0.5,
+			}}
 			onClick={onClick}
 			className={`${className} absolute flex justify-center`}
 			style={{
 				transform: `translate(${x}vw, ${y}vh)`,
+			}}
+			onAnimationComplete={() => {
+				setLoaded(true);
 			}}
 		>
 			<div className="box-border absolute flex flex-row w-11/12 h-48 overflow-hidden -bottom-4">
@@ -47,7 +62,12 @@ export default function WindowImage({
 					</h3>
 					<img className="w-48 h-8" src={icons} alt="" />
 				</div>
-				{children}
+				<div
+					className="w-full h-full transition-opacity border-4 border-dark"
+					style={{ opacity: loaded ? 100 : 0 }}
+				>
+					{children}
+				</div>
 			</div>
 		</motion.div>
 	);

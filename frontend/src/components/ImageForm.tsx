@@ -1,22 +1,15 @@
 import clsx from "clsx";
-import {
-	useRef,
-	useMemo,
-	useState,
-	useEffect,
-	memo,
-	FocusEventHandler,
-} from "react";
+import { useState } from "react";
 import { windowImageStyles } from "../App";
 import Dropdown, { Option, OptionGroup } from "./Dropdown";
 import ResButton from "./ResButton";
 import Slider from "./Slider";
 import WindowImage from "./WindowImage";
 import { UploadedImage, inputHandlerType } from "../hooks/useUploadedImages";
-import { useClickOutside } from "../hooks/useClickOutside";
 import { nanoid } from "nanoid";
 import { isPaletteOption } from "../utils/isA";
 import ColourChip from "./ColourChip";
+import Canvas from "./Canvas";
 
 interface ImageFormProps {
 	img: UploadedImage;
@@ -24,8 +17,6 @@ interface ImageFormProps {
 }
 
 export default function ImageForm({ img, onChange }: ImageFormProps) {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const canvasImage = useMemo(() => new Image(), []);
 	const [windowAbove, setWindowAbove] = useState(true);
 	const [tempColor, setTempColor] = useState<string>("");
 	const [paletteList, setPaletteList] = useState<string[]>(img.colours);
@@ -64,54 +55,47 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 
 	const windowStyles = (num: number, above: boolean) =>
 		clsx({
-			"w-2/3 h-2/3": true,
+			"w-2/3 h-2/3 transition-opacity": true,
 			"top-8 left-8": num == 1,
 			"bottom-8 right-8": num == 2,
 			"z-[999]": above,
 			"z-0": !above,
 		});
 
+	function draw(
+		canvas: HTMLCanvasElement,
+		context: CanvasRenderingContext2D,
+		canvasImage: HTMLImageElement,
+	) {
+		context.filter = `grayscale(100%) brightness(${img.brightness}%) contrast(${img.contrast}%)`;
+		const vRatio = canvas.width / canvasImage.width;
+		const hRatio = canvas.height / canvasImage.height;
+		const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+		context.putImageData(imgData, 0, 0);
+
+		const ratio = Math.min(vRatio, hRatio);
+		var centerShift_x = (canvas.width - canvasImage.width * ratio) / 2;
+		var centerShift_y = (canvas.height - canvasImage.height * ratio) / 2;
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		context.drawImage(
+			canvasImage,
+			0,
+			0,
+			canvasImage.width,
+			canvasImage.height,
+			centerShift_x,
+			centerShift_y,
+			canvasImage.width * ratio,
+			canvasImage.height * ratio,
+		);
+	}
+
 	// TODO: make the canvas its own component to solve the image not showing on render of ImageForm
 	// TODO: please improve the loading animation LMAO (maybe save a list of messages and have them scroll down? also improve spacing on multi-line spinners)
 	// TODO: add the freaking zip file animation Lol
 	// TODO; also just general   change of Interface animations (close windows, hide input elements, etc.)
 	// TODO: add the bayer 8x8 and special bayer matrices
-
-	useEffect(() => {
-		if (!canvasImage.src) {
-			canvasImage.src = img.src;
-		}
-
-		// brightness + contrast handler
-		if (canvasRef && canvasRef.current) {
-			const canvas = canvasRef.current;
-			const context = canvas.getContext("2d");
-			if (context) {
-				context.filter = `grayscale(100%) brightness(${img.brightness}%) contrast(${img.contrast}%)`;
-				const vRatio = canvas.width / canvasImage.width;
-				const hRatio = canvas.height / canvasImage.height;
-				const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-				context.putImageData(imgData, 0, 0);
-
-				const ratio = Math.min(vRatio, hRatio);
-				var centerShift_x = (canvas.width - canvasImage.width * ratio) / 2;
-				var centerShift_y = (canvas.height - canvasImage.height * ratio) / 2;
-				context.clearRect(0, 0, canvas.width, canvas.height);
-				context.drawImage(
-					canvasImage,
-					0,
-					0,
-					canvasImage.width,
-					canvasImage.height,
-					centerShift_x,
-					centerShift_y,
-					canvasImage.width * ratio,
-					canvasImage.height * ratio,
-				);
-			}
-		}
-	}, [img]);
 
 	const widthOptions: OptionGroup[] = [
 		{
@@ -463,7 +447,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					title={`${img.fileName.slice(0, -4)}_dithered_${img.algorithm}.png`}
 					height="66%"
 				>
-					<canvas className={windowImageStyles} ref={canvasRef} />
+					<Canvas img={img} draw={draw} />
 				</WindowImage>
 			</div>
 		</div>
