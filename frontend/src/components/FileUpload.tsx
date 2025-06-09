@@ -36,7 +36,6 @@ export default function FileUpload({
 	// 	}
 	// }, [mousePosition, screenHeight, screenWidth]);
 
-	// TODO: use the `isDraggedOver` prop to do a framer motion animation
 	// TODO: create a little modal for when the file size is too big, don't push it to imgState either
 
 	function dragOverHandler(e: DragEvent) {
@@ -64,6 +63,7 @@ export default function FileUpload({
 						onUpload(file); // handle file upload via a handler function prop
 					} else {
 						alert("file is too big! be nice to the servers!");
+						// TODO: replace this with a dom animation, use the X( face like when a tab crashes, shake it left and right
 					}
 				}
 			} else {
