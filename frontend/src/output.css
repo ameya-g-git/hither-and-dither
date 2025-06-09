@@ -844,12 +844,12 @@ video {
   display: none;
 }
 
-.aspect-square {
-  aspect-ratio: 1 / 1;
-}
-
 .aspect-auto {
   aspect-ratio: auto;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
 }
 
 .h-10 {
@@ -1027,10 +1027,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-auto {
-  width: auto;
 }
 
 .min-w-24 {
@@ -1460,10 +1456,6 @@ video {
 
 .opacity-60 {
   opacity: 0.6;
-}
-
-.opacity-100 {
-  opacity: 1;
 }
 
 .shadow {

@@ -3,7 +3,7 @@ from io import BytesIO
 from json import loads
 from base64 import b64decode, b64encode
 from PIL import Image, ImageEnhance
-
+import numpy as np
 
 from .models import UploadedImage, UploadedImageList
 from .utils.dither import dither_general
@@ -47,14 +47,15 @@ def upload_images():
             contrast = ImageEnhance.Contrast(brightened)
             edited_image = contrast.enhance(image_contrast / 100)
 
-            palette_list = [hex_to_array(x) for x in image.get("colours")]  # [R,G,B] encoding
+            palette_list = np.array([hex_to_array(x) for x in image.get("colours")])  # [R,G,B] encoding
+            weight_matrix = np.array(image.get("weights"))
 
             uploaded_image = UploadedImage(
                 image_id=image.get("id"),
                 file_name=image.get("fileName"),
                 src=edited_image,
                 algorithm=image.get("algorithm"),
-                weights=image.get("weights"),
+                weights=weight_matrix,
                 palette=palette_list,
                 width=image.get("width"),
                 scale=image.get("scale"),
@@ -92,13 +93,13 @@ def dither_images():
             if image.algorithm[0] == "b":
                 dithered_image = dither_bayer(
                     img=prepared_image,
-                    weights=image.weights,
+                    weight_matrix=image.weights,
                     palette=image.palette,
                 )
             else:
                 dithered_image = dither_general(
                     img=prepared_image,
-                    weights=image.weights,
+                    weight_matrix=image.weights,
                     palette=image.palette,
                 )
 

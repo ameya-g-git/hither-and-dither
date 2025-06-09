@@ -1,5 +1,8 @@
 # gamma corrected euclidean distance yay!
-def euclidean_dist(col1: list[int], col2: list[int]):
+import numpy as np
+
+
+def euclidean_dist(col1: np.ndarray[int, 3], col2: np.ndarray[int, 3]):
     dR = col1[0] - col2[0]
     dG = col1[1] - col2[1]
     dB = col1[2] - col2[2]

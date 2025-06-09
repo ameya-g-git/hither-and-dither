@@ -4,7 +4,7 @@ from PIL import Image
 from .euclidean_dist import euclidean_dist
 
 
-def dither_general(img: np.ndarray, weights: list[list[float]], palette: list[list[int]]):
+def dither_general(img: np.ndarray[int], weight_matrix: np.ndarray, palette: np.ndarray[int, (1, 3)]):
     """
     Generalized dithering algorithm for images.
     Allows for custom dithering weights and color palette.
@@ -17,7 +17,6 @@ def dither_general(img: np.ndarray, weights: list[list[float]], palette: list[li
     Returns:
         Image: The dithered image.
     """
-    weight_matrix = np.array(weights)
     img_height, img_width, _ = img.shape
 
     weight_h, weight_w = weight_matrix.shape
@@ -25,6 +24,8 @@ def dither_general(img: np.ndarray, weights: list[list[float]], palette: list[li
 
     fwd_arr = np.zeros((img_width, 3))
     fwd_arr2 = np.zeros((img_width, 3))
+
+    # TODO: allocate forward arrays automatically based on size of weight matrix
 
     print(img_width, img_height)
 
