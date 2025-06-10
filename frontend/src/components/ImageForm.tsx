@@ -1,15 +1,20 @@
 import clsx from "clsx";
 import { useState } from "react";
+import { nanoid } from "nanoid";
+
 import { windowImageStyles } from "../App";
 import Dropdown, { Option, OptionGroup } from "./Dropdown";
 import ResButton from "./ResButton";
 import Slider from "./Slider";
 import WindowImage from "./WindowImage";
-import { UploadedImage, inputHandlerType } from "../hooks/useUploadedImages";
-import { nanoid } from "nanoid";
-import { isPaletteOption } from "../utils/isA";
 import ColourChip from "./ColourChip";
 import Canvas from "./Canvas";
+
+import { UploadedImage, inputHandlerType } from "../hooks/useUploadedImages";
+import { isPaletteOption } from "../utils/isA";
+import { algOptions } from "../utils/alg_options";
+import { defaultPalette } from "../utils/palette_options";
+import { widthOptions } from "../utils/width_options";
 
 interface ImageFormProps {
 	img: UploadedImage;
@@ -23,35 +28,6 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	const [customPaletteName, setCustomPaletteName] = useState(false);
 
 	const customInd = 2;
-
-	function loadCustomPalettes(): Option[] {
-		const customPalettes: Option[] = [];
-
-		for (const name of Object.keys(localStorage).reverse()) {
-			let loadedPalette: unknown = JSON.parse(
-				localStorage!.getItem(name) as string,
-			);
-
-			// check if the data loaded from localStorage is the right type to be an Option
-			if (!isPaletteOption(loadedPalette)) continue;
-
-			// make sure palette name isn't taken already
-			if (customPalettes.some((op) => op.name === loadedPalette.name)) {
-				localStorage.removeItem(loadedPalette.id);
-				continue;
-			}
-
-			// make sure palette doesn't already exist
-			if (customPalettes.some((op) => op.id === loadedPalette.id)) {
-				localStorage.removeItem(loadedPalette.id);
-				continue;
-			}
-
-			customPalettes.push(loadedPalette);
-		}
-
-		return customPalettes;
-	}
 
 	const windowStyles = (num: number, above: boolean) =>
 		clsx({
@@ -91,175 +67,13 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 		);
 	}
 
-	// TODO: make the canvas its own component to solve the image not showing on render of ImageForm
 	// TODO: please improve the loading animation LMAO (maybe save a list of messages and have them scroll down? also improve spacing on multi-line spinners)
 	// TODO: add the freaking zip file animation Lol
 	// TODO; also just general   change of Interface animations (close windows, hide input elements, etc.)
 	// TODO: add the bayer 8x8 and special bayer matrices
 
-	const widthOptions: OptionGroup[] = [
-		{
-			name: "",
-			options: [
-				{ id: "360", val: 360, name: "360px" },
-				{ id: "480", val: 480, name: "480px" },
-				{ id: "720", val: 720, name: "720px" },
-			],
-		},
-	];
-
-	const algOptions: OptionGroup[] = [
-		{
-			name: "Diffusion",
-			options: [
-				{ id: "s", val: [[0, 0, 1]], name: "Simple" },
-				{
-					id: "fs",
-					val: [
-						[0, 0, 7 / 16],
-						[3 / 16, 5 / 16, 1 / 16],
-					],
-					name: "Floyd-Steinberg",
-				},
-				{
-					id: "jjn",
-					val: [
-						[0, 0, 0, 7 / 48, 5 / 48],
-						[3 / 48, 5 / 48, 7 / 48, 5 / 48, 3 / 48],
-						[1 / 48, 3 / 48, 5 / 48, 3 / 48, 1 / 48],
-					],
-					name: "JJN",
-				},
-				{
-					id: "stk",
-					val: [
-						[0, 0, 0, 8 / 42, 4 / 42],
-						[2 / 42, 4 / 42, 8 / 42, 4 / 42, 2 / 42],
-						[1 / 42, 2 / 42, 4 / 42, 2 / 42, 1 / 42],
-					],
-					name: "Stucki",
-				},
-				{
-					id: "atk",
-					val: [
-						[0, 0, 0, 1 / 8, 1 / 8],
-						[0, 1 / 8, 1 / 8, 1 / 8, 0],
-						[0, 0, 1 / 8, 0, 0],
-					],
-					name: "Atkinson",
-				},
-				{
-					id: "urk",
-					val: [
-						[0, 0, 0, 8 / 32, 4 / 32],
-						[2 / 32, 4 / 32, 8 / 32, 4 / 32, 2 / 32],
-					],
-					name: "Burkes",
-				},
-				{
-					id: "2sra",
-					val: [
-						[0, 0, 0, 5 / 32, 3 / 32],
-						[2 / 32, 4 / 32, 5 / 32, 4 / 32, 2 / 32],
-						[0, 2 / 32, 3 / 32, 2 / 32, 0],
-					],
-					name: "Two-Row Sierra",
-				},
-				{
-					id: "sra",
-					val: [
-						[0, 0, 0, 4 / 16, 3 / 16],
-						[1 / 16, 2 / 16, 3 / 16, 2 / 16, 1 / 16],
-					],
-					name: "Sierra",
-				},
-				{
-					id: "sra_l",
-					val: [
-						[0, 0, 2 / 4],
-						[1 / 4, 1 / 4, 0],
-					],
-					name: "Sierra Lite",
-				},
-			],
-		},
-		{
-			name: "Ordered",
-			options: [
-				{
-					id: "b2x2",
-					val: [
-						[0, 2 / 4],
-						[3 / 4, 1 / 4],
-					],
-					name: "Bayer 2x2",
-				},
-				{
-					id: "b4x4",
-					val: [
-						[0, 8 / 16, 2 / 16, 10 / 16],
-						[12 / 16, 4 / 16, 14 / 16, 6 / 16],
-						[3 / 16, 11 / 16, 1 / 16, 9 / 16],
-						[15 / 16, 7 / 16, 13 / 16, 5 / 16],
-					],
-					name: "Bayer 4x4",
-				},
-			],
-		},
-	];
-
-	const [paletteOptions, setPaletteOptions] = useState<OptionGroup[]>([
-		{
-			name: "Standard",
-			options: [
-				{ id: "h&d", val: ["#140428", "#79468a"], name: "Hither & Dither" },
-				{ id: "bw_1", val: ["#000000", "#ffffff"], name: "1-Bit Grayscale" },
-				{
-					id: "bw_2",
-					val: ["#000000", "#565656", "#acacac", "#ffffff"],
-					name: "2-Bit Grayscale",
-				},
-				{
-					id: "rgb_3",
-					val: [
-						"#000000",
-						"#0000ff",
-						"#00ffff",
-						"#00ff00",
-						"#ffff00",
-						"#ff0000",
-						"#ff00ff",
-						"#ffffff",
-					],
-					name: "3-Bit RGB",
-				},
-				{
-					id: "cmyk",
-					val: ["#00ffff", "#ff00ff", "#ffff00", "#000000"],
-					name: "CMYK",
-				},
-			],
-		},
-		{
-			name: "Retro",
-			options: [
-				{
-					id: "gboy",
-					val: ["#294139", "#39594a", "#5a7942", "#7b8210"],
-					name: "Game Boy",
-				},
-				{
-					id: "gboy_l",
-					val: ["#181818", "#4a5138", "#8c926b", "#c5caa4"],
-					name: "Game Boy Pocket",
-				},
-			],
-		},
-		{
-			name: "Custom",
-			options: loadCustomPalettes().map((op) => ({ ...op, deletable: true })),
-		},
-	]);
+	const [paletteOptions, setPaletteOptions] =
+		useState<OptionGroup[]>(defaultPalette);
 
 	function deletePalette(id: string) {
 		let newCustomOptions: Option[] = [...paletteOptions[customInd].options];
@@ -281,7 +95,6 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	}
 
 	function saveLocalPalette(e: React.FocusEvent<HTMLInputElement>) {
-		// TODO: add save animation when the user defocuses
 		if (!e.target.value) return;
 
 		const existingPalette = localStorage.getItem(img.palette);
