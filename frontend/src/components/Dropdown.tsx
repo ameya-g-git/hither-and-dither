@@ -44,7 +44,7 @@ function DropdownOption({
 	return (
 		<motion.li variants={{ ...variants }} className="relative w-full h-12">
 			<motion.button
-				className="flex flex-row items-center h-12 gap-6 select"
+				className="flex flex-row items-center h-12 rounded-xl select"
 				exit={{ fontSize: 0 }}
 				transition={{ delay: 0.25 }}
 				onClick={(e) => onClick(e as unknown as Event)}
@@ -117,10 +117,6 @@ export default function Dropdown({
 	useClickOutside(dropdownRef, (_) => setShowDropdownList(false));
 	useKeyPress("Escape", (_) => setShowDropdownList(false));
 
-	// TODO: ok im more insane   if i want the animation to work i need to change the positioning of options depending on what's selected
-	// TODO: add framer motion animation for this   although this can come later during the  Polishing state tbh
-	// i should   check these TODOs one day
-
 	const opt: Variants = {
 		start: { translateX: "-2rem", opacity: 0 },
 		end: { translateX: "0", opacity: 1 },
@@ -142,18 +138,14 @@ export default function Dropdown({
 						? `${Math.min(16, options.map((x) => x.options.length).reduce((x, y) => x + y, 0) * 4)}rem`
 						: "4.5rem",
 				}}
-				// transition={{ type: "tween", ease: "easeInOut" }}
+				transition={{ type: "tween", ease: "easeInOut" }}
 				className={`${
 					showDropdownList ? "overflow-y-auto" : ""
-				} absolute overflow-x-hidden top-10 scrollbar-thin transition-all bg-dark scrollbar-track-dark scrollbar-thumb-medium scrollbar-track-rounded-full mb-8 flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
+				} absolute overflow-x-hidden top-10 transition-all bg-dark mb-8 flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
 			>
-				<motion.div
-					layout
-					transition={{ duration: 1 }}
-					className="sticky top-0 z-50 max-h-16 bg-dark rounded-2xl"
-				>
+				<motion.div className="sticky top-0 z-50 pr-0.5 max-h-16 bg-dark rounded-xl">
 					<button
-						className="flex flex-row items-center h-16 gap-4 select"
+						className="flex flex-row items-center h-16 gap-4 rounded-lg select"
 						onClick={(e) => {
 							toggleDropdown(e as unknown as Event);
 						}}
@@ -186,7 +178,7 @@ export default function Dropdown({
 								<motion.ol
 									transition={{ delayChildren: 0.25, staggerChildren: 0.1 }}
 									variants={opt}
-									className="flex flex-col items-center"
+									className="flex flex-col items-center gap-0.5 mt-3"
 									layout
 								>
 									<AnimatePresence>
