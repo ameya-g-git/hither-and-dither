@@ -1,7 +1,6 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import upload from "../assets/img/upload.svg";
+import { useCallback, useState } from "react";
 import { uploadHandlerType } from "../hooks/useUploadedImages";
-import { AnimatePresence, motion, Variant, Variants } from "framer-motion";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import upload from "../assets/pixel_doodles/upload.svg";
 import crash from "../assets/pixel_doodles/crash.svg";
 
@@ -21,11 +20,9 @@ interface FileUploadType {
  * @returns | The JSX that displays the drag-and-drop uploader
  */
 
-export default function FileUpload({
-	className = "",
-	onUpload,
-}: FileUploadType) {
+export default function FileUpload({ className = "", onUpload }: FileUploadType) {
 	const [isDraggedOver, setIsDraggedOver] = useState(false);
+	const [showCrashModal, setShowCrashModal] = useState(false);
 
 	// useEffect(() => {
 	// 	if (
@@ -64,14 +61,13 @@ export default function FileUpload({
 						// 25 MB limit, no need to be egregious with it
 						onUpload(file); // handle file upload via a handler function prop
 					} else {
-						alert("file is too big! be nice to the servers!");
+						// alert("file is too big! be nice to the servers!");
+						setShowCrashModal(true);
 						// TODO: replace this with a dom animation, use the X( face like when a tab crashes, shake it left and right
 					}
 				}
 			} else {
-				console.error(
-					"Error in uploading file, try uploading a file saved on your computer",
-				);
+				console.error("Error in uploading file, try uploading a file saved on your computer");
 			}
 		},
 		[onUpload],
@@ -79,26 +75,32 @@ export default function FileUpload({
 
 	const modal: Variants = {
 		start: { opacity: 0 },
-		end: { opacity: 1 },
-		exit: { opacity: 0 },
-	};
-
-	const textContainer: Variants = {
-		start: {
-			opacity: 1,
-		},
 		end: {
 			opacity: 1,
 			transition: {
 				staggerChildren: 0.25,
 			},
 		},
+		exit: { opacity: 0, transition: { duration: 1 } },
 	};
 
 	const text: Variants = {
 		start: { opacity: 0, translateY: "3rem" },
 		end: { opacity: 1, translateY: "0" },
 		exit: { opacity: 0, translateY: "3rem" },
+	};
+
+	const shake: Variants = {
+		start: { x: "4rem" },
+		end: {
+			x: 0,
+			transition: {
+				type: "spring",
+				stiffness: 1000,
+				mass: 1,
+				damping: 7.5,
+			},
+		},
 	};
 
 	return (
@@ -122,32 +124,41 @@ export default function FileUpload({
 						animate="end"
 						exit="exit"
 						transition={{ duration: 0.1 }}
-						className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 rounded-[2rem] h-[90%] w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-2"
+						className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 rounded-[2rem] h-[90%] w-full flex flex-col bg-dark/75 backdrop-blur-md items-center justify-center gap-8"
 					>
-						{/* <img alt="upload" className="w-32 -m-4" /> */}
-						<motion.span
-							variants={textContainer}
-							initial="start"
-							animate="end"
-							exit="exit"
-							className="flex flex-col items-center gap-8 "
-						>
-							<motion.img
-								className="-mb-4"
-								variants={text}
-								src={upload}
-								alt="Upload icon"
-							/>
-							<motion.h2 variants={text} className="text-3xl">
-								let go of your file!
-							</motion.h2>
-							<motion.span
-								variants={text}
-								className="text-sm opacity-50 text-medium"
-							>
-								(all will be taken care of!)
-							</motion.span>
+						<motion.img className="w-24 -mb-4" variants={text} src={upload} alt="Upload icon" />
+						<motion.h2 variants={text} className="w-full h-20 -mb-6 text-3xl text-center">
+							let go of your file!
+						</motion.h2>
+						<motion.span variants={text} className="text-sm opacity-50 text-medium">
+							(all will be taken care of!)
 						</motion.span>
+					</motion.div>
+				)}
+
+				{showCrashModal && (
+					<motion.div
+						id="file-reject"
+						className="absolute flex flex-col items-center justify-center w-full gap-2 -translate-x-1/2 -translate-y-1/2 bg-dark/75 backdrop-blur-md h-5/6 top-1/2 left-1/2 "
+						variants={modal}
+						initial="start"
+						animate="end"
+						exit="exit"
+					>
+						<motion.img
+							className="-mb-2"
+							variants={shake}
+							onAnimationComplete={() => setShowCrashModal(false)}
+							src={crash}
+							alt="Upload icon"
+						/>
+						<h2 className="w-full h-20 text-3xl text-center -mb-7">file too large!</h2>
+						<span className="mb-8 mr-16 text-xs text-center text-medium/75">
+							be nice to the servers!
+						</span>
+						<span className="text-xs text-center text-medium/75">
+							<small>(and my wallet)</small>
+						</span>
 					</motion.div>
 				)}
 			</AnimatePresence>
