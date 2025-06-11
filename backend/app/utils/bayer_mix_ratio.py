@@ -10,14 +10,11 @@ def bayer_mix_ratio(desired: np.ndarray[int, 3], col1: np.ndarray[int, 3], col2:
     ]
 
     def calcRatio(d: int, c1: int, c2: int, weight: int):
+        # based off the mixing equation:
+        # col1 + (col2 - col1) * ratio
         return weight * (d - c1) / (c2 - c1) if (c1 != c2) else 0
 
     v = np.vectorize(calcRatio)
 
+    # gamma corrected weighted average
     return sum(v(desired, col1, col2, weights)) / sum(weights)
-
-    return (
-        (30 * (desired[0] - col1[0]) / (col1[0] - col2[0]) if (col1[0] != col2[0]) else 0)
-        + (59 * (desired[1] - col1[1]) / (col1[1] - col2[1]) if (col1[1] != col2[1]) else 0)
-        + (11 * (desired[2] - col1[2]) / (col1[2] - col2[2]) if (col1[2] != col2[2]) else 0)
-    ) / ((30 if col1[0] != col2[0] else 0) + (59 if col1[1] != col2[1] else 0) + (11 if col1[2] != col2[2] else 0))
