@@ -2,6 +2,8 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import upload from "../assets/img/upload.svg";
 import { uploadHandlerType } from "../hooks/useUploadedImages";
 import { AnimatePresence, motion, Variant, Variants } from "framer-motion";
+import upload from "../assets/pixel_doodles/upload.svg";
+import crash from "../assets/pixel_doodles/crash.svg";
 
 interface FileUploadType {
 	className?: string;

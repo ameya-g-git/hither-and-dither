@@ -5,19 +5,15 @@ import JSZip from "jszip";
 import moment from "moment";
 import { spinners, loadingMessages } from "../utils/loader";
 
-import download from "../assets/img/download.svg";
+import download from "../assets/pixel_doodles/download.svg";
 import { AnimatePresence, motion, Variants } from "framer-motion";
-import clsx from "clsx";
 
 interface DitheredImagesProps {
 	ditheredImages: DitheredImage[];
 	loading: boolean;
 }
 
-export default function DitheredImages({
-	ditheredImages,
-	loading,
-}: DitheredImagesProps) {
+export default function DitheredImages({ ditheredImages, loading }: DitheredImagesProps) {
 	const [ditherBlob, setDitherBlob] = useState<Blob>();
 	const [loader, setLoader] = useState<string | string[]>();
 	const [loaderFrame, setLoaderFrame] = useState<number>(0);
@@ -60,13 +56,9 @@ export default function DitheredImages({
 	let messageId = 0;
 
 	useEffect(() => {
-		setLoader(
-			loading ? spinners[Math.floor(Math.random() * spinners.length)] : "",
-		);
+		setLoader(loading ? spinners[Math.floor(Math.random() * spinners.length)] : "");
 		setLoaderMessage(
-			loading
-				? loadingMessages[Math.floor(Math.random() * loadingMessages.length)]
-				: "",
+			loading ? loadingMessages[Math.floor(Math.random() * loadingMessages.length)] : "",
 		);
 	}, [loading]);
 
@@ -77,11 +69,7 @@ export default function DitheredImages({
 			}, 200);
 			messageId = setInterval(() => {
 				setLoaderMessage(
-					loading
-						? loadingMessages[
-								Math.floor(Math.random() * loadingMessages.length)
-							]
-						: "",
+					loading ? loadingMessages[Math.floor(Math.random() * loadingMessages.length)] : "",
 				);
 			}, 4096);
 		} else {
@@ -102,10 +90,7 @@ export default function DitheredImages({
 	// TODO: add subtle animations and stuff   hooray we're basically at the polishing up phase
 
 	return loading ? (
-		<div
-			className="relative flex flex-col items-center justify-center w-full gap-4"
-			id="loading"
-		>
+		<div className="relative flex flex-col items-center justify-center w-full gap-4" id="loading">
 			{loader && (
 				<pre
 					className="absolute -translate-x-1/2 left-1/2"
@@ -155,17 +140,12 @@ export default function DitheredImages({
 					<h2 className="h-28 p-4 text-4xl text-center leading-[6rem] -mb-7">
 						your images are ready!
 					</h2>
-					<h4 className="mb-4 text-sm opacity-50 pl-36 text-medium">
-						have a splendid day!
-					</h4>
+					<h4 className="mb-4 text-sm opacity-50 pl-36 text-medium">have a splendid day!</h4>
 					<button
 						id="width"
 						onClick={(e) => {
 							e.preventDefault();
-							saveAs(
-								ditherBlob,
-								`dithered-images-${moment().format("YYYYMMDD-HHmmss")}.zip`,
-							);
+							saveAs(ditherBlob, `dithered-images-${moment().format("YYYYMMDD-HHmmss")}.zip`);
 						}}
 						className="flex flex-row items-center h-16 gap-4 px-4 py-8 border-4 rounded-lg text-light bg-dark border-medium"
 					>

@@ -11,9 +11,9 @@ import FileUpload from "./FileUpload";
 import DitheredImages from "./DitheredImages";
 import ImageForm from "./ImageForm";
 
-import upload from "../assets/img/upload.svg";
-import arrow from "../assets/img/arrow.svg";
-import ditherIt from "../assets/img/ditherit.svg";
+import upload from "../assets/pixel_doodles/upload.svg";
+import arrow from "../assets/pixel_doodles/arrow.svg";
+import ditherIt from "../assets/pixel_doodles/ditherit.svg";
 
 interface DitherFormProps {
 	imgState: UploadedImage[];
@@ -27,12 +27,7 @@ export interface DitheredImage {
 	data: string;
 }
 
-export default function DitherForm({
-	imgState,
-	onChange,
-	onOpen,
-	onUpload,
-}: DitherFormProps) {
+export default function DitherForm({ imgState, onChange, onOpen, onUpload }: DitherFormProps) {
 	const [showForm, setShowForm] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const [ditheredImages, setDitheredImages] = useState<DitheredImage[]>([]);
@@ -96,10 +91,9 @@ export default function DitherForm({
 					imgState.length == 0 ? (
 						<div className="flex flex-col items-center w-full gap-4 text-center bg-dark">
 							<img className="w-48" src={upload} alt="Upload icon" />
-							<h2 className="">no images have been uploaded!</h2>
+							<h2 className="w-full h-16 text-center">no images have been uploaded!</h2>
 							<span className="inline-flex gap-2 text-center text-medium">
-								feel free to drag n' drop or click the + icon below to add
-								images!
+								feel free to drag n' drop or click the + icon below to add images!
 							</span>
 						</div>
 					) : (
@@ -126,9 +120,7 @@ export default function DitherForm({
 									>
 										{img.fileName.slice(0, img.fileName.length - 4)}
 									</button>
-									{img.open && (
-										<ImageForm key={img.id} img={img} onChange={onChange} />
-									)}
+									{img.open && <ImageForm key={img.id} img={img} onChange={onChange} />}
 								</div>
 							);
 						})
