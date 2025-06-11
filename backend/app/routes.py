@@ -90,7 +90,7 @@ def dither_images():
             prepared_image = prepare_image(img=image.src, img_size=image.width)
             print(len(prepared_image))
             # apply dithering algorithm
-            if image.algorithm[0] == "b":
+            if image.algorithm[0] == "o":
                 dithered_image = dither_bayer(
                     img=prepared_image,
                     weight_matrix=image.weights,
