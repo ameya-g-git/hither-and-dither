@@ -2,7 +2,8 @@ import icons from "../assets/pixel_doodles/icons.svg";
 import shadow from "../assets/img/bayershadow.webp";
 import { ReactNode, useState } from "react";
 import { motion, Variants } from "motion/react";
-import earth from "../assets/img/earth.webp";
+
+// TODO: fix the dark background when the windows scale up
 
 interface WindowImageProps {
 	x?: number;
@@ -65,7 +66,6 @@ export default function WindowImage({
 					style={{ opacity: loaded ? 100 : 0 }}
 				>
 					{children}
-					{/* <img className="object-cover w-full h-full overflow-hidden " src={earth} alt="" /> */}
 				</div>
 			</div>
 		</motion.div>

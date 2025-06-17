@@ -50,6 +50,8 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 
 		context.putImageData(imgData, 0, 0);
 
+		console.log(canvas.width, canvas.height, canvasImage.width, canvasImage.height);
+
 		const ratio = Math.min(vRatio, hRatio);
 		var centerShift_x = (canvas.width - canvasImage.width * ratio) / 2;
 		var centerShift_y = (canvas.height - canvasImage.height * ratio) / 2;
@@ -72,8 +74,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	// TODO; also just general   change of Interface animations (close windows, hide input elements, etc.)
 	// TODO: add the bayer 8x8 and special bayer matrices
 
-	const [paletteOptions, setPaletteOptions] =
-		useState<OptionGroup[]>(defaultPalette);
+	const [paletteOptions, setPaletteOptions] = useState<OptionGroup[]>(defaultPalette);
 
 	function deletePalette(id: string) {
 		let newCustomOptions: Option[] = [...paletteOptions[customInd].options];
@@ -252,7 +253,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					title={img.fileName}
 					height="66%"
 				>
-					<img src={img.src} className={windowImageStyles} alt="" />
+					<img src={img.src} className="object-contain w-full h-full aspect-auto" alt="" />
 				</WindowImage>
 				<WindowImage
 					onClick={() => setWindowAbove(true)}
@@ -260,7 +261,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					title={`${img.fileName.slice(0, -4)}_dithered_${img.algorithm}.png`}
 					height="66%"
 				>
-					<Canvas img={img} draw={draw} />
+					<Canvas className="w-full h-full" img={img} draw={draw} />
 				</WindowImage>
 			</div>
 		</div>
