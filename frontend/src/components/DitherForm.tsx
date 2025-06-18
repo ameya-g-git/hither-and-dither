@@ -1,24 +1,18 @@
 import clsx from "clsx";
 import { useState } from "react";
 
-import {
-	UploadedImage,
-	inputHandlerType,
-	uploadHandlerType,
-	openHandlerType,
-} from "../hooks/useUploadedImages";
+import { UploadedImage, inputHandlerType, uploadHandlerType } from "../hooks/useUploadedImages";
 import FileUpload from "./FileUpload";
 import DitheredImages from "./DitheredImages";
 import ImageForm from "./ImageForm";
 
-import upload from "../assets/pixel_doodles/upload.svg";
 import arrow from "../assets/pixel_doodles/arrow.svg";
 import ditherIt from "../assets/pixel_doodles/ditherit.svg";
+import addImg from "../assets/pixel_doodles/addimage.svg";
 
 interface DitherFormProps {
 	imgState: UploadedImage[];
 	onChange: inputHandlerType;
-	onOpen: openHandlerType;
 	onUpload: uploadHandlerType;
 }
 
@@ -27,14 +21,16 @@ export interface DitheredImage {
 	data: string;
 }
 
-export default function DitherForm({ imgState, onChange, onOpen, onUpload }: DitherFormProps) {
+export default function DitherForm({ imgState, onChange, onUpload }: DitherFormProps) {
 	const [showForm, setShowForm] = useState(true);
 	const [loading, setLoading] = useState(false);
+	const [showUpload, setShowUpload] = useState(true);
 	const [ditheredImages, setDitheredImages] = useState<DitheredImage[]>([]);
+	const [currImageIndex, setCurrImageIndex] = useState(0);
 
 	const buttonStyles = (open: boolean) =>
 		clsx({
-			"absolute small-pixel-corners h-20 before:bg-dark text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark -top-16":
+			"h-full text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark":
 				true,
 			"border-medium text-glow": open,
 			"border-medium/50 text-medium hover:border-medium hover:text-glow": !open,
@@ -70,61 +66,78 @@ export default function DitherForm({ imgState, onChange, onOpen, onUpload }: Dit
 	}
 
 	return (
-		<div id="form" className="flex items-center justify-center w-full h-full ">
+		<div id="form" className="flex items-center justify-center w-full h-full">
 			<form className="flex after:z-50 items-center justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97%] before: before:-top-1 before:-left-2">
-				{!imgState.length && <FileUpload onUpload={onUpload} />}
-				{imgState.length > 0 && (
-					<button
-						disabled={loading || ditheredImages.length > 0}
-						id="width"
-						className="absolute z-[999] disabled:brightness-75 disabled:hover:brightness-75 flex items-center justify-center w-24 h-24 p-4 text-sm font-bold -translate-y-1/2 border-[6px] -right-12 top-1/2 bg-dark border-medium rounded-xl"
-						onClick={(e) => {
-							e.preventDefault();
-							submitImages();
+				{showUpload && (
+					<FileUpload
+						className={imgState.length > 0 ? "h-[calc(100%-1rem)] bottom-0" : "h-full"}
+						onUpload={(file) => {
+							setCurrImageIndex(imgState.length);
+							setShowUpload(false);
+							onUpload(file);
 						}}
-						title="DITHER IT!!!"
-					>
-						<img src={ditherIt} className="w-full" alt="" />
-					</button>
+					/>
+				)}
+				{imgState.length > 0 && showForm && (
+					<div className="flex flex-col w-24 z-[999] -right-12 h-64 gap-4 absolute top-1/2 -translate-y-1/2 *:rounded-xl *:hover:brightness-125">
+						<button
+							disabled={loading || ditheredImages.length > 0}
+							className="flex items-center justify-center w-24 h-24 p-4 text-sm font-bold border-[6px] bg-dark border-medium"
+							onClick={(e) => {
+								e.preventDefault();
+								submitImages();
+							}}
+							title="DITHER IT!!!"
+						>
+							<img src={ditherIt} className="w-full" alt="" />
+						</button>
+						<button
+							className="flex items-center justify-center w-24 h-24 p-4 text-sm font-bold border-[6px] bg-dark border-medium"
+							onClick={(e) => {
+								e.preventDefault();
+								setShowUpload(true);
+							}}
+						>
+							<img src={addImg} className="w-full" alt="" />
+						</button>
+					</div>
 				)}
 				{showForm ? (
-					imgState.length == 0 ? (
-						<div className="flex flex-col items-center w-full gap-4 text-center bg-dark">
-							<img className="w-48" src={upload} alt="Upload icon" />
-							<h2 className="w-full h-16 text-center">no images have been uploaded!</h2>
-							<span className="inline-flex gap-2 text-center text-medium">
-								feel free to drag n' drop or click the + icon below to add images!
-							</span>
-						</div>
-					) : (
-						imgState.map((img, i) => {
-							return (
-								<div
-									key={img.id}
-									style={{
-										zIndex: img.open ? imgState.length : imgState.length - i,
-									}}
-									className="absolute top-0 left-0 w-full h-full"
-								>
+					// TODO: add + button on top bar when there are images
+					// TODO: fix spacing when the filename is   normally sized
+					<div className="w-full h-full">
+						<div className="absolute flex flex-row w-[calc(100%-7rem)] h-20 [&>:not(:first-child)]:-mr-9 -left-2 -top-16">
+							{imgState.map((img, i) => {
+								return (
 									<button
+										key={img.id}
+										style={{
+											zIndex: i == currImageIndex ? imgState.length : imgState.length - i,
+										}}
 										title={img.fileName}
-										className={buttonStyles(img.open)}
+										className={buttonStyles(i == currImageIndex)}
 										onClick={(e) => {
 											e.stopPropagation();
 											e.preventDefault();
-											onOpen(img.id);
-										}}
-										style={{
-											left: `${i * (75 / Math.max(imgState.length, 6)) - 0.5}%`,
+											setShowUpload(false);
+											setCurrImageIndex(i);
 										}}
 									>
-										{img.fileName.slice(0, img.fileName.length - 4)}
+										{img.fileName}
 									</button>
-									{img.open && <ImageForm key={img.id} img={img} onChange={onChange} />}
-								</div>
-							);
-						})
-					)
+								);
+							})}
+						</div>
+						<div className="w-full h-full">
+							{!showUpload && currImageIndex >= 0 && currImageIndex < imgState.length && (
+								<ImageForm
+									key={imgState[currImageIndex].id}
+									img={imgState[currImageIndex]}
+									onChange={onChange}
+								/>
+							)}
+						</div>
+					</div>
 				) : (
 					<>
 						<button

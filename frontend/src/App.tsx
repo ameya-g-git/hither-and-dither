@@ -32,12 +32,10 @@ import WindowImage from "./components/WindowImage";
 import useWindowSize from "./hooks/useWindowSize";
 import useUploadedFiles from "./hooks/useUploadedImages";
 import DitherForm from "./components/DitherForm";
-import UploadButton from "./components/UploadButton";
 
 // export const MousePosition = createContext<position>({ x: 0, y: 0 });
 export const ScreenSize = createContext({ screenWidth: 0, screenHeight: 0 });
-export const windowImageStyles =
-	"object-cover w-full h-full aspect-auto overflow-hidden";
+export const windowImageStyles = "object-fit w-full h-full aspect-auto overflow-hidden";
 
 export default function App() {
 	const [positions, setPositions] = useState([
@@ -50,7 +48,7 @@ export default function App() {
 	// TODO: en generale just   add title attributes to  Interactive elements (input elements, dropdown, images, etc.)
 
 	const { screenWidth, screenHeight } = useWindowSize();
-	const [imgState, uploadHandler, openHandler, formHandler] = useUploadedFiles([
+	const [imgState, uploadHandler, formHandler] = useUploadedFiles([
 		// {
 		// 	id: "1",
 		// 	fileName: "1",
@@ -88,21 +86,9 @@ export default function App() {
 			.fill("")
 			.map((_, i) => (
 				<div key={i} className="relative max-h-96 w-full *:absolute *:top-8">
-					<img
-						src={back_cloud}
-						className="mt-8 animate-float [--delay:500ms]"
-						alt=""
-					/>
-					<img
-						src={mid_cloud}
-						className="mt-4 animate-float [--delay:1000ms]"
-						alt=""
-					/>
-					<img
-						src={top_cloud}
-						className="animate-float [--delay:1500ms]"
-						alt=""
-					/>
+					<img src={back_cloud} className="mt-8 animate-float [--delay:500ms]" alt="" />
+					<img src={mid_cloud} className="mt-4 animate-float [--delay:1000ms]" alt="" />
+					<img src={top_cloud} className="animate-float [--delay:1500ms]" alt="" />
 				</div>
 			));
 	};
@@ -137,8 +123,7 @@ export default function App() {
 						currentPosition:
 							Math.abs(pos.currentPosition - pos.targetPosition) <= 0.1
 								? pos.targetPosition // clamp value to target position when the position is close enough
-								: pos.currentPosition +
-									(pos.targetPosition - pos.currentPosition) * 0.1,
+								: pos.currentPosition + (pos.targetPosition - pos.currentPosition) * 0.1,
 					})),
 				);
 			}
@@ -150,13 +135,8 @@ export default function App() {
 	return (
 		<ScreenSize.Provider value={useWindowSize()}>
 			{/* <MousePosition.Provider value={useMousePosition()}> */}
-			<UploadButton onUpload={uploadHandler} />
 			<div
-				onClick={(_) =>
-					document
-						.getElementById("form")!
-						.scrollIntoView({ behavior: "smooth" })
-				}
+				onClick={(_) => document.getElementById("form")!.scrollIntoView({ behavior: "smooth" })}
 				className="box-border flex items-center w-screen h-screen cursor-pointer "
 			>
 				<div
@@ -169,11 +149,7 @@ export default function App() {
 				</div>
 				<div className="absolute flex items-center justify-center w-full h-full pt-16 overflow-hidden pointer-events-none select-none">
 					<ParallaxLayer factor={0.01}>
-						<img
-							src={back_layer}
-							className="h-screen mt-16 opacity-50"
-							alt=""
-						/>
+						<img src={back_layer} className="h-screen mt-16 opacity-50" alt="" />
 					</ParallaxLayer>
 					<ParallaxLayer factor={0.03}>
 						<img src={mid_layer} className="h-5/6 opacity-60 ml-96" alt="" />
@@ -186,10 +162,7 @@ export default function App() {
 					<h1 className="">
 						hither <br /> & dither
 					</h1>
-					<div
-						id="wave"
-						className="flex flex-row w-full drop-shadow-lg shadow-light"
-					>
+					<div id="wave" className="flex flex-row w-full drop-shadow-lg shadow-light">
 						{waveElements(12)}
 					</div>
 					<span className="inline-flex items-end gap-2">
@@ -268,11 +241,7 @@ export default function App() {
 						height="40vh"
 						title="DSC_0132"
 					>
-						<img
-							className={windowImageStyles}
-							src={clouds}
-							alt="Pixelated image of clouds"
-						/>
+						<img className={windowImageStyles} src={clouds} alt="Pixelated image of clouds" />
 					</WindowImage>
 					<WindowImage
 						x={50}
@@ -281,11 +250,7 @@ export default function App() {
 						height="50vh"
 						title="IMG_8214"
 					>
-						<img
-							src={flower}
-							className={windowImageStyles}
-							alt="Pixelated image of a flower"
-						/>
+						<img src={flower} className={windowImageStyles} alt="Pixelated image of a flower" />
 					</WindowImage>
 					<WindowImage
 						x={positions[3].currentPosition}
@@ -339,16 +304,8 @@ export default function App() {
 					))}
 			</div>
 			<div className="w-screen h-screen">
-				<img
-					src={vines}
-					className="absolute w-full -z-[99] -top-72 opacity-40"
-					alt=""
-				/>
-				<img
-					src={flowers_base}
-					className="absolute bottom-0 w-full opacity-40"
-					alt=""
-				/>
+				<img src={vines} className="absolute w-full -z-[99] -top-72 opacity-40" alt="" />
+				<img src={flowers_base} className="absolute bottom-0 w-full opacity-40" alt="" />
 				<div
 					id="bayer"
 					className="absolute left-0 flex flex-row items-center justify-center w-full -top-[30rem] animate-float [--float-dist:2rem] overflow-hidden -z-[99] opacity-25"
@@ -357,12 +314,7 @@ export default function App() {
 					<img src={bayer} />
 					<img src={bayer} />
 				</div>
-				<DitherForm
-					imgState={imgState}
-					onChange={formHandler}
-					onOpen={openHandler}
-					onUpload={uploadHandler}
-				/>
+				<DitherForm imgState={imgState} onChange={formHandler} onUpload={uploadHandler} />
 			</div>
 			{/* </MousePosition.Provider> */}
 		</ScreenSize.Provider>

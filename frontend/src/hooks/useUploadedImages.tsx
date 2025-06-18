@@ -45,10 +45,6 @@ interface UploadAction extends Action {
 	src: string;
 }
 
-interface OpenAction extends Action {
-	id: string;
-}
-
 interface InputAction extends Action {
 	id: string;
 	key: string;
@@ -57,11 +53,9 @@ interface InputAction extends Action {
 
 export type uploadHandlerType = (file: File) => void;
 
-export type openHandlerType = (id: string) => void;
-
 export type inputHandlerType = (id: string, key: string, value: any) => void;
 
-type UploadedFilesHookReturn = [UploadedImage[], uploadHandlerType, openHandlerType, inputHandlerType];
+type UploadedFilesHookReturn = [UploadedImage[], uploadHandlerType, inputHandlerType];
 
 /**
  * Reads an inputted files data URL. Adapted from Joseph Zimmerman's drag-and-drop uploader linked below:
@@ -121,7 +115,7 @@ function fileToUploadedImage(file: File) {
  * @param action | The action defined by a given dispatch() call
  * @returns {UploadedImage[]} | The updated state after the reducer call finishes
  */
-function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | InputAction | OpenAction) {
+function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | InputAction) {
 	switch (action.type) {
 		case "UPLOAD_FILES": {
 			const { file, src } = action as UploadAction;
@@ -134,20 +128,6 @@ function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | I
 			}
 
 			return [...uploadState, image];
-		}
-		case "OPEN_MENU": {
-			const { id } = action as OpenAction;
-			const imageIndex = state!.findIndex((img) => img.id === id);
-			const newState: UploadedImage[] = state!.map((image) => {
-				return { ...image, open: false };
-			});
-
-			newState[imageIndex] = {
-				...newState[imageIndex],
-				open: true,
-			};
-
-			return newState;
 		}
 		case "INPUT_CHANGE": {
 			const { id, key, value } = action as InputAction;
@@ -192,13 +172,6 @@ export default function useUploadedFiles(initialImages: UploadedImage[]) {
 			.catch((error) => console.error("Error uploading files", error));
 	}, []);
 
-	const openHandler = useCallback((id: string) => {
-		dispatch({
-			type: "OPEN_MENU",
-			id,
-		});
-	}, []);
-
 	const formHandler = useCallback((id: string, key: string, value: any) => {
 		dispatch({
 			type: "INPUT_CHANGE",
@@ -208,5 +181,5 @@ export default function useUploadedFiles(initialImages: UploadedImage[]) {
 		});
 	}, []);
 
-	return [imgState, uploadHandler, openHandler, formHandler] as UploadedFilesHookReturn;
+	return [imgState, uploadHandler, formHandler] as UploadedFilesHookReturn;
 }
