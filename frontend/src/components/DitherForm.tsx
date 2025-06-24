@@ -30,7 +30,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 
 	const buttonStyles = (open: boolean) =>
 		clsx({
-			"h-full text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark":
+			"h-full -mr-9 text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark":
 				true,
 			"border-medium text-glow": open,
 			"border-medium/50 text-medium hover:border-medium hover:text-glow": !open,
@@ -42,16 +42,18 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 		formData.append("images", JSON.stringify(imgState));
 
 		try {
+			setShowUpload(false);
+			setShowForm(false);
+			setLoading(true);
+
 			const response = await fetch("/api", { method: "POST", body: formData });
 
 			if (response.status === 200 || response.status === 201) {
 				console.log("Uploaded images to server");
 			} else {
 				console.error("Error:", response.statusText, response.status);
+				// TODO: add error modal when it fails? with a little arrow to go back to editing
 			}
-
-			setShowForm(false);
-			setLoading(true);
 
 			fetch("/api/images")
 				.then<DitheredImage[]>((res) => res.json())
@@ -66,8 +68,8 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 	}
 
 	return (
-		<div id="form" className="flex items-center justify-center w-full h-full">
-			<form className="flex after:z-50 items-center justify-center w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium h-4/5 bg-dark pixel-corners before:h-3/5 before:w-[97%] before: before:-top-1 before:-left-2">
+		<div id="form" className="flex items-center justify-center w-full h-full pt-32 pb-24 ">
+			<form className="flex after:z-50 items-center justify-center h-full min-h-[80dvh] w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium bg-dark pixel-corners rounded-[4rem] rounded-tl-none before:h-3/5 before:w-[calc(100%-2.5rem)] before:-top-1 before:-left-2">
 				{showUpload && (
 					<FileUpload
 						className={imgState.length > 0 ? "h-[calc(100%-1rem)] bottom-0" : "h-full"}
@@ -78,35 +80,9 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 						}}
 					/>
 				)}
-				{imgState.length > 0 && showForm && (
-					<div className="flex flex-col w-24 z-[999] -right-12 h-64 gap-4 absolute top-1/2 -translate-y-1/2 *:rounded-xl *:hover:brightness-125">
-						<button
-							disabled={loading || ditheredImages.length > 0}
-							className="flex items-center justify-center w-24 h-24 p-4 text-sm font-bold border-[6px] bg-dark border-medium"
-							onClick={(e) => {
-								e.preventDefault();
-								submitImages();
-							}}
-							title="DITHER IT!!!"
-						>
-							<img src={ditherIt} className="w-full" alt="" />
-						</button>
-						<button
-							className="flex items-center justify-center w-24 h-24 p-4 text-sm font-bold border-[6px] bg-dark border-medium"
-							onClick={(e) => {
-								e.preventDefault();
-								setShowUpload(true);
-							}}
-						>
-							<img src={addImg} className="w-full" alt="" />
-						</button>
-					</div>
-				)}
 				{showForm ? (
-					// TODO: add + button on top bar when there are images
-					// TODO: fix spacing when the filename is   normally sized
-					<div className="w-full h-full">
-						<div className="absolute flex flex-row w-[calc(100%-7rem)] h-20 [&>:not(:first-child)]:-mr-9 -left-2 -top-16">
+					<div className="w-full min-h-[80dvh] h-full">
+						<div className="absolute flex flex-row w-[calc(100%-7rem)] h-20 -left-2 -top-16">
 							{imgState.map((img, i) => {
 								return (
 									<button
@@ -115,7 +91,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 											zIndex: i == currImageIndex ? imgState.length : imgState.length - i,
 										}}
 										title={img.fileName}
-										className={buttonStyles(i == currImageIndex)}
+										className={buttonStyles(i == currImageIndex && !showUpload)}
 										onClick={(e) => {
 											e.stopPropagation();
 											e.preventDefault();
@@ -155,6 +131,31 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 						</button>
 						<DitheredImages loading={loading} ditheredImages={ditheredImages} />
 					</>
+				)}
+				{imgState.length > 0 && showForm && (
+					<div className="flex flex-col w-24 z-[999] -right-12 gap-4 absolute top-1/2 -translate-y-1/2 *:rounded-xl">
+						<button
+							disabled={loading || ditheredImages.length > 0}
+							className="flex hover:brightness-125 items-center justify-center w-24 h-24 p-4 text-sm font-bold border-[6px] bg-dark border-medium"
+							onClick={(e) => {
+								e.preventDefault();
+								submitImages();
+							}}
+							title="DITHER IT!!!"
+						>
+							<img src={ditherIt} className="w-full" alt="" />
+						</button>
+						<button
+							className="flex hover:brightness-125 items-center justify-center w-24 h-24 p-4 text-sm font-bold border-[6px] bg-dark border-medium"
+							onClick={(e) => {
+								e.preventDefault();
+								setShowUpload(true);
+							}}
+							title="add image"
+						>
+							<img src={addImg} className="w-full" alt="" />
+						</button>
+					</div>
 				)}
 			</form>
 		</div>
