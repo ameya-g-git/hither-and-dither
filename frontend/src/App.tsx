@@ -117,15 +117,19 @@ export default function App() {
 		// ease current positions to each target position with basic interpolation
 		const timeout = setTimeout(() => {
 			if (window.scrollY < 1500) {
-				setPositions((prevPositions) =>
-					prevPositions.map((pos) => ({
+				setPositions((prevPositions) => {
+					// check if targets + current positions are close enough; if so, then no need to update position state
+					if (
+						prevPositions.every((pos) => Math.abs(pos.currentPosition - pos.targetPosition) < 0.5)
+					) {
+						return prevPositions;
+					}
+
+					return prevPositions.map((pos) => ({
 						...pos,
-						currentPosition:
-							Math.abs(pos.currentPosition - pos.targetPosition) <= 0.1
-								? pos.targetPosition // clamp value to target position when the position is close enough
-								: pos.currentPosition + (pos.targetPosition - pos.currentPosition) * 0.1,
-					})),
-				);
+						currentPosition: pos.currentPosition + (pos.targetPosition - pos.currentPosition) * 0.1,
+					}));
+				});
 			}
 		}, 8);
 
@@ -303,7 +307,7 @@ export default function App() {
 						<img key={i} src={wave_border} className="h-full" alt="" />
 					))}
 			</div>
-			<div className="w-screen h-screen">
+			<div className="w-screen h-full min-h-screen">
 				<img src={vines} className="absolute w-full -z-[99] -top-72 opacity-40" alt="" />
 				<img src={flowers_base} className="absolute bottom-0 w-full opacity-40" alt="" />
 				<div
