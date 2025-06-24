@@ -1,0 +1,6 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M192 32H160V64H192V96H224V64H256V32H224V0H192V32Z" fill="#F8A4F0" style="fill:#F8A4F0;fill:color(display-p3 0.9725 0.6431 0.9412);fill-opacity:1;"/>
+<path d="M0 256H256V80H240V240H16V80H144V64H0V256Z" fill="#F8A4F0" style="fill:#F8A4F0;fill:color(display-p3 0.9725 0.6431 0.9412);fill-opacity:1;"/>
+<path d="M144 128H176V96H144V128Z" fill="#F8A4F0" style="fill:#F8A4F0;fill:color(display-p3 0.9725 0.6431 0.9412);fill-opacity:1;"/>
+<path d="M80 128H64V144H48V160H32V224H224V176H208V160H192V144H176V160H160V176H144V160H128V144H112V128H96V112H80V128Z" fill="#F8A4F0" style="fill:#F8A4F0;fill:color(display-p3 0.9725 0.6431 0.9412);fill-opacity:1;"/>
+</svg>
