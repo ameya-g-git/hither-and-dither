@@ -3,6 +3,8 @@ import { uploadHandlerType } from "../hooks/useUploadedImages";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import upload from "../assets/pixel_doodles/upload.svg";
 import crash from "../assets/pixel_doodles/crash.svg";
+import { nanoid } from "nanoid";
+import clsx from "clsx";
 
 interface FileUploadType {
 	className?: string;
@@ -22,7 +24,12 @@ interface FileUploadType {
 
 export default function FileUpload({ className = "", onUpload }: FileUploadType) {
 	const [isDraggedOver, setIsDraggedOver] = useState(false);
+	const [isClicked, setIsClicked] = useState(false);
 	const [showCrashModal, setShowCrashModal] = useState(false);
+
+	const inputClasses = clsx(
+		"mt-0.5 w-[calc(100%-1rem)] h-[calc(100%-1rem)] transition-all rounded-[4.5rem] rounded-tl-none",
+	);
 
 	// useEffect(() => {
 	// 	if (
@@ -34,8 +41,6 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 	// 		setIsDraggedOver(false);
 	// 	}
 	// }, [mousePosition, screenHeight, screenWidth]);
-
-	// TODO: create a little modal for when the file size is too big, don't push it to imgState either
 
 	function dragOverHandler(e: DragEvent) {
 		e.preventDefault();
@@ -63,7 +68,6 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 					} else {
 						// alert("file is too big! be nice to the servers!");
 						setShowCrashModal(true);
-						// TODO: replace this with a dom animation, use the X( face like when a tab crashes, shake it left and right
 					}
 				}
 			} else {
@@ -81,7 +85,7 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 				staggerChildren: 0.25,
 			},
 		},
-		exit: { opacity: 0, transition: { duration: 1 } },
+		exit: { opacity: 0 },
 	};
 
 	const text: Variants = {
@@ -96,7 +100,7 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 			x: 0,
 			transition: {
 				type: "spring",
-				stiffness: 1000,
+				stiffness: 500,
 				mass: 1,
 				damping: 7.5,
 			},
@@ -105,7 +109,7 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 
 	return (
 		<div
-			className={`${className} absolute h-full w-full z-[999]`}
+			className={`${className} absolute flex items-center justify-center w-full z-10`}
 			id="modal"
 			onDragEnter={(e) => dragOverHandler(e as unknown as DragEvent)}
 			onDragOver={(e) => dragOverHandler(e as unknown as DragEvent)}
@@ -115,6 +119,47 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 				dropHandler(e as unknown as DragEvent);
 			}}
 		>
+			<label
+				onClick={(e) => e.stopPropagation()}
+				htmlFor="fileElem"
+				className={`font-normal text-center bg-dark ${inputClasses}`}
+			>
+				<div
+					className={`flex flex-col items-center justify-center w-full h-full gap-4 transition-all select-none ${isClicked ? "scale-90" : "scale-100"} `}
+				>
+					<img className="w-48" src={upload} alt="Upload icon" />
+					<h2 className="w-full h-16 text-center">no images have been uploaded!</h2>
+					<span className="inline-flex gap-2 text-center text-medium">
+						feel free to drag n' drop or click here to add images!
+					</span>
+				</div>
+			</label>
+			~
+			<input
+				type="file"
+				id="fileElem"
+				key={"fileElem"}
+				name="fileElem"
+				onMouseLeave={() => setIsClicked(false)}
+				onMouseDown={() => setIsClicked(true)}
+				onMouseUp={() => setIsClicked(false)}
+				className={`absolute top-1/2 left-1/2 hover:backdrop-brightness-125 cursor-pointer text-transparent -translate-x-1/2 -translate-y-1/2 ${inputClasses}`}
+				multiple
+				accept="image/*"
+				onChange={(e) => {
+					console.log(e);
+					if (e.target.files && e.target.files.length > 0) {
+						for (const file of e.target.files) {
+							if (file.size < 25e6) {
+								// 25 MB limit, no need to be egregious with it
+								onUpload(file); // handle file upload via a handler function prop
+							} else {
+								setShowCrashModal(true);
+							}
+						}
+					}
+				}}
+			/>
 			<AnimatePresence>
 				{isDraggedOver && (
 					<motion.div
@@ -138,6 +183,7 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 
 				{showCrashModal && (
 					<motion.div
+						key="crash-modal"
 						id="file-reject"
 						className="absolute flex flex-col items-center justify-center w-full gap-2 -translate-x-1/2 -translate-y-1/2 bg-dark/75 backdrop-blur-md h-5/6 top-1/2 left-1/2 "
 						variants={modal}
