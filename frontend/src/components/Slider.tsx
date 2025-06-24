@@ -1,7 +1,8 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import useMousePosition from "../hooks/useMousePosition";
 import { inputHandlerType } from "../hooks/useUploadedImages";
+import { motion, Variants } from "motion/react";
 
 interface SliderProps {
 	label: string;
@@ -11,9 +12,19 @@ interface SliderProps {
 	max: number;
 	step: number;
 	onChange: inputHandlerType;
+	variants: Variants;
 }
 
-export default function Slider({ label, id, value, min, max, step = 5, onChange }: SliderProps) {
+export default function Slider({
+	label,
+	id,
+	value,
+	min,
+	max,
+	step = 15,
+	onChange,
+	variants,
+}: SliderProps) {
 	const labelStyles = (dark: boolean) =>
 		clsx({
 			absolute: !dark,
@@ -40,7 +51,7 @@ export default function Slider({ label, id, value, min, max, step = 5, onChange 
 	}, [mouseDown, mousePosition]);
 
 	return (
-		<div>
+		<motion.div variants={variants}>
 			<div className="overflow-hidden">
 				<input
 					className="absolute z-[99] right-0 w-full"
@@ -49,7 +60,7 @@ export default function Slider({ label, id, value, min, max, step = 5, onChange 
 					min={min}
 					max={max}
 					value={sliderVal}
-					step={(min - max) / 25}
+					step={step}
 					onChange={(e) => {
 						setSliderVal(Number(e.target.value));
 						onChange(id, label.toLowerCase(), e.target.value);
@@ -58,9 +69,6 @@ export default function Slider({ label, id, value, min, max, step = 5, onChange 
 			</div>
 			<div
 				className="flex items-center justify-start w-full p-1 border-4 cursor-pointer bg-dark border-medium rounded-2xl "
-				// onDrag={(e) => {
-				// 	console.log(e.clientX - e.currentTarget.getBoundingClientRect().x);
-				// }}
 				ref={sliderRef}
 				onMouseDown={(_) => setMouseDown(true)}
 				onMouseUp={(_) => setMouseDown(false)}
@@ -84,6 +92,6 @@ export default function Slider({ label, id, value, min, max, step = 5, onChange 
 					</div>
 				</div>
 			</div>
-		</div>
+		</motion.div>
 	);
 }

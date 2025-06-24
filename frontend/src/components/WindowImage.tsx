@@ -1,5 +1,5 @@
 import icons from "../assets/pixel_doodles/icons.svg";
-import shadow from "../assets/img/bayershadow.webp";
+import shadow from "../assets/img/shadow.webp";
 import { ReactNode, useState } from "react";
 import { motion, Variants } from "motion/react";
 
@@ -27,7 +27,7 @@ export default function WindowImage({
 	const [loaded, setLoaded] = useState(false);
 
 	const windowVar: Variants = {
-		start: { height: "8%" },
+		start: { height: "10%" },
 		end: { height: height },
 	};
 
@@ -50,7 +50,7 @@ export default function WindowImage({
 				setLoaded(true);
 			}}
 		>
-			<div className="box-border absolute flex flex-row w-11/12 h-48 overflow-hidden -bottom-4">
+			<div className="box-border absolute flex flex-row w-11/12 h-6 overflow-hidden -bottom-4">
 				<img src={shadow} className="h-full" alt="" />
 				<img src={shadow} className="h-full" alt="" />
 			</div>

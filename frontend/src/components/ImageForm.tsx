@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import { useState } from "react";
 import { nanoid } from "nanoid";
+import { motion, Variants } from "motion/react";
 
-import { windowImageStyles } from "../App";
 import Dropdown, { Option, OptionGroup } from "./Dropdown";
 import ResButton from "./ResButton";
 import Slider from "./Slider";
@@ -49,8 +49,6 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 		const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
 
 		context.putImageData(imgData, 0, 0);
-
-		console.log(canvas.width, canvas.height, canvasImage.width, canvasImage.height);
 
 		const ratio = Math.min(vRatio, hRatio);
 		var centerShift_x = (canvas.width - canvasImage.width * ratio) / 2;
@@ -131,9 +129,32 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			});
 		}
 	}
+
+	const formVar: Variants = {
+		start: { opacity: 0 },
+		end: {
+			opacity: 1,
+			transition: {
+				staggerChildren: 0.1,
+			},
+		},
+	};
+
+	const formChildVar: Variants = {
+		start: { translateX: "-4rem", opacity: 0 },
+		end: { translateX: "0rem", opacity: 1 },
+		exit: { translateX: "-4rem", opacity: 0 },
+	};
+
 	return (
-		<div className="absolute flex flex-col w-full h-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
-			<div className="flex flex-col gap-4 grow">
+		<div className="flex flex-col w-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
+			<motion.div
+				variants={formVar}
+				initial="start"
+				animate="end"
+				transition={{ staggerChildren: 1 }}
+				className="flex flex-col gap-4 grow"
+			>
 				<Dropdown
 					className="z-50"
 					current={img.algorithm}
@@ -145,6 +166,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 						onChange(id, "weights", opVal);
 					}}
 					showLabel
+					variants={formChildVar}
 				/>
 				<Dropdown
 					className="z-40"
@@ -160,9 +182,13 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					}}
 					onDelete={deletePalette}
 					showLabel
+					variants={formChildVar}
 				/>
 
-				<div className="flex flex-wrap gap-2 mb-2 -mt-4 *:rounded-full *:border-medium *:border-4">
+				<motion.div
+					variants={formChildVar}
+					className="flex flex-wrap gap-2 mb-2 -mt-4 *:rounded-full *:border-medium *:border-4"
+				>
 					{paletteList.map((col, i) => {
 						return (
 							<ColourChip
@@ -205,7 +231,6 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 						</button>
 					</div>
 					{customPaletteName && (
-						// name custom palette
 						<input
 							onBlur={saveLocalPalette}
 							type="text"
@@ -213,16 +238,19 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 							className="h-16 px-4 border-4 w-72 bg-dark"
 						/>
 					)}
-				</div>
-				<label className="text-lg">Image Adjustments</label>
+				</motion.div>
+				<motion.label variants={formChildVar} className="text-lg">
+					Image Adjustments
+				</motion.label>
 				<Slider
 					label="Brightness"
 					id={img.id}
 					value={img.brightness}
 					min={1}
 					max={200}
-					step={1}
+					step={5}
 					onChange={onChange}
+					variants={formChildVar}
 				/>
 				<Slider
 					label="Contrast"
@@ -230,22 +258,26 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					value={img.contrast}
 					min={1}
 					max={400}
-					step={1}
+					step={10}
 					onChange={onChange}
+					variants={formChildVar}
 				/>
 				<div className="flex flex-row items-center w-full gap-4 mt-4 max-h-16">
-					<label htmlFor="">Image Width</label>
+					<motion.label variants={formChildVar} htmlFor="">
+						Image Width
+					</motion.label>
 					<Dropdown
-						className="z-30 -mt-6"
+						className="-mt-6"
 						dropFor="width"
 						current={String(img.width)}
 						id={img.id}
 						options={widthOptions}
 						onChange={(id, key, [_, opVal]) => onChange(id, key, opVal)}
+						variants={formChildVar}
 					/>
-					<ResButton id={img.id} onClick={onChange} />
+					<ResButton id={img.id} onClick={onChange} variants={formChildVar} />
 				</div>
-			</div>
+			</motion.div>
 			<div className="w-1/2 p-8">
 				<WindowImage
 					onClick={() => setWindowAbove(false)}

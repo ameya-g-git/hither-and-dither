@@ -21,10 +21,11 @@ interface DropdownProps {
 	current: any;
 	options: OptionGroup[];
 	id: string; // id of image its updating
-	onDelete?: (id: string) => void;
 	onChange: inputHandlerType; // form state change handler function
+	onDelete?: (id: string) => void;
 	className?: string;
 	showLabel?: boolean;
+	variants?: Variants;
 }
 
 interface DropdownOptionProps {
@@ -35,12 +36,7 @@ interface DropdownOptionProps {
 }
 
 // simple component for a single dropdown option just to make component code a little Cleaner
-function DropdownOption({
-	option,
-	onClick,
-	onDelete,
-	variants,
-}: DropdownOptionProps) {
+function DropdownOption({ option, onClick, onDelete, variants }: DropdownOptionProps) {
 	return (
 		<motion.li variants={{ ...variants }} className="relative w-full h-12">
 			<motion.button
@@ -92,11 +88,10 @@ export default function Dropdown({
 	onDelete,
 	className,
 	showLabel = false,
+	variants = {},
 }: DropdownProps) {
 	const [showDropdownList, setShowDropdownList] = useState(false);
-	const [currentOption, setCurrentOption] = useState(
-		findOptionFromId(options, current),
-	);
+	const [currentOption, setCurrentOption] = useState(findOptionFromId(options, current));
 	const dropdownRef = useRef(null);
 
 	function toggleDropdown(event: Event, option?: Option) {
@@ -123,16 +118,19 @@ export default function Dropdown({
 	};
 
 	return (
-		<div className={`min-h-32 min-w-48 ${className ? className : ""}`}>
+		<motion.div
+			layoutId={`dropdown-${dropFor}${id}`}
+			variants={variants}
+			transition={{ ease: "easeOut" }}
+			className={`min-h-32 min-w-48 ${className ? className : ""}`}
+		>
 			{showLabel && (
-				<label className="text-lg ">
-					{dropFor.slice(0, 1).toUpperCase() + dropFor.slice(1)}
-				</label>
+				<label className="text-lg ">{dropFor.slice(0, 1).toUpperCase() + dropFor.slice(1)}</label>
 			)}
 			<motion.div
 				ref={dropdownRef}
 				layout
-				layoutId={`dropdown-${dropFor}`}
+				layoutId={`options-${dropFor}${id}`}
 				style={{
 					height: showDropdownList
 						? `${Math.min(16, options.map((x) => x.options.length).reduce((x, y) => x + y, 0) * 4)}rem`
@@ -140,12 +138,12 @@ export default function Dropdown({
 				}}
 				transition={{ type: "tween", ease: "easeInOut" }}
 				className={`${
-					showDropdownList ? "overflow-y-auto" : ""
+					showDropdownList ? "overflow-y-auto pr-0.5" : ""
 				} absolute overflow-x-hidden top-10 transition-all bg-dark mb-8 flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
 			>
-				<motion.div className="sticky top-0 z-50 pr-0.5 max-h-16 bg-dark rounded-xl">
+				<motion.div className="sticky top-0 z-50 max-h-16 bg-dark">
 					<button
-						className="flex flex-row items-center h-16 gap-4 rounded-lg select"
+						className={`flex flex-row items-center w-full h-16 gap-4 rounded-xl select`}
 						onClick={(e) => {
 							toggleDropdown(e as unknown as Event);
 						}}
@@ -189,9 +187,7 @@ export default function Dropdown({
 													option={op}
 													onClick={(e) => optionClick(e, op)}
 													variants={opt}
-													onDelete={
-														op.deletable && onDelete ? onDelete : () => {}
-													}
+													onDelete={op.deletable && onDelete ? onDelete : () => {}}
 												/>
 											) : (
 												<></>
@@ -205,6 +201,6 @@ export default function Dropdown({
 					</motion.div>
 				)}
 			</motion.div>
-		</div>
+		</motion.div>
 	);
 }
