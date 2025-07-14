@@ -7,7 +7,6 @@ import { useCallback, useReducer } from "react";
  * @property {string} id | The id of the image, used for making form state updates easier
  * @property {string} fileName | The filename of the image
  * @property {string} src | The data URL of the image
- * @property {boolean} open | True if this image is the currently open one in the menu
  * IMAGE ADJUSTMENTS
  * @property {number} brightness
  * @property {number} contrast
@@ -23,7 +22,6 @@ export interface UploadedImage {
 	id: string;
 	fileName: string;
 	src: string;
-	open: boolean;
 
 	brightness: number;
 	contrast: number;
@@ -90,7 +88,6 @@ function fileToUploadedImage(file: File) {
 		id: nanoid(),
 		fileName: file.name,
 		src: "",
-		open: true,
 
 		brightness: 100,
 		contrast: 100,
@@ -123,9 +120,6 @@ function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | I
 
 			const image = fileToUploadedImage(file);
 			image.src = src;
-			if (uploadState.length >= 1) {
-				image.open = false;
-			}
 
 			return [...uploadState, image];
 		}
