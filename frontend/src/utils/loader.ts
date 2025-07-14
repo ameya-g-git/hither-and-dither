@@ -10,8 +10,9 @@ export const loadingMessages = [
 	"127.0.0.1",
 	'echo "Hello World!"',
 	"ERROR: message not found",
-	""
-]
+	"thinking of a good loading message",
+	"$> imagemagick convert -ordered-dither",
+];
 
 // from https://stackoverflow.com/questions/2685435/cooler-ascii-spinners/2685827#2685827
 export const spinners = [
@@ -33,16 +34,7 @@ export const spinners = [
 	"⣾⣽⣻⢿⡿⣟⣯⣷",
 	"⡀⡁⡂⡃⡄⡅⡆⡇⡈⡉⡊⡋⡌⡍⡎⡏⡐⡑⡒⡓⡔⡕⡖⡗⡘⡙⡚⡛⡜⡝⡞⡟⡠⡡⡢⡣⡤⡥⡦⡧⡨⡩⡪⡫⡬⡭⡮⡯⡰⡱⡲⡳⡴⡵⡶⡷⡸⡹⡺⡻⡼⡽⡾⡿⢀⢁⢂⢃⢄⢅⢆⢇⢈⢉⢊⢋⢌⢍⢎⢏⢐⢑⢒⢓⢔⢕⢖⢗⢘⢙⢚⢛⢜⢝⢞⢟⢠⢡⢢⢣⢤⢥⢦⢧⢨⢩⢪⢫⢬⢭⢮⢯⢰⢱⢲⢳⢴⢵⢶⢷⢸⢹⢺⢻⢼⢽⢾⢿⣀⣁⣂⣃⣄⣅⣆⣇⣈⣉⣊⣋⣌⣍⣎⣏⣐⣑⣒⣓⣔⣕⣖⣗⣘⣙⣚⣛⣜⣝⣞⣟⣠⣡⣢⣣⣤⣥⣦⣧⣨⣩⣪⣫⣬⣭⣮⣯⣰⣱⣲⣳⣴⣵⣶⣷⣸⣹⣺⣻⣼⣽⣾⣿",
 	"⠁⠂⠄⡀⢀⠠⠐⠈",
-	[
-		">))'>",
-		" >))'>",
-		"  >))'>",
-		"   >))'>",
-		"    >))'>",
-		"   <'((<",
-		"  <'((<",
-		" <'((<",
-	],
+	[">))'>", " >))'>", "  >))'>", "   >))'>", "    >))'>", "   <'((<", "  <'((<", " <'((<"],
 	[
 		"    /\\O\n     /\\/\n    /\\\n   /  \\\n LOL  LOL",
 		"     _O\n   //|_\n    |\n   /|\n   LLOL",
