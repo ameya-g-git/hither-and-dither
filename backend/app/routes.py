@@ -28,15 +28,21 @@ def upload_images():
         data = []
 
         if not form_data:
-            return jsonify({"error": "Invalid upload"}), 400
+            return jsonify({"error": "Invalid upload."}), 400
         else:
             data: list[dict] = loads(form_data)
 
+        if len(data) > 5:
+            return jsonify({"error": "Too many images uploaded in a request."}), 415
+
         for image in data:
-            header_length = len("data:image/png;base64,")
+            header_length = len("data:image/***;base64,")
             image_data = b64decode(image.get("src")[header_length:])
             decoded_image = Image.open(BytesIO(image_data))
             decoded_image = decoded_image.convert("RGB")
+
+            if max(decoded_image.size) > 5000:
+                return jsonify({"error": "Image too big, try downscaling before uploading."}), 415
 
             image_brightness = image.get("brightness")
             image_contrast = image.get("contrast")
@@ -61,6 +67,15 @@ def upload_images():
                 scale=image.get("scale"),
             )
 
+            if uploaded_image.width not in [360, 480, 720]:
+                return (
+                    jsonify({"error": "Export resolution not in allowed range.", "filename": uploaded_image.file_name}),
+                    415,
+                )
+
+            if uploaded_image.scale not in [1, 2, 4]:
+                return jsonify({"error": "Scale not in allowed range.", "filename": uploaded_image.file_name}), 415
+
             uploaded_images.push(uploaded_image)
         return jsonify({"upload": "Succesful"}), 201
     except Exception as e:
@@ -72,10 +87,10 @@ def get_images():
     return jsonify(uploaded_images.to_dict_list()), 200
 
 
-# @main.route("/delete", methods=["POST"])
-# def delete_uploaded_images():
-#     uploaded_images.clear()
-#     raise ReferenceError("Going back")
+@main.route("/delete", methods=["POST"])
+def delete_uploaded_images():
+    uploaded_images.clear()
+    return {}, 201
 
 
 @main.route("/images", methods=["GET"])
@@ -88,7 +103,6 @@ def dither_images():
 
         for image in uploaded_images.images:
             prepared_image = prepare_image(img=image.src, img_size=image.width)
-            print(len(prepared_image))
             # apply dithering algorithm
             if image.algorithm[0] == "o":
                 dithered_image = dither_bayer(
@@ -128,3 +142,8 @@ def dither_images():
         return jsonify(dithered_images), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@main.route("/teapot", methods=["GET"])
+def im_a_teapot():
+    return jsonify({"teapot": "Cannot brew coffee with a teapot."}), 418
