@@ -11,7 +11,7 @@ class UploadedImage:
         weights: list[list[float]],
         palette: list[str],
         width: int,
-        scale: float,
+        scale: int,
     ) -> None:
         self.image_id: str = image_id
         self.file_name: str = file_name
@@ -20,7 +20,7 @@ class UploadedImage:
         self.weights: list[list[float]] = weights
         self.palette: list[str] = palette
         self.width: int = width
-        self.scale: float = scale
+        self.scale: int = scale
 
     def to_dict(self):
         return {

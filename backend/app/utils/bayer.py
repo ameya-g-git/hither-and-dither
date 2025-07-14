@@ -1,6 +1,5 @@
 import numpy as np
 from PIL import Image
-from .euclidean_dist import euclidean_dist
 from .bayer_mixing_error import bayer_mixing_error
 from .bayer_mix_ratio import bayer_mix_ratio
 
@@ -18,11 +17,8 @@ def dither_bayer(img: np.ndarray, weight_matrix: list[list[float]], palette: lis
         Image: The dithered image.
     """
 
-    # TODO: just like   check over and test this algorithm to make sure it's working as expected
-    # TODO: maybe try the exact images and use the same palette
-    # also i want to try out the cool cluster halftonining matrices i saw a bit ago
-
-    # thank you my goat joel yliluoma
+    # okay you know what     this guy's a little strange with the islamophobia nonsense on his blog
+    # cool dithering algorithm but the guy's weird
     # adapted from https://bisqwit.iki.fi/story/howto/dither/jy/
 
     """
@@ -40,7 +36,7 @@ def dither_bayer(img: np.ndarray, weight_matrix: list[list[float]], palette: lis
     """
 
     img_height, img_width, _ = img.shape
-    weight_h, _ = weight_matrix.shape
+    weight_h, weight_w = weight_matrix.shape
 
     for ir in range(img_height):
         for ic in range(img_width):
@@ -62,7 +58,7 @@ def dither_bayer(img: np.ndarray, weight_matrix: list[list[float]], palette: lis
                         min_cost = cost
 
             mix_col1, mix_col2, mix_ratio = plan
-            threshold = weight_matrix[ir % weight_h, ic % weight_h]
+            threshold = weight_matrix[ir % weight_h, ic % weight_w]
 
             # "The mix ratio determines how much of color2 is needed,
             # and the Bayer matrix distributes that amount spatially."

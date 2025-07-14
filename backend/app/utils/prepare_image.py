@@ -12,7 +12,6 @@ def prepare_image(img: Image, img_size: int) -> np.ndarray:
         np.ndarray: The resized image as a NumPy array.
     """
     width, height = img.size
-    print(img.size)
 
     if width > height:
         img_width = img_size
