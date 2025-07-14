@@ -1,9 +1,8 @@
-import icons from "../assets/pixel_doodles/icons.svg";
-import shadow from "../assets/img/shadow.webp";
 import { ReactNode, useState } from "react";
 import { motion, Variants } from "motion/react";
 
-// TODO: fix the dark background when the windows scale up
+import icons from "../assets/pixel_doodles/icons.svg";
+import shadow from "../assets/img/shadow.webp";
 
 interface WindowImageProps {
 	x?: number;

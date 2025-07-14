@@ -9,7 +9,6 @@ import Slider from "./Slider";
 import WindowImage from "./WindowImage";
 import ColourChip from "./ColourChip";
 import Canvas from "./Canvas";
-
 import { UploadedImage, inputHandlerType } from "../hooks/useUploadedImages";
 import { isPaletteOption } from "../utils/isA";
 import { algOptions } from "../utils/alg_options";
@@ -23,7 +22,6 @@ interface ImageFormProps {
 
 export default function ImageForm({ img, onChange }: ImageFormProps) {
 	const [windowAbove, setWindowAbove] = useState(true);
-	const [tempColor, setTempColor] = useState<string>("");
 	const [paletteList, setPaletteList] = useState<string[]>(img.colours);
 	const [customPaletteName, setCustomPaletteName] = useState(false);
 
@@ -263,11 +261,9 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					variants={formChildVar}
 				/>
 				<div className="flex flex-row items-center w-full gap-4 mt-4 max-h-16">
-					<motion.label variants={formChildVar} htmlFor="">
-						Image Width
-					</motion.label>
+					<motion.label variants={formChildVar}>Image Width</motion.label>
 					<Dropdown
-						className="-mt-6"
+						className="z-50 -mt-6"
 						dropFor="width"
 						current={String(img.width)}
 						id={img.id}

@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { inputHandlerType } from "../hooks/useUploadedImages";
+import { useRef, useState } from "react";
 import { AnimatePresence, motion, Variants } from "motion/react";
+
+import { inputHandlerType } from "../hooks/useUploadedImages";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useKeyPress } from "../hooks/useKeyPress";
 

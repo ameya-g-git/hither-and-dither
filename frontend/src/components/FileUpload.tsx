@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
-import { uploadHandlerType } from "../hooks/useUploadedImages";
+import clsx from "clsx";
 import { AnimatePresence, motion, Variants } from "framer-motion";
+
+import { uploadHandlerType } from "../hooks/useUploadedImages";
 import upload from "../assets/pixel_doodles/upload.svg";
 import crash from "../assets/pixel_doodles/crash.svg";
-import { nanoid } from "nanoid";
-import clsx from "clsx";
 
 interface FileUploadType {
 	className?: string;
@@ -147,7 +147,6 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 				multiple
 				accept="image/*"
 				onChange={(e) => {
-					console.log(e);
 					if (e.target.files && e.target.files.length > 0) {
 						for (const file of e.target.files) {
 							if (file.size < 25e6) {

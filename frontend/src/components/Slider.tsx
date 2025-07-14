@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { motion, Variants } from "motion/react";
+
 import useMousePosition from "../hooks/useMousePosition";
 import { inputHandlerType } from "../hooks/useUploadedImages";
-import { motion, Variants } from "motion/react";
 
 interface SliderProps {
 	label: string;
