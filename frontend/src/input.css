@@ -28,6 +28,7 @@
 * {
 	padding: 0;
 	position: relative;
+	scrollbar-color: var(--medium) var(--dark);
 }
 
 body {
@@ -37,7 +38,8 @@ body {
 	overflow-x: hidden;
 }
 
-img {
+img,
+canvas {
 	user-select: none;
 	pointer-events: none;
 	image-rendering: pixelated;
@@ -103,13 +105,16 @@ form::before {
 	image-rendering: pixelated;
 }
 
-select,
 .select,
 label {
 	width: 100%;
 	font-weight: bold;
 	color: var(--medium);
 	overflow: visible;
+}
+
+small {
+	font-size: xx-small;
 }
 
 label:not([for="fileElem"]) {
@@ -119,9 +124,6 @@ label:not([for="fileElem"]) {
 
 button {
 	transition: all 0.1s ease-in-out;
-}
-
-button:not([id^="width"]) {
 	text-align: left;
 	padding-top: 0.25rem;
 	padding-left: 2rem;
@@ -131,7 +133,18 @@ button:hover {
 	filter: brightness(125%);
 }
 
-button:focus {
+input::file-selector-button,
+input::-webkit-file-upload-button {
+	display: none;
+}
+
+div.colour-chip {
+	transition: outline 0.1s ease-in-out;
+}
+
+input:focus,
+button:focus,
+div.colour-chip:has(input[type="color"]:focus) {
 	outline: 1px solid var(--glow);
 }
 
@@ -151,9 +164,7 @@ hr {
 	background: var(--medium) !important;
 }
 
-select,
 .select {
-	border-radius: 1rem;
 	background-color: var(--dark);
 }
 
@@ -181,12 +192,7 @@ select:focus {
 	bottom: 0;
 	right: 0;
 	background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-		linear-gradient(
-			90deg,
-			rgba(255, 0, 0, 0.06),
-			rgba(0, 255, 0, 0.02),
-			rgb a(0, 0, 255, 0.06)
-		);
+		linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgb a(0, 0, 255, 0.06));
 	z-index: 2;
 	background-size:
 		100% 4px,
