@@ -52,7 +52,6 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 				console.log("Uploaded images to server");
 			} else {
 				console.error("Error:", response.statusText, response.status);
-				// TODO: add error modal when it fails? with a little arrow to go back to editing
 			}
 
 			fetch("/api/images")
@@ -60,16 +59,17 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 				.then((data) => {
 					setDitheredImages(data);
 				})
-				.then(() => setLoading(false))
-				.catch((e) => console.error(e));
+				.then(() => setLoading(false));
 		} catch (error) {
 			console.error("Error:", error);
+			setLoading(false);
+			setDitheredImages([]);
 		}
 	}
 
 	return (
 		<div id="form" className="flex items-center justify-center w-full h-full pt-32 pb-24 ">
-			<form className="flex after:z-50 items-center justify-center h-full min-h-[80dvh] w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium bg-dark pixel-corners rounded-[4rem] rounded-tl-none before:h-3/5 before:w-[calc(100%-2.5rem)] before:-top-1 before:-left-2">
+			<form className="flex after:z-10 items-center justify-center h-full min-h-[80dvh] w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium bg-dark pixel-corners rounded-[4rem] rounded-tl-none before:h-3/5 before:w-[calc(100%-2.5rem)] before:-top-1 before:-left-2">
 				{showUpload && (
 					<FileUpload
 						className={imgState.length > 0 ? "h-[calc(100%-1rem)] bottom-0" : "h-full"}

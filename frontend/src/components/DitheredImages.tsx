@@ -1,12 +1,14 @@
 import saveAs from "file-saver";
-import { useEffect, useState } from "react";
-import { DitheredImage } from "./DitherForm";
 import JSZip from "jszip";
 import moment from "moment";
+import { AnimatePresence, motion, Variants } from "framer-motion";
+import { useEffect, useState } from "react";
+
+import { DitheredImage } from "./DitherForm";
 import { spinners, loadingMessages } from "../utils/loader";
 
 import download from "../assets/pixel_doodles/download.svg";
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import err from "../assets/pixel_doodles/crash.svg";
 
 interface DitheredImagesProps {
 	ditheredImages: DitheredImage[];
@@ -87,7 +89,6 @@ export default function DitheredImages({ ditheredImages, loading }: DitheredImag
 	};
 
 	// TODO: fix up interface for downloading images
-	// TODO: add subtle animations and stuff   hooray we're basically at the polishing up phase
 
 	return loading ? (
 		<div className="relative flex flex-col items-center justify-center w-full gap-4" id="loading">
@@ -115,6 +116,24 @@ export default function DitheredImages({ ditheredImages, loading }: DitheredImag
 				</motion.h3>
 			</AnimatePresence>
 		</div>
+	) : ditheredImages.length == 0 ? (
+		<div className="flex flex-col items-center justify-center w-4/5 h-3/5">
+			<img src={err} className="h-48" alt="" />
+			<h2 className="w-full text-center">error while processing images!</h2>
+			<span className="mt-2 leading-9 text-center text-medium">
+				try reuploading?
+				<br />
+				<a
+					className="underline focus:brightness-125 active:brightness-125"
+					target="_blank"
+					rel="noopener noreferrer"
+					href="mailto:ameya.gup@proton.me?subject=hither%20and%20dither%20bug!!"
+				>
+					reach out to me
+				</a>{" "}
+				if the error's bigger!
+			</span>
+		</div>
 	) : (
 		<div className="relative h-64 " id="dithered-images">
 			{ditherBlob && (
@@ -123,7 +142,7 @@ export default function DitheredImages({ ditheredImages, loading }: DitheredImag
 						{ditheredImages.map((dImg, i) => (
 							<img
 								key={i}
-								className="absolute z-[9999] object-cover w-24 h-24 transition-all ease-in-out border-2 cursor-pointer top-1/2 left-1/2 border-medium/50 rounded-xl shadow-medium"
+								className="absolute z-50 object-cover w-24 h-24 transition-all ease-in-out border-2 cursor-pointer top-1/2 left-1/2 border-medium/50 rounded-xl shadow-medium"
 								style={{
 									transform: `translateX(-50%) rotate(${
 										25 *
