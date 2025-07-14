@@ -33,7 +33,6 @@ import useWindowSize from "./hooks/useWindowSize";
 import useUploadedFiles from "./hooks/useUploadedImages";
 import DitherForm from "./components/DitherForm";
 
-// export const MousePosition = createContext<position>({ x: 0, y: 0 });
 export const ScreenSize = createContext({ screenWidth: 0, screenHeight: 0 });
 export const windowImageStyles = "object-fit w-full h-full aspect-auto overflow-hidden";
 
@@ -48,20 +47,7 @@ export default function App() {
 	// TODO: en generale just   add title attributes to  Interactive elements (input elements, dropdown, images, etc.)
 
 	const { screenWidth, screenHeight } = useWindowSize();
-	const [imgState, uploadHandler, formHandler] = useUploadedFiles([
-		// {
-		// 	id: "1",
-		// 	fileName: "1",
-		// 	src: "1",
-		// 	open: true,
-		// 	brightness: 100,
-		// 	contrast: 100,
-		// 	algorithm: "fs",
-		// 	palette: "bw",
-		// 	width: 48,
-		// 	scale: 2,
-		// },
-	]);
+	const [imgState, uploadHandler, formHandler] = useUploadedFiles([]);
 
 	const targetPositionFunctions = (s: number) => [
 		// list of functions to calculate target position of window
@@ -176,64 +162,64 @@ export default function App() {
 				</div>
 			</div>
 			<div className=" mt-24 overflow-visible z-[99]">
-				{/* <ParallaxLayer factor={0}> */}
-				<img
-					src={webb}
-					className="absolute h-80 -top-48 animate-float -left-8 [--delay:1000ms]"
-					alt=""
-				/>
-				<img
-					src={pearl}
-					className="absolute w-96 -top-56 animate-float -right-24 [--delay:500ms]"
-					alt=""
-				/>
-				<img
-					src={venus}
-					className="absolute w-96 -top-24 animate-float left-[60%] [--delay:1600ms]"
-					alt=""
-				/>
-				{/* </ParallaxLayer> */}
-				{/* <ParallaxLayer factor={0}> */}
-				<img
-					src={supper}
-					className="absolute h-56 -top-48 animate-float left-[45%] [--delay:1000ms]"
-					alt=""
-				/>
-				<img
-					src={creation}
-					className="absolute h-64 -top-56 animate-float left-32 [--delay:1500ms] "
-					alt=""
-				/>
-				<img
-					src={david}
-					className="absolute h-80 -top-48 animate-float left-3/4 [--delay:750ms]"
-					alt=""
-				/>
-				{/* </ParallaxLayer> */}
-				{/* <ParallaxLayer factor={0}> */}
-				<img
-					src={mona}
-					className="absolute w-72 -top-48 animate-float left-[20%] [--delay:1000ms]"
-					alt=""
-				/>
-				<img
-					src={moon}
-					className="absolute h-60 -top-24 animate-float left-1/2 [--delay:1000ms]"
-					alt=""
-				/>
-				{/* </ParallaxLayer> */}
-				{/* <ParallaxLayer factor={0}> */}
-				<img
-					src={flowers}
-					className="absolute h-80 -top-48 animate-float left-[30%] [--delay:750ms]"
-					alt=""
-				/>
-				<img
-					src={waves}
-					className="absolute h-56 -top-16 animate-float left-[35%] [--delay:500ms]"
-					alt=""
-				/>
-				{/* </ParallaxLayer> */}
+				<ParallaxLayer factor={0}>
+					<img
+						src={webb}
+						className="absolute h-80 -top-48 animate-float -left-8 [--delay:1000ms]"
+						alt=""
+					/>
+					<img
+						src={pearl}
+						className="absolute w-96 -top-56 animate-float -right-24 [--delay:500ms]"
+						alt=""
+					/>
+					<img
+						src={venus}
+						className="absolute w-96 -top-24 animate-float left-[60%] [--delay:1600ms]"
+						alt=""
+					/>
+				</ParallaxLayer>
+				<ParallaxLayer factor={0}>
+					<img
+						src={supper}
+						className="absolute h-56 -top-48 animate-float left-[45%] [--delay:1000ms]"
+						alt=""
+					/>
+					<img
+						src={creation}
+						className="absolute h-64 -top-56 animate-float left-32 [--delay:1500ms] "
+						alt=""
+					/>
+					<img
+						src={david}
+						className="absolute h-80 -top-48 animate-float left-3/4 [--delay:750ms]"
+						alt=""
+					/>
+				</ParallaxLayer>
+				<ParallaxLayer factor={0}>
+					<img
+						src={mona}
+						className="absolute w-72 -top-48 animate-float left-[20%] [--delay:1000ms]"
+						alt=""
+					/>
+					<img
+						src={moon}
+						className="absolute h-60 -top-24 animate-float left-1/2 [--delay:1000ms]"
+						alt=""
+					/>
+				</ParallaxLayer>
+				<ParallaxLayer factor={0}>
+					<img
+						src={flowers}
+						className="absolute h-80 -top-48 animate-float left-[30%] [--delay:750ms]"
+						alt=""
+					/>
+					<img
+						src={waves}
+						className="absolute h-56 -top-16 animate-float left-[35%] [--delay:500ms]"
+						alt=""
+					/>
+				</ParallaxLayer>
 			</div>
 			<div className="box-border w-screen h-screen overflow-hidden bg-medium">
 				<div className="flex flex-row *:-mr-4 z-50">{cloudElements(7)}</div>
@@ -300,7 +286,10 @@ export default function App() {
 					</span>
 				</div>
 			</div>
-			<div className="flex flex-row z-50 w-full h-32 *:-ml-4 overflow-x-hidden">
+			<div
+				tabIndex={-1}
+				className=" pointer-events-none focus flex flex-row z-50 w-full h-32 *:-ml-4 overflow-x-hidden"
+			>
 				{Array(13)
 					.fill("")
 					.map((_, i) => (
