@@ -25,7 +25,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	const [paletteList, setPaletteList] = useState<string[]>(img.colours);
 	const [customPaletteName, setCustomPaletteName] = useState(false);
 
-	const customInd = 2;
+	const CUSTOM_IND = 2;
 
 	const windowStyles = (num: number, above: boolean) =>
 		clsx({
@@ -35,6 +35,18 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			"z-[999]": above,
 			"z-0": !above,
 		});
+
+	const chipContainerStyles = clsx({
+		"h-fit mb-2 -mt-4 w-fit": true,
+		"flex gap-2": paletteList.length < 4,
+		"grid grid-rows-2 grid-flow-col grid gap-1.5": paletteList.length >= 4,
+	});
+
+	const addButtonStyles = clsx({
+		"flex items-center justify-center p-0 rounded-full bg-dark": true,
+		"w-10 h-10 pt-5 pl-0.5": paletteList.length < 4,
+		"w-6 h-6 text-2xl pt-3.5 pl-1": paletteList.length >= 4,
+	});
 
 	function draw(
 		canvas: HTMLCanvasElement,
@@ -73,7 +85,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	const [paletteOptions, setPaletteOptions] = useState<OptionGroup[]>(defaultPalette);
 
 	function deletePalette(id: string) {
-		let newCustomOptions: Option[] = [...paletteOptions[customInd].options];
+		let newCustomOptions: Option[] = [...paletteOptions[CUSTOM_IND].options];
 
 		const deleteIndex = newCustomOptions.findIndex((op) => op.id === id);
 		newCustomOptions.splice(deleteIndex, 1);
@@ -82,8 +94,8 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 		setPaletteOptions((prev) => {
 			const updated = [...prev];
 
-			updated[customInd] = {
-				...updated[customInd],
+			updated[CUSTOM_IND] = {
+				...updated[CUSTOM_IND],
 				options: newCustomOptions,
 			};
 
@@ -118,9 +130,9 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			setPaletteOptions((prev) => {
 				const updated = [...prev];
 
-				updated[customInd] = {
-					...updated[customInd],
-					options: [...updated[customInd].options, newPaletteOp],
+				updated[CUSTOM_IND] = {
+					...updated[CUSTOM_IND],
+					options: [...updated[CUSTOM_IND].options, newPaletteOp],
 				};
 
 				return updated;
@@ -183,14 +195,15 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					variants={formChildVar}
 				/>
 
-				<motion.div
-					variants={formChildVar}
-					className="flex flex-wrap gap-2 mb-2 -mt-4 *:rounded-full *:border-medium *:border-4"
-				>
+				<motion.div variants={formChildVar} className={chipContainerStyles}>
 					{paletteList.map((col, i) => {
 						return (
+							// <div className="relative flex items-center justify-center overflow-hidden border-4 rounded-full w-fit h-fit border-medium colour-chip">
+							// 	<div className="w-6 h-6 bg-red-600"></div>
+							// </div>
 							<ColourChip
 								col={col}
+								small={paletteList.length >= 4}
 								onChange={(e) => {
 									let newPaletteList = [...paletteList];
 									newPaletteList[i] = e.target.value;
@@ -211,9 +224,9 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 							/>
 						);
 					})}
-					<div className="flex items-center p-1 text-4xl *:cursor-pointer">
+					<div className="flex w-fit h-fit border-medium border-4 rounded-full items-center p-1 text-4xl *:cursor-pointer">
 						<button
-							className="flex items-center justify-center w-12 h-12 rounded-full [&&]:p-0 bg-dark hover:brightness-125"
+							className={addButtonStyles}
 							onClick={(e) => {
 								e.preventDefault();
 								setCustomPaletteName(true);
@@ -223,20 +236,18 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 								onChange(img.id, "colours", newPaletteList);
 							}}
 						>
-							<span className="[&&]:text-4xl italic w-full text-center h-fit pl-1 pt-5 text-medium">
-								+
-							</span>
+							<span className="w-full text-center h-fit text-medium">+</span>
 						</button>
 					</div>
-					{customPaletteName && (
-						<input
-							onBlur={saveLocalPalette}
-							type="text"
-							placeholder="name your palette!"
-							className="h-16 px-4 border-4 w-72 bg-dark"
-						/>
-					)}
 				</motion.div>
+				{customPaletteName && (
+					<input
+						onBlur={saveLocalPalette}
+						type="text"
+						placeholder="name your palette!"
+						className="h-16 px-4 border-4 rounded-full border-medium w-72 bg-dark"
+					/>
+				)}
 				<motion.label variants={formChildVar} className="text-lg">
 					Image Adjustments
 				</motion.label>
