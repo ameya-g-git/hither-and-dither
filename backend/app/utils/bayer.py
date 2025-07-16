@@ -21,20 +21,6 @@ def dither_bayer(img: np.ndarray, weight_matrix: list[list[float]], palette: lis
     # cool dithering algorithm but the guy's weird
     # adapted from https://bisqwit.iki.fi/story/howto/dither/jy/
 
-    """
-    okay so    reading this article
-    a "planning" procedure is needed. it should determine what combination of colours results in the least visual error
-    
-    okay i think i finally get it
-    we operate under the assumption that ordered dithering mixes two colours together based on some factor (this is thresh_old_val basically)
-    
-    using this assumption, we develop an algorithm that determines the best 
-    two colours to mix together (to best approximate a pixel's colour), and the ratio by which to mix them together
-    
-    we then use the bayer matrix and compare the pixel's bayer threshold with the mixing ratio we calculated before.
-    if the ratio exceeds the threshold, set the current pixel to the second colour. otherwise, set it to the first colour
-    """
-
     img_height, img_width, _ = img.shape
     weight_h, weight_w = weight_matrix.shape
 
