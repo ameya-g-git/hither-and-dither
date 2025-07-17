@@ -77,7 +77,6 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 		);
 	}
 
-	// TODO: please improve the loading animation LMAO (maybe save a list of messages and have them scroll down? also improve spacing on multi-line spinners)
 	// TODO: add the freaking zip file animation Lol
 	// TODO; also just general   change of Interface animations (close windows, hide input elements, etc.)
 	// TODO: add the bayer 8x8 and special bayer matrices
@@ -162,6 +161,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 				variants={formVar}
 				initial="start"
 				animate="end"
+				// exit="exit"
 				transition={{ staggerChildren: 1 }}
 				className="flex flex-col gap-4 grow"
 			>
@@ -185,7 +185,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					id={img.id}
 					options={paletteOptions}
 					onChange={(id, key, [opId, opVal]) => {
-						setCustomPaletteName(false); // hide custom palette name on palette change
+						setCustomPaletteName(false);
 						setPaletteList(opVal);
 						onChange(id, key, opId);
 						onChange(id, "colours", opVal);
@@ -198,9 +198,6 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					<motion.div variants={formChildVar} className={chipContainerStyles}>
 						{paletteList.map((col, i) => {
 							return (
-								// <div className="relative flex items-center justify-center overflow-hidden border-4 rounded-full w-fit h-fit border-medium colour-chip">
-								// 	<div className="w-6 h-6 bg-red-600"></div>
-								// </div>
 								<ColourChip
 									col={col}
 									small={paletteList.length > 4}

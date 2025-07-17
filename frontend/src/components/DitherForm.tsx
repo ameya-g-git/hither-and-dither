@@ -9,6 +9,7 @@ import ImageForm from "./ImageForm";
 import arrow from "../assets/pixel_doodles/arrow.svg";
 import ditherIt from "../assets/pixel_doodles/ditherit.svg";
 import addImg from "../assets/pixel_doodles/addimage.svg";
+import { AnimatePresence } from "motion/react";
 
 interface DitherFormProps {
 	imgState: UploadedImage[];
@@ -67,6 +68,9 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 		}
 	}
 
+	// TODO: use custom named variant setting specifically for when the dither button is pressed
+	// this is when i want to play the exit animations, the animations between different "tabs" is already good for me
+
 	return (
 		<div id="form" className="flex items-center justify-center w-full h-full pt-32 pb-24 ">
 			<form className="flex after:z-10 items-center justify-center h-full min-h-[80dvh] w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium bg-dark pixel-corners rounded-[4rem] rounded-tl-none before:h-3/5 before:w-[calc(100%-2.5rem)] before:-top-1 before:-left-2">
@@ -105,6 +109,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 							})}
 						</div>
 						<div className="w-full h-full">
+							{/* <AnimatePresence> */}
 							{!showUpload && currImageIndex >= 0 && currImageIndex < imgState.length && (
 								<ImageForm
 									key={imgState[currImageIndex].id}
@@ -112,6 +117,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 									onChange={onChange}
 								/>
 							)}
+							{/* </AnimatePresence> */}
 						</div>
 					</div>
 				) : (
