@@ -997,6 +997,10 @@ video {
   max-height: 24rem;
 }
 
+.max-h-24 {
+  max-height: 6rem;
+}
+
 .min-h-16 {
   min-height: 4rem;
 }
@@ -1104,6 +1108,10 @@ video {
 
 .w-4 {
   width: 1rem;
+}
+
+.w-64 {
+  width: 16rem;
 }
 
 .min-w-24 {
@@ -1742,6 +1750,10 @@ video {
   transition-property: opacity;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+.transition-none {
+  transition-property: none;
 }
 
 .duration-500 {

@@ -19,14 +19,8 @@ export default function ColourChip({ col, onChange, onDelete, onBlur, small }: C
 		"w-6 h-6": small,
 	});
 
-	const delButtonVar: Variants = {
-		start: { opacity: 0, left: "12px" },
-		end: { opacity: 1, left: "-12px" },
-		exit: { opacity: 0, left: "12px" },
-	};
-
 	return (
-		<div className="colour-chip border-medium border-4 h-fit w-fit rounded-full relative items-center *:cursor-pointer p-1">
+		<div className="colour-chip border-medium border-4 h-fit w-fit rounded-full relative *:cursor-pointer p-1">
 			<div className={chipStyles} style={{ backgroundColor: col }}>
 				{" "}
 			</div>
@@ -44,6 +38,7 @@ export default function ColourChip({ col, onChange, onDelete, onBlur, small }: C
 				<button
 					title={`Delete ${col}`}
 					onMouseOver={() => setIsHovered(true)}
+					onMouseLeave={() => setIsHovered(false)}
 					onBlur={() => setIsHovered(false)}
 					className="absolute flex items-center justify-center text-medium w-8 h-6 border-[3px] text-xs border-medium rounded-full -top-2 -left-3 bg-dark [&&]:p-0"
 					onClick={(e) => {
