@@ -45,7 +45,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	const addButtonStyles = clsx({
 		"flex items-center justify-center p-0 rounded-full bg-dark": true,
 		"w-10 h-10 pt-5 pl-0.5": paletteList.length < 4,
-		"w-6 h-6 text-2xl pt-3.5 pl-1": paletteList.length >= 4,
+		"w-6 h-6 text-2xl pt-3.5 pl-0.5": paletteList.length >= 4,
 	});
 
 	function draw(
