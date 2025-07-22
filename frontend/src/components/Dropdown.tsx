@@ -25,6 +25,7 @@ interface DropdownProps {
 	onChange: inputHandlerType; // form state change handler function
 	onDelete?: (id: string) => void;
 	className?: string;
+	disabled?: boolean;
 	showLabel?: boolean;
 	variants?: Variants;
 }
@@ -88,6 +89,7 @@ export default function Dropdown({
 	onChange,
 	onDelete,
 	className,
+	disabled = false,
 	showLabel = false,
 	variants = {},
 }: DropdownProps) {
@@ -120,7 +122,7 @@ export default function Dropdown({
 
 	return (
 		<motion.div
-			layoutId={`dropdown-${dropFor}${id}`}
+			// layoutId={`dropdown-${dropFor}${id}`}
 			variants={variants}
 			transition={{ ease: "easeOut" }}
 			className={`min-h-32 min-w-48 ${className ? className : ""}`}
@@ -130,8 +132,8 @@ export default function Dropdown({
 			)}
 			<motion.div
 				ref={dropdownRef}
-				layout
-				layoutId={`options-${dropFor}${id}`}
+				// layout
+				// layoutId={`options-${dropFor}${id}`}
 				style={{
 					height: showDropdownList
 						? `${Math.min(16, options.map((x) => x.options.length).reduce((x, y) => x + y, 0) * 4)}rem`
@@ -142,9 +144,10 @@ export default function Dropdown({
 					showDropdownList ? "overflow-y-auto pr-0.5" : ""
 				} absolute overflow-x-hidden top-10 transition-all bg-dark mb-8 flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
 			>
-				<motion.div className="sticky top-0 z-50 max-h-16 bg-dark">
+				<motion.div className="sticky top-0 max-h-16 bg-dark">
 					<button
 						className={`flex flex-row items-center w-full h-16 gap-4 rounded-xl select`}
+						disabled={disabled}
 						onClick={(e) => {
 							toggleDropdown(e as unknown as Event);
 						}}
@@ -169,7 +172,7 @@ export default function Dropdown({
 						animate="end"
 						exit="exit"
 						transition={{ delayChildren: 0.1, staggerChildren: 0.2 }}
-						className="flex flex-col gap-4 px-4 bg-dark"
+						className="flex flex-col gap-4 px-4 pb-4 bg-dark"
 					>
 						{options.map((group, i) => (
 							<motion.div variants={opt} key={i} className="w-full min-h-16">

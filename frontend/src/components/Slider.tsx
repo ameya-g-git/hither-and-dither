@@ -13,6 +13,7 @@ interface SliderProps {
 	max: number;
 	step: number;
 	onChange: inputHandlerType;
+	disabled?: boolean;
 	variants: Variants;
 }
 
@@ -24,6 +25,7 @@ export default function Slider({
 	max,
 	step = 15,
 	onChange,
+	disabled = false,
 	variants,
 }: SliderProps) {
 	const labelStyles = (dark: boolean) =>
@@ -45,17 +47,25 @@ export default function Slider({
 			const sliderRect = sliderRef.current.getBoundingClientRect();
 			const sliderX = sliderRect.x;
 			const sliderWidth = sliderRect.width;
-			const value = ((mousePosition.x - sliderX) / sliderWidth) * max;
-			setSliderVal(value > 0.99 * max ? max : value);
-			onChange(id, label.toLowerCase(), value);
+			let newVal = ((mousePosition.x - sliderX) / sliderWidth) * max;
+
+			if (newVal < min + (max - min) * 0.01) {
+				newVal = min;
+			} else if (newVal > 0.99 * max) {
+				newVal = max;
+			}
+
+			setSliderVal(newVal);
+			onChange(id, label.toLowerCase(), newVal);
 		}
 	}, [mouseDown, mousePosition]);
 
 	return (
-		<motion.div variants={variants}>
+		<motion.div className="" variants={variants}>
 			<div className="overflow-hidden">
 				<input
 					className="absolute z-[99] right-0 w-full"
+					disabled={disabled}
 					type="range"
 					name={label.toLowerCase()}
 					min={min}
@@ -63,7 +73,7 @@ export default function Slider({
 					value={sliderVal}
 					step={step}
 					onChange={(e) => {
-						setSliderVal(Number(e.target.value));
+						setSliderVal(Math.max(Number(e.target.value)));
 						onChange(id, label.toLowerCase(), e.target.value);
 					}}
 				/>
@@ -82,12 +92,12 @@ export default function Slider({
 				<label className={labelStyles(false)} htmlFor={label.toLowerCase()}>
 					{label}
 				</label>
-				<div className="w-full h-[3.5rem]">
+				<div className="w-full rounded-lg overflow-hidden h-[3.5rem]">
 					<div
 						style={{
 							width: `${(sliderVal / max) * 100}%`,
 						}}
-						className="flex items-center h-full overflow-hidden rounded-lg text-dark bg-medium"
+						className="flex items-center h-full overflow-hidden text-dark bg-medium"
 					>
 						<label className={labelStyles(true)}>{label}</label>
 					</div>

@@ -7,9 +7,10 @@ interface ResButtonProps {
 	id: string;
 	onClick: inputHandlerType;
 	variants: Variants;
+	disabled: boolean;
 }
 
-export default function ResButton({ id, onClick, variants }: ResButtonProps) {
+export default function ResButton({ id, onClick, variants, disabled }: ResButtonProps) {
 	const [counter, setCounter] = useState(0);
 	const resolution = [1, 2, 4];
 
@@ -31,10 +32,11 @@ export default function ResButton({ id, onClick, variants }: ResButtonProps) {
 		});
 	}
 	return (
-		<motion.div layoutId={`res-${id}`} key={`res-${id}`} variants={variants}>
+		<motion.div key={`res-${id}`} variants={variants}>
 			<button
 				onClick={(e: SyntheticEvent) => incrementCounter(e)}
 				className={buttonStyles}
+				disabled={disabled}
 				style={
 					{
 						// scale: 1 + resolution[counter] / 20,
