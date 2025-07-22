@@ -28,13 +28,12 @@ export default function WindowImage({
 	const windowVar: Variants = {
 		start: { height: "10%" },
 		end: { height: height },
+		exit: { height: "10%", opacity: 0 },
 	};
 
 	return (
 		<motion.div
 			variants={windowVar}
-			initial={loaded ? "end" : "start"}
-			animate="end"
 			transition={{
 				delay: 0.5,
 				ease: "easeInOut",

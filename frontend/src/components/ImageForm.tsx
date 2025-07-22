@@ -171,161 +171,163 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 					if (exit && def === "exit") onExit();
 				}}
 				// transition={{ staggerChildren: 1 }}
-				className="flex flex-col gap-4 grow"
+				className="flex flex-row w-full"
 			>
-				<Dropdown
-					className="z-40"
-					current={img.algorithm}
-					dropFor="algorithm"
-					id={img.id}
-					options={algOptions}
-					onChange={(id, _, [opId, opVal]) => {
-						onChange(id, "algorithm", opId);
-						onChange(id, "weights", opVal);
-					}}
-					disabled={formDisabled}
-					showLabel
-					variants={formChildVar}
-				/>
-				<Dropdown
-					className="z-30"
-					current={img.palette}
-					dropFor="palette"
-					id={img.id}
-					options={paletteOptions}
-					onChange={(id, key, [opId, opVal]) => {
-						setCustomPaletteName(false);
-						setPaletteList(opVal);
-						onChange(id, key, opId);
-						onChange(id, "colours", opVal);
-					}}
-					onDelete={deletePalette}
-					disabled={formDisabled}
-					showLabel
-					variants={formChildVar}
-				/>
-				<div className="inline-flex items-center gap-2 mb-2 -mt-4 h-fit">
-					<motion.div variants={formChildVar} className={chipContainerStyles}>
-						{paletteList.map((col, i) => {
-							return (
-								<ColourChip
-									col={col}
-									small={paletteList.length > 4}
-									disabled={formDisabled}
-									onChange={(e) => {
-										let newPaletteList = [...paletteList];
-										newPaletteList[i] = e.target.value;
-										setPaletteList(newPaletteList);
-									}}
-									onDelete={() => {
-										setCustomPaletteName(true);
-
-										let newPaletteList = [...paletteList];
-										newPaletteList.splice(i, 1);
-
-										setPaletteList(newPaletteList);
-									}}
-									onBlur={() => {
-										setCustomPaletteName(true);
-										onChange(img.id, "colours", paletteList);
-									}}
-								/>
-							);
-						})}
-						{paletteList.length < 12 && (
-							<div className="flex w-fit h-fit border-medium border-4 rounded-full items-center p-1 text-4xl *:cursor-pointer">
-								<button
-									disabled={formDisabled}
-									className={addButtonStyles}
-									onClick={(e) => {
-										e.preventDefault();
-										setCustomPaletteName(true);
-
-										const newPaletteList = [...paletteList, "#ffffff"];
-										setPaletteList(newPaletteList);
-										onChange(img.id, "colours", newPaletteList);
-									}}
-								>
-									<span className="w-full text-center h-fit text-medium">+</span>
-								</button>
-							</div>
-						)}
-					</motion.div>
-
-					{customPaletteName && (
-						<input
-							onBlur={saveLocalPalette}
-							disabled={formDisabled}
-							type="text"
-							placeholder="name your palette!"
-							className="w-64 h-full px-4 text-sm border-4 rounded-full border-medium bg-dark"
-						/>
-					)}
-				</div>
-
-				<motion.label variants={formChildVar} className="text-lg">
-					Image Adjustments
-				</motion.label>
-				<Slider
-					label="Brightness"
-					id={img.id}
-					value={img.brightness}
-					min={5}
-					max={200}
-					step={5}
-					disabled={formDisabled}
-					onChange={onChange}
-					variants={formChildVar}
-				/>
-				<Slider
-					label="Contrast"
-					id={img.id}
-					value={img.contrast}
-					min={10}
-					max={400}
-					step={10}
-					disabled={formDisabled}
-					onChange={onChange}
-					variants={formChildVar}
-				/>
-				<div className="flex flex-row items-center w-full gap-4 mt-4 max-h-16">
-					<motion.label variants={formChildVar}>Export Settings</motion.label>
+				<div className="flex flex-col w-1/2 gap-4 grow">
 					<Dropdown
-						className="z-40 -mt-6"
-						dropFor="width"
-						current={String(img.width)}
+						className="z-40"
+						current={img.algorithm}
+						dropFor="algorithm"
 						id={img.id}
-						options={widthOptions}
+						options={algOptions}
+						onChange={(id, _, [opId, opVal]) => {
+							onChange(id, "algorithm", opId);
+							onChange(id, "weights", opVal);
+						}}
 						disabled={formDisabled}
-						onChange={(id, key, [_, opVal]) => onChange(id, key, opVal)}
+						showLabel
 						variants={formChildVar}
 					/>
-					<ResButton
-						disabled={formDisabled}
+					<Dropdown
+						className="z-30"
+						current={img.palette}
+						dropFor="palette"
 						id={img.id}
-						onClick={onChange}
+						options={paletteOptions}
+						onChange={(id, key, [opId, opVal]) => {
+							setCustomPaletteName(false);
+							setPaletteList(opVal);
+							onChange(id, key, opId);
+							onChange(id, "colours", opVal);
+						}}
+						onDelete={deletePalette}
+						disabled={formDisabled}
+						showLabel
 						variants={formChildVar}
 					/>
+					<div className="inline-flex items-center gap-2 mb-2 -mt-4 h-fit">
+						<motion.div variants={formChildVar} className={chipContainerStyles}>
+							{paletteList.map((col, i) => {
+								return (
+									<ColourChip
+										col={col}
+										small={paletteList.length > 4}
+										disabled={formDisabled}
+										onChange={(e) => {
+											let newPaletteList = [...paletteList];
+											newPaletteList[i] = e.target.value;
+											setPaletteList(newPaletteList);
+										}}
+										onDelete={() => {
+											setCustomPaletteName(true);
+
+											let newPaletteList = [...paletteList];
+											newPaletteList.splice(i, 1);
+
+											setPaletteList(newPaletteList);
+										}}
+										onBlur={() => {
+											setCustomPaletteName(true);
+											onChange(img.id, "colours", paletteList);
+										}}
+									/>
+								);
+							})}
+							{paletteList.length < 12 && (
+								<div className="flex w-fit h-fit border-medium border-4 rounded-full items-center p-1 text-4xl *:cursor-pointer">
+									<button
+										disabled={formDisabled}
+										className={addButtonStyles}
+										onClick={(e) => {
+											e.preventDefault();
+											setCustomPaletteName(true);
+
+											const newPaletteList = [...paletteList, "#ffffff"];
+											setPaletteList(newPaletteList);
+											onChange(img.id, "colours", newPaletteList);
+										}}
+									>
+										<span className="w-full text-center h-fit text-medium">+</span>
+									</button>
+								</div>
+							)}
+						</motion.div>
+
+						{customPaletteName && (
+							<input
+								onBlur={saveLocalPalette}
+								disabled={formDisabled}
+								type="text"
+								placeholder="name your palette!"
+								className="w-64 h-full px-4 text-sm border-4 rounded-full border-medium bg-dark"
+							/>
+						)}
+					</div>
+
+					<motion.label variants={formChildVar} className="text-lg">
+						Image Adjustments
+					</motion.label>
+					<Slider
+						label="Brightness"
+						id={img.id}
+						value={img.brightness}
+						min={5}
+						max={200}
+						step={5}
+						disabled={formDisabled}
+						onChange={onChange}
+						variants={formChildVar}
+					/>
+					<Slider
+						label="Contrast"
+						id={img.id}
+						value={img.contrast}
+						min={10}
+						max={400}
+						step={10}
+						disabled={formDisabled}
+						onChange={onChange}
+						variants={formChildVar}
+					/>
+					<div className="flex flex-row items-center w-full gap-4 mt-4 max-h-16">
+						<motion.label variants={formChildVar}>Export Settings</motion.label>
+						<Dropdown
+							className="z-40 -mt-6"
+							dropFor="width"
+							current={String(img.width)}
+							id={img.id}
+							options={widthOptions}
+							disabled={formDisabled}
+							onChange={(id, key, [_, opVal]) => onChange(id, key, opVal)}
+							variants={formChildVar}
+						/>
+						<ResButton
+							disabled={formDisabled}
+							id={img.id}
+							onClick={onChange}
+							variants={formChildVar}
+						/>
+					</div>
+				</div>
+				<div className="w-1/2 p-8">
+					<WindowImage
+						onClick={() => setWindowAbove(false)}
+						className={windowStyles(1, !windowAbove)}
+						title={img.fileName}
+						height="66%"
+					>
+						<img src={img.src} className="object-contain w-full h-full aspect-auto" alt="" />
+					</WindowImage>
+					<WindowImage
+						onClick={() => setWindowAbove(true)}
+						className={windowStyles(2, windowAbove)}
+						title={`${img.fileName.slice(0, -4)}_dithered_${img.algorithm}.png`}
+						height="66%"
+					>
+						<Canvas className="w-full h-full" img={img} draw={draw} />
+					</WindowImage>
 				</div>
 			</motion.div>
-			<div className="w-1/2 p-8">
-				<WindowImage
-					onClick={() => setWindowAbove(false)}
-					className={windowStyles(1, !windowAbove)}
-					title={img.fileName}
-					height="66%"
-				>
-					<img src={img.src} className="object-contain w-full h-full aspect-auto" alt="" />
-				</WindowImage>
-				<WindowImage
-					onClick={() => setWindowAbove(true)}
-					className={windowStyles(2, windowAbove)}
-					title={`${img.fileName.slice(0, -4)}_dithered_${img.algorithm}.png`}
-					height="66%"
-				>
-					<Canvas className="w-full h-full" img={img} draw={draw} />
-				</WindowImage>
-			</div>
 		</div>
 	);
 }
