@@ -109,7 +109,7 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 
 	return (
 		<div
-			className={`${className} absolute flex items-center justify-center w-full z-10`}
+			className={`${className} absolute flex items-center justify-center w-full z-50`}
 			id="modal"
 			onDragEnter={(e) => dragOverHandler(e as unknown as DragEvent)}
 			onDragOver={(e) => dragOverHandler(e as unknown as DragEvent)}

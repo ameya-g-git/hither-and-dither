@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { UploadedImage, inputHandlerType, uploadHandlerType } from "../hooks/useUploadedImages";
 import FileUpload from "./FileUpload";
@@ -29,6 +29,9 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 	const [ditheredImages, setDitheredImages] = useState<DitheredImage[]>([]);
 	const [currImageIndex, setCurrImageIndex] = useState(0);
 
+	const [tabHover, setTabHover] = useState(false);
+	const [tabFocus, setTabFocus] = useState(false);
+
 	const buttonStyles = (open: boolean) =>
 		clsx({
 			"h-full -mr-9 text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark":
@@ -43,8 +46,8 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 		formData.append("images", JSON.stringify(imgState));
 
 		try {
+			setCurrImageIndex(-1);
 			setShowUpload(false);
-			setShowForm(false);
 			setLoading(true);
 
 			const response = await fetch("/api", { method: "POST", body: formData });
@@ -59,14 +62,23 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 				.then<DitheredImage[]>((res) => res.json())
 				.then((data) => {
 					setDitheredImages(data);
-				})
-				.then(() => setLoading(false));
+					setLoading(false);
+					setCurrImageIndex(0);
+				});
 		} catch (error) {
 			console.error("Error:", error);
 			setLoading(false);
 			setDitheredImages([]);
 		}
 	}
+
+	useEffect(() => {
+		setTabHover(true);
+		setTabFocus(true);
+	}, [imgState]);
+
+	console.log(imgState.length, showForm);
+	console.log(!tabHover && !tabFocus);
 
 	// TODO: use custom named variant setting specifically for when the dither button is pressed
 	// this is when i want to play the exit animations, the animations between different "tabs" is already good for me
@@ -94,6 +106,11 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 										style={{
 											zIndex: i == currImageIndex ? imgState.length : imgState.length - i,
 										}}
+										onMouseOver={() => setTabHover(true)}
+										onMouseLeave={() => setTabHover(false)}
+										onFocus={() => setTabFocus(true)}
+										onBlur={() => setTabFocus(false)}
+										autoFocus
 										title={img.fileName}
 										className={buttonStyles(i == currImageIndex && !showUpload)}
 										onClick={(e) => {
@@ -109,15 +126,20 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 							})}
 						</div>
 						<div className="w-full h-full">
-							{/* <AnimatePresence> */}
-							{!showUpload && currImageIndex >= 0 && currImageIndex < imgState.length && (
-								<ImageForm
-									key={imgState[currImageIndex].id}
-									img={imgState[currImageIndex]}
-									onChange={onChange}
-								/>
-							)}
-							{/* </AnimatePresence> */}
+							<AnimatePresence mode="wait">
+								{currImageIndex >= 0 && currImageIndex < imgState.length && (
+									<ImageForm
+										key={imgState[currImageIndex].id}
+										img={imgState[currImageIndex]}
+										formDisabled={showUpload}
+										onChange={onChange}
+										exit={!tabHover && !tabFocus && !showUpload}
+										onExit={() => {
+											setShowForm(false);
+										}}
+									/>
+								)}
+							</AnimatePresence>
 						</div>
 					</div>
 				) : (
@@ -145,6 +167,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 							className="flex hover:brightness-125 items-center justify-center w-24 h-24 p-4 text-sm font-bold border-[6px] bg-dark border-medium"
 							onClick={(e) => {
 								e.preventDefault();
+								if (showUpload) setShowForm(false);
 								submitImages();
 							}}
 							title="DITHER IT!!!"

@@ -18,9 +18,12 @@ import { widthOptions } from "../utils/width_options";
 interface ImageFormProps {
 	img: UploadedImage;
 	onChange: inputHandlerType;
+	exit: boolean;
+	onExit: () => void;
+	formDisabled: boolean;
 }
 
-export default function ImageForm({ img, onChange }: ImageFormProps) {
+export default function ImageForm({ img, onChange, exit, onExit, formDisabled }: ImageFormProps) {
 	const [windowAbove, setWindowAbove] = useState(true);
 	const [paletteList, setPaletteList] = useState<string[]>(img.colours);
 	const [customPaletteName, setCustomPaletteName] = useState(false);
@@ -32,7 +35,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 			"w-2/3 h-2/3 transition-opacity": true,
 			"top-8 left-8": num == 1,
 			"bottom-8 right-8": num == 2,
-			"z-[999]": above,
+			"z-[1]": above,
 			"z-0": !above,
 		});
 
@@ -103,6 +106,8 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	}
 
 	function saveLocalPalette(e: React.FocusEvent<HTMLInputElement>) {
+		// TODO: add little save animation to indicate to user their palette has been saved
+
 		if (!e.target.value) return;
 
 		const existingPalette = localStorage.getItem(img.palette);
@@ -156,17 +161,20 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 	};
 
 	return (
-		<div className="flex flex-col w-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
+		<div className="flex flex-col w-full p-12  pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
 			<motion.div
 				variants={formVar}
 				initial="start"
 				animate="end"
-				// exit="exit"
-				transition={{ staggerChildren: 1 }}
+				exit={exit ? "exit" : ""}
+				onAnimationComplete={(def) => {
+					if (exit && def === "exit") onExit();
+				}}
+				// transition={{ staggerChildren: 1 }}
 				className="flex flex-col gap-4 grow"
 			>
 				<Dropdown
-					className="z-50"
+					className="z-40"
 					current={img.algorithm}
 					dropFor="algorithm"
 					id={img.id}
@@ -175,11 +183,12 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 						onChange(id, "algorithm", opId);
 						onChange(id, "weights", opVal);
 					}}
+					disabled={formDisabled}
 					showLabel
 					variants={formChildVar}
 				/>
 				<Dropdown
-					className="z-40"
+					className="z-30"
 					current={img.palette}
 					dropFor="palette"
 					id={img.id}
@@ -191,6 +200,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 						onChange(id, "colours", opVal);
 					}}
 					onDelete={deletePalette}
+					disabled={formDisabled}
 					showLabel
 					variants={formChildVar}
 				/>
@@ -201,6 +211,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 								<ColourChip
 									col={col}
 									small={paletteList.length > 4}
+									disabled={formDisabled}
 									onChange={(e) => {
 										let newPaletteList = [...paletteList];
 										newPaletteList[i] = e.target.value;
@@ -224,6 +235,7 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 						{paletteList.length < 12 && (
 							<div className="flex w-fit h-fit border-medium border-4 rounded-full items-center p-1 text-4xl *:cursor-pointer">
 								<button
+									disabled={formDisabled}
 									className={addButtonStyles}
 									onClick={(e) => {
 										e.preventDefault();
@@ -241,9 +253,9 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					</motion.div>
 
 					{customPaletteName && (
-						// TODO: add little save animation to indicate to user their palette has been saved
 						<input
 							onBlur={saveLocalPalette}
+							disabled={formDisabled}
 							type="text"
 							placeholder="name your palette!"
 							className="w-64 h-full px-4 text-sm border-4 rounded-full border-medium bg-dark"
@@ -258,9 +270,10 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					label="Brightness"
 					id={img.id}
 					value={img.brightness}
-					min={1}
+					min={5}
 					max={200}
 					step={5}
+					disabled={formDisabled}
 					onChange={onChange}
 					variants={formChildVar}
 				/>
@@ -268,24 +281,31 @@ export default function ImageForm({ img, onChange }: ImageFormProps) {
 					label="Contrast"
 					id={img.id}
 					value={img.contrast}
-					min={1}
+					min={10}
 					max={400}
 					step={10}
+					disabled={formDisabled}
 					onChange={onChange}
 					variants={formChildVar}
 				/>
 				<div className="flex flex-row items-center w-full gap-4 mt-4 max-h-16">
-					<motion.label variants={formChildVar}>Image Width</motion.label>
+					<motion.label variants={formChildVar}>Export Settings</motion.label>
 					<Dropdown
-						className="z-50 -mt-6"
+						className="z-40 -mt-6"
 						dropFor="width"
 						current={String(img.width)}
 						id={img.id}
 						options={widthOptions}
+						disabled={formDisabled}
 						onChange={(id, key, [_, opVal]) => onChange(id, key, opVal)}
 						variants={formChildVar}
 					/>
-					<ResButton id={img.id} onClick={onChange} variants={formChildVar} />
+					<ResButton
+						disabled={formDisabled}
+						id={img.id}
+						onClick={onChange}
+						variants={formChildVar}
+					/>
 				</div>
 			</motion.div>
 			<div className="w-1/2 p-8">
