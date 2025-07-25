@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useState } from "react";
 import { nanoid } from "nanoid";
-import { motion, Variants } from "motion/react";
+import { AnimatePresence, motion, Variants } from "motion/react";
 
 import Dropdown, { Option, OptionGroup } from "./Dropdown";
 import ResButton from "./ResButton";
@@ -15,6 +15,8 @@ import { algOptions } from "../utils/alg_options";
 import { defaultPalette } from "../utils/palette_options";
 import { widthOptions } from "../utils/width_options";
 
+import floppy from "../assets/pixel_doodles/floppy.svg";
+
 interface ImageFormProps {
 	img: UploadedImage;
 	onChange: inputHandlerType;
@@ -27,6 +29,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 	const [windowAbove, setWindowAbove] = useState(true);
 	const [paletteList, setPaletteList] = useState<string[]>(img.colours);
 	const [customPaletteName, setCustomPaletteName] = useState(false);
+	const [showSaveAnim, setShowSaveAnim] = useState(false);
 
 	const CUSTOM_IND = 2;
 
@@ -38,18 +41,6 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 			"z-[1]": above,
 			"z-0": !above,
 		});
-
-	const chipContainerStyles = clsx({
-		"h-fit max w-fit relative gap-1.5": true,
-		flex: paletteList.length <= 4,
-		"grid grid-rows-2 grid-flow-col grid": paletteList.length > 4,
-	});
-
-	const addButtonStyles = clsx({
-		"flex items-center justify-center p-0 rounded-full bg-dark": true,
-		"w-10 h-10 pt-5 pl-0.5": paletteList.length <= 4,
-		"w-6 h-6 text-2xl pt-3.5 pl-0.5": paletteList.length > 4,
-	});
 
 	function draw(
 		canvas: HTMLCanvasElement,
@@ -106,8 +97,6 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 	}
 
 	function saveLocalPalette(e: React.FocusEvent<HTMLInputElement>) {
-		// TODO: add little save animation to indicate to user their palette has been saved
-
 		if (!e.target.value) return;
 
 		const existingPalette = localStorage.getItem(img.palette);
@@ -142,6 +131,8 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 				return updated;
 			});
 		}
+
+		setShowSaveAnim(true);
 	}
 
 	const formVar: Variants = {
@@ -170,7 +161,6 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 				onAnimationComplete={(def) => {
 					if (exit && def === "exit") onExit();
 				}}
-				// transition={{ staggerChildren: 1 }}
 				className="flex flex-row w-full"
 			>
 				<div className="flex flex-col w-1/2 gap-4 grow">
@@ -205,18 +195,21 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 						showLabel
 						variants={formChildVar}
 					/>
-					<div className="inline-flex items-center gap-2 mb-2 -mt-4 h-fit">
-						<motion.div variants={formChildVar} className={chipContainerStyles}>
+					<div className="inline-flex items-start gap-2 mb-2 -mt-4 h-fit">
+						<motion.div
+							variants={formChildVar}
+							className="h-fit max w-fit relative gap-1.5 grid grid-rows-2 grid-flow-col"
+						>
 							{paletteList.map((col, i) => {
 								return (
 									<ColourChip
 										col={col}
-										small={paletteList.length > 4}
 										disabled={formDisabled}
 										onChange={(e) => {
 											let newPaletteList = [...paletteList];
 											newPaletteList[i] = e.target.value;
 											setPaletteList(newPaletteList);
+											setCustomPaletteName(true);
 										}}
 										onDelete={() => {
 											setCustomPaletteName(true);
@@ -227,7 +220,6 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 											setPaletteList(newPaletteList);
 										}}
 										onBlur={() => {
-											setCustomPaletteName(true);
 											onChange(img.id, "colours", paletteList);
 										}}
 									/>
@@ -237,7 +229,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 								<div className="flex w-fit h-fit border-medium border-4 rounded-full items-center p-1 text-4xl *:cursor-pointer">
 									<button
 										disabled={formDisabled}
-										className={addButtonStyles}
+										className="flex items-center justify-center p-0 rounded-full bg-dark w-6 h-6 text-2xl pt-3.5 pl-0.5"
 										onClick={(e) => {
 											e.preventDefault();
 											setCustomPaletteName(true);
@@ -255,13 +247,13 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 
 						{customPaletteName && (
 							<motion.div className="absolute flex flex-col -top-[4.75rem] items-end gap-5 right-2">
-							<input
-								onBlur={saveLocalPalette}
-								disabled={formDisabled}
-								type="text"
-								placeholder="name your palette!"
+								<input
+									onBlur={saveLocalPalette}
+									disabled={formDisabled}
+									type="text"
+									placeholder="name your palette!"
 									className="z-30 w-64 h-12 px-4 text-sm border-2 rounded-xl border-medium bg-dark"
-							/>
+								/>
 								<AnimatePresence>
 									{showSaveAnim && (
 										<motion.div

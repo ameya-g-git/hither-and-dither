@@ -7,29 +7,15 @@ interface ColourChipProps {
 	onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 	onDelete: () => void;
 	onBlur: () => void;
-	small: boolean;
 	disabled: boolean;
 }
 
-export default function ColourChip({
-	col,
-	onChange,
-	onDelete,
-	onBlur,
-	small,
-	disabled,
-}: ColourChipProps) {
+export default function ColourChip({ col, onChange, onDelete, onBlur, disabled }: ColourChipProps) {
 	const [isHovered, setIsHovered] = useState(false);
-
-	const chipStyles = clsx({
-		"rounded-full": true,
-		"w-10 h-10": !small,
-		"w-6 h-6": small,
-	});
 
 	return (
 		<div className="colour-chip border-medium border-4 h-fit w-fit rounded-full relative *:cursor-pointer p-1">
-			<div className={chipStyles} style={{ backgroundColor: col }}>
+			<div className="w-6 h-6 rounded-full" style={{ backgroundColor: col }}>
 				{" "}
 			</div>
 			<input
