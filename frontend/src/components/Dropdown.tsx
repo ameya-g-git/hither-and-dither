@@ -40,11 +40,11 @@ interface DropdownOptionProps {
 // simple component for a single dropdown option just to make component code a little Cleaner
 function DropdownOption({ option, onClick, onDelete, variants }: DropdownOptionProps) {
 	return (
-		<motion.li variants={{ ...variants }} className="relative w-full h-12">
+		<motion.li layout="position" variants={{ ...variants }} className="relative w-full h-12">
 			<motion.button
 				className="flex flex-row items-center h-12 rounded-xl select"
-				exit={{ fontSize: 0 }}
-				transition={{ delay: 0.25 }}
+				exit={{ translateX: "-10rem" }}
+				// transition={{ delay: 0.25 }}
 				onClick={(e) => onClick(e as unknown as Event)}
 			>
 				{option.name}
@@ -53,7 +53,7 @@ function DropdownOption({ option, onClick, onDelete, variants }: DropdownOptionP
 				<motion.button
 					initial={{ translateX: 0 }}
 					exit={{ translateX: "10rem" }}
-					transition={{ ease: "easeIn", duration: 0.5 }}
+					transition={{ ease: "easeIn", duration: 0.25 }}
 					className="absolute top-0 right-0 h-10 [&&]:p-2 mx-2 border-4 rounded-md aspect-square bg-dark text-medium border-medium"
 					onClick={(e) => {
 						e.preventDefault();
@@ -144,7 +144,7 @@ export default function Dropdown({
 					showDropdownList ? "overflow-y-auto pr-0.5" : ""
 				} absolute overflow-x-hidden top-10 transition-all bg-dark mb-8 flex flex-col w-full gap-6 text-sm border-4 min-h-16 max-h-64 rounded-2xl border-medium`}
 			>
-				<motion.div className="sticky top-0 max-h-16 bg-dark">
+				<motion.div className="sticky top-0 z-50 max-h-16 bg-dark">
 					<button
 						className={`flex flex-row items-center w-full h-16 gap-4 rounded-xl select`}
 						disabled={disabled}
@@ -171,6 +171,7 @@ export default function Dropdown({
 						initial="start"
 						animate="end"
 						exit="exit"
+						layout
 						transition={{ delayChildren: 0.1, staggerChildren: 0.2 }}
 						className="flex flex-col gap-4 px-4 pb-4 bg-dark"
 					>
@@ -180,14 +181,14 @@ export default function Dropdown({
 								<motion.ol
 									transition={{ delayChildren: 0.25, staggerChildren: 0.1 }}
 									variants={opt}
-									className="flex flex-col items-center gap-0.5 mt-3"
+									className="flex flex-col items-center gap-0.5 mt-3 mb-2"
 									layout
 								>
 									<AnimatePresence>
 										{group.options.map((op, j) =>
 											op.id !== current ? (
 												<DropdownOption
-													key={j}
+													key={op.id}
 													option={op}
 													onClick={(e) => optionClick(e, op)}
 													variants={opt}
