@@ -254,13 +254,29 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 						</motion.div>
 
 						{customPaletteName && (
+							<motion.div className="absolute flex flex-col -top-[4.75rem] items-end gap-5 right-2">
 							<input
 								onBlur={saveLocalPalette}
 								disabled={formDisabled}
 								type="text"
 								placeholder="name your palette!"
-								className="w-64 h-full px-4 text-sm border-4 rounded-full border-medium bg-dark"
+									className="z-30 w-64 h-12 px-4 text-sm border-2 rounded-xl border-medium bg-dark"
 							/>
+								<AnimatePresence>
+									{showSaveAnim && (
+										<motion.div
+											initial={{ opacity: 0, translateX: "-2rem" }}
+											animate={{ opacity: 1, translateX: 0 }}
+											exit={{ opacity: 0, translateX: "-2rem" }}
+											onAnimationComplete={() => setTimeout(() => setShowSaveAnim(false), 500)}
+											className="flex items-center h-6 gap-2"
+										>
+											<img src={floppy} className="h-full" alt="" />
+											<span className="z-50 pt-1 text-xs select-none text-medium">saved!</span>
+										</motion.div>
+									)}
+								</AnimatePresence>
+							</motion.div>
 						)}
 					</div>
 
