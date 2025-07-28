@@ -22,8 +22,7 @@ def dither_general(img: np.ndarray[int], weight_matrix: np.ndarray, palette: np.
     weight_h, weight_w = weight_matrix.shape
     weight_center = weight_w // 2
 
-    fwd_arr = np.zeros((img_width, 3))
-    fwd_arr2 = np.zeros((img_width, 3))
+    fwd_arrs = np.zeros((weight_h, img_width, 3))
 
     # TODO: allocate forward arrays automatically based on size of weight matrix
 
@@ -47,24 +46,18 @@ def dither_general(img: np.ndarray[int], weight_matrix: np.ndarray, palette: np.
                                     err * weight_matrix[row, col],
                                     out=img[ir, ic + col - weight_center],
                                 )
-                            elif row == 1:
-                                np.add(
-                                    fwd_arr[ic + col - weight_center],
-                                    err * weight_matrix[row, col],
-                                    out=fwd_arr[ic + col - weight_center],
-                                )
                             else:
                                 np.add(
-                                    fwd_arr2[ic + col - weight_center],
+                                    fwd_arrs[row - 1][ic + col - weight_center],
                                     err * weight_matrix[row, col],
-                                    out=fwd_arr2[ic + col - weight_center],
+                                    out=fwd_arrs[row - 1][ic + col - weight_center],
                                 )
-        if ir < (img_height - 1):
-            np.add(img[ir + 1], fwd_arr, out=img[ir + 1])
-        if ir < (img_height - 2):
-            np.add(img[ir + 2], fwd_arr2, out=img[ir + 2])
-        fwd_arr = np.zeros((img_width, 3))
-        fwd_arr2 = np.zeros((img_width, 3))
+
+        for wr in range(weight_h):
+            if ir < img_height - wr - 1:
+                np.add(img[ir + wr + 1], fwd_arrs[wr], out=img[ir + wr + 1])
+
+        fwd_arrs = np.zeros((weight_h, img_width, 3))
 
     carr = np.array(img, dtype=np.uint8)
     dithered_image = Image.fromarray(carr)
