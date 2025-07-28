@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { motion, Variants } from "motion/react";
 
 import icons from "../assets/pixel_doodles/icons.svg";
@@ -12,6 +12,7 @@ interface WindowImageProps {
 	height: string;
 	children: ReactNode;
 	onClick?: () => void;
+	exit?: string;
 }
 
 export default function WindowImage({
@@ -22,6 +23,7 @@ export default function WindowImage({
 	height,
 	children,
 	onClick,
+	exit = "exit",
 }: WindowImageProps) {
 	const [loaded, setLoaded] = useState(false);
 
@@ -31,20 +33,27 @@ export default function WindowImage({
 		exit: { height: "10%", opacity: 0 },
 	};
 
+	useEffect(() => {});
+
 	return (
 		<motion.div
+			key={title}
 			variants={windowVar}
+			// initial="start"
+			animate="end"
+			exit={exit}
 			transition={{
 				delay: 0.5,
 				ease: "easeInOut",
 				duration: 0.5,
 			}}
 			onClick={onClick}
-			className={`${className} absolute flex justify-center`}
+			className={`${className} absolute h-[12%] flex justify-center`}
 			style={{
 				transform: `translate(${x}vw, ${y}vh)`,
 			}}
-			onAnimationComplete={() => {
+			onAnimationComplete={(d) => {
+				console.log(d);
 				setLoaded(true);
 			}}
 		>
@@ -59,11 +68,13 @@ export default function WindowImage({
 					</h3>
 					<img className="h-8" src={icons} alt="" />
 				</div>
-				<div
-					className="h-[calc(100%-3rem)] w-full transition-opacity border-4 overflow-clip border-dark"
-					style={{ opacity: loaded ? 100 : 0 }}
-				>
-					{children}
+				<div className="h-[calc(100%-3rem)] w-full border-4 overflow-clip border-dark">
+					<div
+						className="w-full h-full transition-opacity duration-500"
+						style={{ opacity: loaded ? 100 : 0 }}
+					>
+						{children}
+					</div>
 				</div>
 			</div>
 		</motion.div>
