@@ -34,8 +34,6 @@ export default function Canvas({ img, draw, className }: CanvasProps) {
 			canvas.width = canvas.clientWidth;
 			canvas.height = canvas.clientHeight > 0 ? canvas.clientHeight : canvas.clientWidth;
 
-			console.log(canvas.width, canvas.height);
-
 			const context = canvas.getContext("2d");
 			if (context && canvasImage) {
 				draw(canvas, context, canvasImage);
