@@ -176,7 +176,7 @@ export default function Dropdown({
 						className="flex flex-col gap-4 px-4 pb-4 bg-dark"
 					>
 						{options.map((group, i) => (
-							<motion.div variants={opt} key={i} className="w-full min-h-16">
+							<motion.div variants={opt} key={group.name + `${i}`} className="w-full min-h-16">
 								<label className="text-sm text-medium/50">{group.name}</label>
 								<motion.ol
 									transition={{ delayChildren: 0.25, staggerChildren: 0.1 }}
