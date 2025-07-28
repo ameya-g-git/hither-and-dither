@@ -35,7 +35,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 
 	const windowStyles = (num: number, above: boolean) =>
 		clsx({
-			"w-2/3 h-2/3 transition-opacity": true,
+			"w-2/3 h-2/3": true,
 			"top-8 left-8": num == 1,
 			"bottom-8 right-8": num == 2,
 			"z-[1]": above,
@@ -137,12 +137,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 
 	const formVar: Variants = {
 		start: { opacity: 0 },
-		end: {
-			opacity: 1,
-			transition: {
-				staggerChildren: 0.1,
-			},
-		},
+		end: { opacity: 1 },
 	};
 
 	const formChildVar: Variants = {
@@ -160,6 +155,9 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 				exit={exit ? "exit" : ""}
 				onAnimationComplete={(def) => {
 					if (exit && def === "exit") onExit();
+				}}
+				transition={{
+					staggerChildren: 0.1,
 				}}
 				className="flex flex-row w-full"
 			>
@@ -203,6 +201,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 							{paletteList.map((col, i) => {
 								return (
 									<ColourChip
+										key={i}
 										col={col}
 										disabled={formDisabled}
 										onChange={(e) => {
@@ -323,6 +322,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 						className={windowStyles(1, !windowAbove)}
 						title={img.fileName}
 						height="66%"
+						exit={exit ? "exit" : ""}
 					>
 						<img src={img.src} className="object-contain w-full h-full aspect-auto" alt="" />
 					</WindowImage>
@@ -331,6 +331,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 						className={windowStyles(2, windowAbove)}
 						title={`${img.fileName.slice(0, -4)}_dithered_${img.algorithm}.png`}
 						height="66%"
+						exit={exit ? "exit" : ""}
 					>
 						<Canvas className="w-full h-full" img={img} draw={draw} />
 					</WindowImage>
