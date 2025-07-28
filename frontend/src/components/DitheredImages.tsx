@@ -13,9 +13,10 @@ import err from "../assets/pixel_doodles/crash.svg";
 interface DitheredImagesProps {
 	ditheredImages: DitheredImage[];
 	loading: boolean;
+	errorMsg: string;
 }
 
-export default function DitheredImages({ ditheredImages, loading }: DitheredImagesProps) {
+export default function DitheredImages({ ditheredImages, loading, errorMsg }: DitheredImagesProps) {
 	const [ditherBlob, setDitherBlob] = useState<Blob>();
 	const [loader, setLoader] = useState<string | string[]>();
 	const [loaderFrame, setLoaderFrame] = useState<number>(0);
@@ -116,10 +117,10 @@ export default function DitheredImages({ ditheredImages, loading }: DitheredImag
 				</motion.h3>
 			</AnimatePresence>
 		</div>
-	) : ditheredImages.length == 0 ? (
+	) : ditheredImages.length == 0 && errorMsg.length > 0 ? (
 		<div className="flex flex-col items-center justify-center w-4/5 h-3/5">
 			<img src={err} className="h-48" alt="" />
-			<h2 className="w-full text-center">error while processing images!</h2>
+			<h2 className="w-full h-16 -mb-3 text-center">error while processing images!</h2>
 			<span className="mt-2 leading-9 text-center text-medium">
 				try reuploading?
 				<br />
@@ -133,6 +134,7 @@ export default function DitheredImages({ ditheredImages, loading }: DitheredImag
 				</a>{" "}
 				if the error's bigger!
 			</span>
+			<span className="mt-8 text-medium">error: {errorMsg}</span>
 		</div>
 	) : (
 		<div className="relative h-64 " id="dithered-images">

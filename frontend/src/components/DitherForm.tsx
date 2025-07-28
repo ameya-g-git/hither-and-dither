@@ -28,6 +28,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 	const [showUpload, setShowUpload] = useState(true);
 	const [ditheredImages, setDitheredImages] = useState<DitheredImage[]>([]);
 	const [currImageIndex, setCurrImageIndex] = useState(0);
+	const [errorMsg, setErrorMsg] = useState("");
 
 	const [tabHover, setTabHover] = useState(false);
 	const [tabFocus, setTabFocus] = useState(false);
@@ -41,34 +42,32 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 		});
 
 	async function submitImages() {
-		const formData = new FormData();
-
-		formData.append("images", JSON.stringify(imgState));
-
 		try {
-			setCurrImageIndex(-1);
-			setShowUpload(false);
 			setLoading(true);
+			setShowUpload(false);
+
+			const formData = new FormData();
+			formData.append("images", JSON.stringify(imgState));
 
 			const response = await fetch("/api", { method: "POST", body: formData });
 
 			if (response.status === 200 || response.status === 201) {
 				console.log("Uploaded images to server");
+				fetch("/api/images")
+					.then<DitheredImage[]>((res) => res.json())
+					.then((data) => {
+						setDitheredImages(data);
+						setLoading(false);
+					});
 			} else {
-				console.error("Error:", response.statusText, response.status);
+				const { status, statusText } = response;
+				console.error("Error:", statusText, status);
+				const { error } = await response.json();
+				throw new Error(status + " " + error);
 			}
-
-			fetch("/api/images")
-				.then<DitheredImage[]>((res) => res.json())
-				.then((data) => {
-					setDitheredImages(data);
-					setLoading(false);
-					setCurrImageIndex(0);
-				});
-		} catch (error) {
-			console.error("Error:", error);
+		} catch (e: any) {
+			setErrorMsg(e.message);
 			setLoading(false);
-			setDitheredImages([]);
 		}
 	}
 
@@ -77,11 +76,9 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 		setTabFocus(true);
 	}, [imgState]);
 
-	console.log(imgState.length, showForm);
-	console.log(!tabHover && !tabFocus);
-
-	// TODO: use custom named variant setting specifically for when the dither button is pressed
-	// this is when i want to play the exit animations, the animations between different "tabs" is already good for me
+	useEffect(() => {
+		if (currImageIndex < 0 && !showForm) submitImages();
+	}, [currImageIndex, showForm]);
 
 	return (
 		<div id="form" className="flex items-center justify-center w-full h-full pt-32 pb-24 ">
@@ -150,6 +147,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 							title="go back to editing"
 							className="absolute flex items-center justify-center w-16 h-16 p-4 border-4 rounded-lg shadow-xl shadow-light/10 top-8 left-8 border-medium bg-dark"
 							onClick={() => {
+								setCurrImageIndex(0);
 								setShowForm(true);
 								setDitheredImages([]);
 								fetch("/api/delete", { method: "POST" });
@@ -157,7 +155,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 						>
 							<img src={arrow} className="w-full h-full" alt="Back" />
 						</button>
-						<DitheredImages loading={loading} ditheredImages={ditheredImages} />
+						<DitheredImages errorMsg={errorMsg} loading={loading} ditheredImages={ditheredImages} />
 					</>
 				)}
 				{imgState.length > 0 && showForm && (
@@ -165,10 +163,12 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 						<button
 							disabled={loading || ditheredImages.length > 0}
 							className="flex hover:brightness-125 items-center justify-center w-24 h-24 p-4 text-sm font-bold border-[6px] bg-dark border-medium"
+							onMouseOver={() => setTabHover(false)}
+							onFocus={() => setTabFocus(false)}
 							onClick={(e) => {
 								e.preventDefault();
-								if (showUpload) setShowForm(false);
-								submitImages();
+								if (showUpload || tabHover || tabFocus) setShowForm(false);
+								setCurrImageIndex(-1);
 							}}
 							title="DITHER IT!!!"
 						>
