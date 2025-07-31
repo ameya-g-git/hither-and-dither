@@ -44,8 +44,6 @@ export default function App() {
 		{ targetPosition: 0, currentPosition: 0 },
 	]);
 
-	// TODO: en generale just   add title attributes to  Interactive elements (input elements, dropdown, images, etc.)
-
 	const { screenWidth, screenHeight } = useWindowSize();
 	const [imgState, uploadHandler, formHandler] = useUploadedFiles([]);
 

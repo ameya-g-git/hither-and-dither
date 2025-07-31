@@ -24,8 +24,6 @@ def dither_general(img: np.ndarray[int], weight_matrix: np.ndarray, palette: np.
 
     fwd_arrs = np.zeros((weight_h, img_width, 3))
 
-    # TODO: allocate forward arrays automatically based on size of weight matrix
-
     for ir in range(img_height):
         for ic in range(img_width):
             old_val = img[ir, ic].copy()
