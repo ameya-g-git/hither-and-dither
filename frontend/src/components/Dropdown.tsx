@@ -185,7 +185,7 @@ export default function Dropdown({
 									layout
 								>
 									<AnimatePresence>
-										{group.options.map((op, j) =>
+										{group.options.map((op) =>
 											op.id !== current ? (
 												<DropdownOption
 													key={op.id}
