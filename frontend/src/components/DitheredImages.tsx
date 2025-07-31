@@ -1,7 +1,7 @@
 import saveAs from "file-saver";
 import JSZip from "jszip";
 import moment from "moment";
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { AnimatePresence, motion, stagger, Variants } from "motion/react";
 import { useEffect, useState } from "react";
 
 import { DitheredImage } from "./DitherForm";
@@ -9,6 +9,7 @@ import { spinners, loadingMessages } from "../utils/loader";
 
 import download from "../assets/pixel_doodles/download.svg";
 import err from "../assets/pixel_doodles/crash.svg";
+import zip from "../assets/pixel_doodles/zip.svg";
 
 interface DitheredImagesProps {
 	ditheredImages: DitheredImage[];
@@ -21,6 +22,9 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 	const [loader, setLoader] = useState<string | string[]>();
 	const [loaderFrame, setLoaderFrame] = useState<number>(0);
 	const [loaderMessage, setLoaderMessage] = useState("");
+	const [showZip, setShowZip] = useState(false);
+	const [popImages, setPopImages] = useState(false);
+	const [popZip, setPopZip] = useState(false);
 
 	/**
 	 * Converts a data URL to a UInt8Array for ease of downloading via JSZip
@@ -41,7 +45,7 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 	}
 
 	useEffect(() => {
-		if (ditheredImages.length > 0) {
+		if (ditheredImages.length * 3 > 0) {
 			const zip = JSZip();
 
 			for (const image of ditheredImages) {
@@ -92,7 +96,10 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 	// TODO: fix up interface for downloading images
 
 	return loading ? (
-		<div className="relative flex flex-col items-center justify-center w-full gap-4" id="loading">
+		<div
+			className="relative flex flex-col items-center justify-center w-full gap-4 mb-2"
+			id="loading"
+		>
 			{loader && (
 				<pre
 					className="absolute -translate-x-1/2 left-1/2"
@@ -117,7 +124,7 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 				</motion.h3>
 			</AnimatePresence>
 		</div>
-	) : ditheredImages.length == 0 && errorMsg.length > 0 ? (
+	) : ditheredImages.length * 3 == 0 && errorMsg.length > 0 ? (
 		<div className="flex flex-col items-center justify-center w-4/5 h-3/5">
 			<img src={err} className="h-48" alt="" />
 			<h2 className="w-full h-16 -mb-3 text-center">error while processing images!</h2>
@@ -137,28 +144,97 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 			<span className="mt-8 text-medium">error: {errorMsg}</span>
 		</div>
 	) : (
-		<div className="relative h-64 " id="dithered-images">
+		<div className="relative h-64" id="dithered-images">
 			{ditherBlob && (
-				<div className="flex flex-col z-[9999] items-center gap-2">
+				<div className="flex flex-col z-[9999] items-center justify-center gap-2">
 					<div className="relative w-full h-24 -mb-10">
-						{ditheredImages.map((dImg, i) => (
-							<img
-								key={i}
-								className="absolute z-50 object-cover w-24 h-24 transition-all ease-in-out border-2 cursor-pointer top-1/2 left-1/2 border-medium/50 rounded-xl shadow-medium"
-								style={{
-									transform: `translateX(-50%) rotate(${
-										25 *
-										(ditheredImages.length % 2 === 0
-											? i - (ditheredImages.length - 1) / 2
-											: i - Math.floor(ditheredImages.length / 2))
-									}deg) translateY(-7rem)`,
-									zIndex: 100 + i,
-								}}
-								src={dImg.data}
-							></img>
-						))}
+						<AnimatePresence onExitComplete={() => console.log("d")}>
+							{[...ditheredImages, ...ditheredImages, ...ditheredImages].map((dImg, i) =>
+								popImages ? null : (
+									<motion.img
+										initial="start"
+										animate="end"
+										exit="exit"
+										key={dImg.name + i}
+										variants={{
+											start: {
+												opacity: 0,
+												transformOrigin: "bottom center",
+												transform: `translateX(-50%) rotate(${
+													(90 / (ditheredImages.length * 3)) *
+													((ditheredImages.length * 3) % 2 === 0
+														? i - (ditheredImages.length * 3 - 1) / 2
+														: i - Math.floor((ditheredImages.length * 3) / 2))
+												}deg) translateY(0rem) scale(0)`,
+											},
+											end: {
+												opacity: 1,
+												transform: `translate(-50%, 3rem) rotate(${
+													(90 / (ditheredImages.length * 3)) *
+													((ditheredImages.length * 3) % 2 === 0
+														? i - (ditheredImages.length * 3 - 1) / 2
+														: i - Math.floor((ditheredImages.length * 3) / 2))
+												}deg) translate(0, -4rem) scale(1)`,
+												transition: { type: "spring", duration: 0.75, delay: i * 0.1 },
+											},
+											exit: {
+												opacity: 1,
+												transform: `translate(-50%, 6rem) rotate(0deg) translate(0, -7rem) scale(0)`,
+												transition: { type: "spring", duration: 0.75, delay: i * 0.2 },
+											},
+										}}
+										onAnimationStart={(def) => {
+											if (def === "exit") setTimeout(() => setPopZip(true), 200 + i * 200);
+										}}
+										onAnimationComplete={(def) => {
+											if (i === ditheredImages.length * 3 - 1 && def === "end") setShowZip(true);
+										}}
+										className="absolute z-50 object-cover w-24 h-24 ease-out border-2 shadow-lg cursor-pointer shadow-dark left-1/2 border-medium rounded-xl"
+										src={dImg.data}
+									></motion.img>
+								),
+							)}
+						</AnimatePresence>
 					</div>
-					<h2 className="h-28 p-4 text-4xl text-center leading-[6rem] -mb-7">
+					{showZip && (
+						<motion.img
+							initial="start"
+							animate={popZip ? "pop" : "end"}
+							variants={{
+								start: {
+									bottom: 0,
+									opacity: 0,
+								},
+								end: {
+									bottom: "6rem",
+									opacity: 1,
+									transition: {
+										duration: 1,
+										ease: "anticipate",
+									},
+								},
+								pop: {
+									bottom: "6rem",
+									opacity: 1,
+									scale: 1.1,
+									transition: {
+										type: "spring",
+										bounce: 0.5,
+										duration: 0.1,
+									},
+								},
+							}}
+							className="absolute w-48 pb-8"
+							onAnimationComplete={(def) => {
+								if (!popImages) setTimeout(() => setPopImages(true), 250);
+								if (def === "pop" && popZip) setPopZip(false);
+							}}
+							src={zip}
+							alt=""
+						/>
+					)}
+					<div className="absolute w-full h-80 bottom-4 bg-gradient-to-b from-transparent to-50% to-dark" />
+					<h2 className="h-28 p-4 text-4xl text-center leading-[6rem] mt-12 -mb-7">
 						your images are ready!
 					</h2>
 					<h4 className="mb-4 text-sm opacity-50 pl-36 text-medium">have a splendid day!</h4>

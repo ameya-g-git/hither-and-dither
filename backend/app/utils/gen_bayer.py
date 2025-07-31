@@ -31,6 +31,3 @@ for i in range(3):
         print("},")
         print()
         print()
-
-# TODO: write code to get blue noise from texture
-# simple PIL code   just read luminance and put it into a 2d matrix to print out
