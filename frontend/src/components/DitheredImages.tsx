@@ -45,7 +45,7 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 	}
 
 	useEffect(() => {
-		if (ditheredImages.length * 3 > 0) {
+		if (ditheredImages.length > 0) {
 			const zip = JSZip();
 
 			for (const image of ditheredImages) {
@@ -63,7 +63,8 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 	let messageId = 0;
 
 	useEffect(() => {
-		setLoader(loading ? spinners[Math.floor(Math.random() * spinners.length)] : "");
+		// setLoader(loading ? spinners[Math.floor(Math.random() * spinners.length)] : "");
+		setLoader(loading ? spinners[spinners.length - 1] : "");
 		setLoaderMessage(
 			loading ? loadingMessages[Math.floor(Math.random() * loadingMessages.length)] : "",
 		);
@@ -124,7 +125,7 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 				</motion.h3>
 			</AnimatePresence>
 		</div>
-	) : ditheredImages.length * 3 == 0 && errorMsg.length > 0 ? (
+	) : ditheredImages.length == 0 && errorMsg.length > 0 ? (
 		<div className="flex flex-col items-center justify-center w-4/5 h-3/5">
 			<img src={err} className="h-48" alt="" />
 			<h2 className="w-full h-16 -mb-3 text-center">error while processing images!</h2>
@@ -148,8 +149,8 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 			{ditherBlob && (
 				<div className="flex flex-col z-[9999] items-center justify-center gap-2">
 					<div className="relative w-full h-24 -mb-10">
-						<AnimatePresence onExitComplete={() => console.log("d")}>
-							{[...ditheredImages, ...ditheredImages, ...ditheredImages].map((dImg, i) =>
+						<AnimatePresence>
+							{ditheredImages.map((dImg, i) =>
 								popImages ? null : (
 									<motion.img
 										initial="start"
@@ -161,19 +162,19 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 												opacity: 0,
 												transformOrigin: "bottom center",
 												transform: `translateX(-50%) rotate(${
-													(90 / (ditheredImages.length * 3)) *
-													((ditheredImages.length * 3) % 2 === 0
-														? i - (ditheredImages.length * 3 - 1) / 2
-														: i - Math.floor((ditheredImages.length * 3) / 2))
+													(90 / ditheredImages.length) *
+													(ditheredImages.length % 2 === 0
+														? i - (ditheredImages.length - 1) / 2
+														: i - Math.floor(ditheredImages.length / 2))
 												}deg) translateY(0rem) scale(0)`,
 											},
 											end: {
 												opacity: 1,
 												transform: `translate(-50%, 3rem) rotate(${
-													(90 / (ditheredImages.length * 3)) *
-													((ditheredImages.length * 3) % 2 === 0
-														? i - (ditheredImages.length * 3 - 1) / 2
-														: i - Math.floor((ditheredImages.length * 3) / 2))
+													(90 / ditheredImages.length) *
+													(ditheredImages.length % 2 === 0
+														? i - (ditheredImages.length - 1) / 2
+														: i - Math.floor(ditheredImages.length / 2))
 												}deg) translate(0, -4rem) scale(1)`,
 												transition: { type: "spring", duration: 0.75, delay: i * 0.1 },
 											},
@@ -184,10 +185,10 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 											},
 										}}
 										onAnimationStart={(def) => {
-											if (def === "exit") setTimeout(() => setPopZip(true), 200 + i * 200);
+											if (def === "exit") setTimeout(() => setPopZip(true), 300 + i * 200);
 										}}
 										onAnimationComplete={(def) => {
-											if (i === ditheredImages.length * 3 - 1 && def === "end") setShowZip(true);
+											if (i === ditheredImages.length - 1 && def === "end") setShowZip(true);
 										}}
 										className="absolute z-50 object-cover w-24 h-24 ease-out border-2 shadow-lg cursor-pointer shadow-dark left-1/2 border-medium rounded-xl"
 										src={dImg.data}
