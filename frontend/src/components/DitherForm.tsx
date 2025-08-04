@@ -1,7 +1,12 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 
-import { UploadedImage, inputHandlerType, uploadHandlerType } from "../hooks/useUploadedImages";
+import {
+	UploadedImage,
+	deleteHandlerType,
+	inputHandlerType,
+	uploadHandlerType,
+} from "../hooks/useUploadedImages";
 import FileUpload from "./FileUpload";
 import DitheredImages from "./DitheredImages";
 import ImageForm from "./ImageForm";
@@ -15,6 +20,7 @@ interface DitherFormProps {
 	imgState: UploadedImage[];
 	onChange: inputHandlerType;
 	onUpload: uploadHandlerType;
+	onDelete: deleteHandlerType;
 }
 
 export interface DitheredImage {
@@ -22,7 +28,7 @@ export interface DitheredImage {
 	data: string;
 }
 
-export default function DitherForm({ imgState, onChange, onUpload }: DitherFormProps) {
+export default function DitherForm({ imgState, onChange, onUpload, onDelete }: DitherFormProps) {
 	const [showForm, setShowForm] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const [showUpload, setShowUpload] = useState(true);
@@ -32,10 +38,11 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 
 	const [tabHover, setTabHover] = useState(false);
 	const [tabFocus, setTabFocus] = useState(false);
+	const [tabDelIndex, setTabDelIndex] = useState(-1);
 
 	const buttonStyles = (open: boolean) =>
 		clsx({
-			"h-full -mr-9 text-nowrap pr-8 overflow-hidden text-lg font-bold border-8 border-b-0 rounded-b-none max-w-80 rounded-3xl text-ellipsis bg-dark":
+			"h-full max-w-80 min-w-0 w-full overflow-hidden text-nowrap cursor-pointer pr-6 text-lg font-bold border-8 border-b-0 rounded-b-none rounded-3xl text-ellipsis bg-dark":
 				true,
 			"border-medium text-glow": open,
 			"border-medium/50 text-medium hover:border-medium hover:text-glow": !open,
@@ -57,7 +64,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 					.then<DitheredImage[]>((res) => res.json())
 					.then((data) => {
 						setDitheredImages(data);
-						setLoading(false);
+						setTimeout(() => setLoading(false), 1e6);
 					});
 			} else {
 				const { status, statusText } = response;
@@ -98,27 +105,49 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 						<div className="absolute flex flex-row w-[calc(100%-7rem)] h-20 -left-2 -top-16">
 							{imgState.map((img, i) => {
 								return (
-									<button
-										key={img.id}
+									<div
+										className="relative min-w-0 max-w-80 -mr-9"
 										style={{
 											zIndex: i == currImageIndex ? imgState.length : imgState.length - i,
 										}}
-										onMouseOver={() => setTabHover(true)}
-										onMouseLeave={() => setTabHover(false)}
-										onFocus={() => setTabFocus(true)}
-										onBlur={() => setTabFocus(false)}
-										autoFocus
-										title={img.fileName}
-										className={buttonStyles(i == currImageIndex && !showUpload)}
-										onClick={(e) => {
-											e.stopPropagation();
-											e.preventDefault();
-											setShowUpload(false);
-											setCurrImageIndex(i);
-										}}
 									>
-										{img.fileName}
-									</button>
+										<button
+											key={img.id}
+											className={buttonStyles(i == currImageIndex && !showUpload)}
+											onMouseOver={() => {
+												setTabDelIndex(i);
+												setTabHover(true);
+											}}
+											onMouseLeave={() => setTabHover(false)}
+											onFocus={() => {
+												setTabDelIndex(i);
+												setTabFocus(true);
+											}}
+											onBlur={() => setTabFocus(false)}
+											autoFocus
+											title={img.fileName}
+											onClick={(e) => {
+												e.stopPropagation();
+												e.preventDefault();
+												setShowUpload(false);
+												setCurrImageIndex(i);
+											}}
+										>
+											{img.fileName}
+										</button>
+										{i === tabDelIndex && (
+											<button
+												onClick={(e) => {
+													e.preventDefault();
+													onDelete(img.id);
+												}}
+												title={`delete ${img.fileName}`}
+												className="absolute z-50 flex items-center justify-center w-12 h-12 pl-0 text-xl border-4 rounded-full -top-4 -right-2 bg-dark border-medium text-medium "
+											>
+												x
+											</button>
+										)}
+									</div>
 								);
 							})}
 						</div>
@@ -150,6 +179,7 @@ export default function DitherForm({ imgState, onChange, onUpload }: DitherFormP
 								setCurrImageIndex(0);
 								setShowForm(true);
 								setDitheredImages([]);
+								setErrorMsg("");
 								fetch("/api/delete", { method: "POST" });
 							}}
 						>

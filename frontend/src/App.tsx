@@ -45,7 +45,7 @@ export default function App() {
 	]);
 
 	const { screenWidth, screenHeight } = useWindowSize();
-	const [imgState, uploadHandler, formHandler] = useUploadedFiles([]);
+	const [imgState, uploadHandler, formHandler, deleteHandler] = useUploadedFiles([]);
 
 	const targetPositionFunctions = (s: number) => [
 		// list of functions to calculate target position of window
@@ -305,7 +305,12 @@ export default function App() {
 					<img src={bayer} />
 					<img src={bayer} />
 				</div>
-				<DitherForm imgState={imgState} onChange={formHandler} onUpload={uploadHandler} />
+				<DitherForm
+					imgState={imgState}
+					onChange={formHandler}
+					onUpload={uploadHandler}
+					onDelete={deleteHandler}
+				/>
 			</div>
 			{/* </MousePosition.Provider> */}
 		</ScreenSize.Provider>

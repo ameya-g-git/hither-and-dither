@@ -38,22 +38,33 @@ interface Action {
 	type: string;
 }
 
-interface UploadAction extends Action {
-	file: File;
-	src: string;
-}
-
 interface InputAction extends Action {
 	id: string;
 	key: string;
 	value: any;
 }
 
+interface DeleteAction extends Action {
+	id: string;
+}
+
+interface UploadAction extends Action {
+	file: File;
+	src: string;
+}
+
 export type uploadHandlerType = (file: File) => void;
 
 export type inputHandlerType = (id: string, key: string, value: any) => void;
 
-type UploadedFilesHookReturn = [UploadedImage[], uploadHandlerType, inputHandlerType];
+export type deleteHandlerType = (id: string) => void;
+
+type UploadedFilesHookReturn = [
+	UploadedImage[],
+	uploadHandlerType,
+	inputHandlerType,
+	deleteHandlerType,
+];
 
 /**
  * Reads an inputted files data URL. Adapted from Joseph Zimmerman's drag-and-drop uploader linked below:
@@ -112,17 +123,11 @@ function fileToUploadedImage(file: File) {
  * @param action | The action defined by a given dispatch() call
  * @returns {UploadedImage[]} | The updated state after the reducer call finishes
  */
-function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | InputAction) {
+function imgReducer(
+	state: UploadedImage[] | undefined,
+	action: UploadAction | InputAction | DeleteAction,
+) {
 	switch (action.type) {
-		case "UPLOAD_FILES": {
-			const { file, src } = action as UploadAction;
-			const uploadState = state as UploadedImage[];
-
-			const image = fileToUploadedImage(file);
-			image.src = src;
-
-			return [...uploadState, image];
-		}
 		case "INPUT_CHANGE": {
 			const { id, key, value } = action as InputAction;
 			const formState = state as UploadedImage[];
@@ -137,6 +142,27 @@ function imgReducer(state: UploadedImage[] | undefined, action: UploadAction | I
 			};
 
 			return newState;
+		}
+		case "DELETE_IMAGE": {
+			const { id } = action as DeleteAction;
+			const formState = state as UploadedImage[];
+
+			const delIndex = formState.findIndex((img) => img.id === id);
+
+			const newState = [...formState];
+
+			newState.splice(delIndex, 1);
+
+			return newState;
+		}
+		case "UPLOAD_FILES": {
+			const { file, src } = action as UploadAction;
+			const uploadState = state as UploadedImage[];
+
+			const image = fileToUploadedImage(file);
+			image.src = src;
+
+			return [...uploadState, image];
 		}
 		default: {
 			return state;
@@ -175,5 +201,7 @@ export default function useUploadedFiles(initialImages: UploadedImage[]) {
 		});
 	}, []);
 
-	return [imgState, uploadHandler, formHandler] as UploadedFilesHookReturn;
+	const deleteHandler = useCallback((id: string) => dispatch({ type: "DELETE_IMAGE", id }), []);
+
+	return [imgState, uploadHandler, formHandler, deleteHandler] as UploadedFilesHookReturn;
 }
