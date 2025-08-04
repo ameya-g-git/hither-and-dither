@@ -14,7 +14,7 @@ import ImageForm from "./ImageForm";
 import arrow from "../assets/pixel_doodles/arrow.svg";
 import ditherIt from "../assets/pixel_doodles/ditherit.svg";
 import addImg from "../assets/pixel_doodles/addimage.svg";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 interface DitherFormProps {
 	imgState: UploadedImage[];
@@ -64,7 +64,7 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 					.then<DitheredImage[]>((res) => res.json())
 					.then((data) => {
 						setDitheredImages(data);
-						setTimeout(() => setLoading(false), 1e6);
+						setLoading(false);
 					});
 			} else {
 				const { status, statusText } = response;
@@ -105,8 +105,12 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 						<div className="absolute flex flex-row w-[calc(100%-7rem)] h-20 -left-2 -top-16">
 							{imgState.map((img, i) => {
 								return (
-									<div
-										className="relative min-w-0 max-w-80 -mr-9"
+									<motion.div
+										layout="position"
+										layoutId={img.id}
+										key={img.id}
+										transition={{}}
+										className="relative min-w-0 max-w-72 -mr-9"
 										style={{
 											zIndex: i == currImageIndex ? imgState.length : imgState.length - i,
 										}}
@@ -127,7 +131,6 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 											autoFocus
 											title={img.fileName}
 											onClick={(e) => {
-												e.stopPropagation();
 												e.preventDefault();
 												setShowUpload(false);
 												setCurrImageIndex(i);
@@ -147,7 +150,7 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 												x
 											</button>
 										)}
-									</div>
+									</motion.div>
 								);
 							})}
 						</div>
