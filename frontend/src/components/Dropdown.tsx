@@ -132,8 +132,6 @@ export default function Dropdown({
 			)}
 			<motion.div
 				ref={dropdownRef}
-				// layout
-				// layoutId={`options-${dropFor}${id}`}
 				style={{
 					height: showDropdownList
 						? `${Math.min(16, options.map((x) => x.options.length).reduce((x, y) => x + y, 0) * 4)}rem`
