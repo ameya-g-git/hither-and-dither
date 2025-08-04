@@ -3,6 +3,7 @@ from io import BytesIO
 from json import loads
 from base64 import b64decode, b64encode
 from PIL import Image, ImageEnhance
+from math import prod
 import numpy as np
 
 from .models import UploadedImage, UploadedImageList
@@ -41,7 +42,7 @@ def upload_images():
             decoded_image = Image.open(BytesIO(image_data))
             decoded_image = decoded_image.convert("RGB")
 
-            if max(decoded_image.size) > 5000:
+            if prod(decoded_image.size) > 25e6:
                 return jsonify({"error": "Image too big, try downscaling before uploading."}), 415
 
             image_brightness = image.get("brightness")
