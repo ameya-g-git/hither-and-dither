@@ -21,7 +21,7 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 	const [ditherBlob, setDitherBlob] = useState<Blob>();
 	const [loader, setLoader] = useState<string | string[]>();
 	const [loaderFrame, setLoaderFrame] = useState<number>(0);
-	const [loaderMessage, setLoaderMessage] = useState("");
+	const [loaderMessages, setLoaderMessages] = useState<string[]>([]);
 	const [showZip, setShowZip] = useState(false);
 	const [popImages, setPopImages] = useState(false);
 	const [popZip, setPopZip] = useState(false);
@@ -63,11 +63,10 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 	let messageId = 0;
 
 	useEffect(() => {
-		// setLoader(loading ? spinners[Math.floor(Math.random() * spinners.length)] : "");
-		setLoader(loading ? spinners[spinners.length - 1] : "");
-		setLoaderMessage(
-			loading ? loadingMessages[Math.floor(Math.random() * loadingMessages.length)] : "",
-		);
+		if (loading) {
+			setLoader(spinners[Math.floor(Math.random() * spinners.length)]);
+			setLoaderMessages([loadingMessages[Math.floor(Math.random() * loadingMessages.length)]]);
+		}
 	}, [loading]);
 
 	useEffect(() => {
@@ -76,9 +75,10 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 				setLoaderFrame((prev) => (prev + 1 >= loader.length ? 0 : prev + 1));
 			}, 200);
 			messageId = setInterval(() => {
-				setLoaderMessage(
+				setLoaderMessages((prev) => [
 					loading ? loadingMessages[Math.floor(Math.random() * loadingMessages.length)] : "",
-				);
+					...prev,
+				]);
 			}, 4096);
 		} else {
 			clearInterval(intervalId);
@@ -89,41 +89,49 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 	}, [loader]);
 
 	const messageAnim: Variants = {
-		start: { opacity: 0, scale: 0.75, translateX: "6rem" },
-		end: { opacity: 1, scale: 1, translateX: "0rem" },
-		exit: { opacity: 0, scale: 0.75, translateX: "-6rem" },
+		start: { opacity: 0, scale: 0.75, translateY: "-3rem" },
+		end: { opacity: 1, scale: 1, translateY: "0rem" },
+		sub: { opacity: 1, scale: 0.75, translateY: "0rem" },
 	};
 
 	// TODO: fix up interface for downloading images
 
 	return loading ? (
 		<div
-			className="relative flex flex-col items-center justify-center w-full gap-4 mb-2"
+			className="relative flex flex-col items-center justify-center w-full gap-2 animate"
 			id="loading"
 		>
 			{loader && (
 				<pre
-					className="absolute -translate-x-1/2 left-1/2"
+					className="leading-[4.5rem]"
 					style={{
-						fontSize: loader && typeof loader == "string" ? "7rem" : "5rem",
+						fontSize: loader && typeof loader == "string" ? "7rem" : "4rem",
 					}}
 				>
 					{loader[loaderFrame]}
 				</pre>
 			)}
-			<AnimatePresence>
-				<motion.h3
-					className="absolute w-full text-center text-medium top-16"
-					key={loaderMessage}
-					variants={messageAnim}
-					initial="start"
-					animate="end"
-					exit="exit"
-					transition={{ duration: 1 }}
-				>
-					{loaderMessage}
-				</motion.h3>
-			</AnimatePresence>
+			<div className="relative flex flex-col w-full gap-4">
+				<AnimatePresence>
+					{loaderMessages.map((msg, i) => (
+						// TODO: add a little disclaimer message if the length of loaderMessages is too long
+						<motion.h3
+							layout="position"
+							layoutId={msg + (i - loaderMessages.length + 1)}
+							className="absolute w-full text-center text-medium"
+							style={{ top: `${i * 1.5 + Math.min(i, 1)}rem` }}
+							key={msg}
+							variants={messageAnim}
+							initial="start"
+							animate={i === 0 ? "end" : "sub"}
+							exit="exit"
+							transition={{ duration: 0.5 }}
+						>
+							{msg}
+						</motion.h3>
+					))}
+				</AnimatePresence>
+			</div>
 		</div>
 	) : ditheredImages.length == 0 && errorMsg.length > 0 ? (
 		<div className="flex flex-col items-center justify-center w-4/5 h-3/5">
@@ -185,7 +193,7 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 											},
 										}}
 										onAnimationStart={(def) => {
-											if (def === "exit") setTimeout(() => setPopZip(true), 300 + i * 200);
+											if (def === "exit") setTimeout(() => setPopZip(true), 200 + i * 200);
 										}}
 										onAnimationComplete={(def) => {
 											if (i === ditheredImages.length - 1 && def === "end") setShowZip(true);
