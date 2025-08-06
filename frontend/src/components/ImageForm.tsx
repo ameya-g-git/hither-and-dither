@@ -71,8 +71,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 		);
 	}
 
-	// TODO: add the freaking zip file animation Lol
-	// TODO; also just general   change of Interface animations (close windows, hide input elements, etc.)
+	// TODO: add client-side 5 image validation
 	// TODO: add the bayer 8x8 and special bayer matrices
 	// TODO: add info hover thing for algorithm just to explain what's up
 

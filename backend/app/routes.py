@@ -16,10 +16,6 @@ uploaded_images = UploadedImageList([])
 
 main = Blueprint("main", __name__)
 
-"""Uploading images TODO
- - Accepts 
-"""
-
 
 @main.route("/", methods=["POST"])
 def upload_images():
