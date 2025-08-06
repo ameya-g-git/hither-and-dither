@@ -1,13 +1,12 @@
 import saveAs from "file-saver";
 import JSZip from "jszip";
 import moment from "moment";
-import { AnimatePresence, motion, stagger, Variants } from "motion/react";
+import { AnimatePresence, motion, Variants } from "motion/react";
 import { useEffect, useState } from "react";
 
 import { DitheredImage } from "./DitherForm";
 import { spinners, loadingMessages } from "../utils/loader";
 
-import grad from "../assets/img/gradient.png";
 import download from "../assets/pixel_doodles/download.svg";
 import err from "../assets/pixel_doodles/crash.svg";
 import zip from "../assets/pixel_doodles/zip.svg";
@@ -130,8 +129,35 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 						</motion.h3>
 					))}
 				</AnimatePresence>
+				<div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-dark to-transparent"></div>
 			</div>
-			<div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-dark to-transparent"></div>
+			<div className="flex flex-col w-full gap-3">
+				{loaderMessages.length > 10 && (
+					<motion.span
+						initial={{ opacity: 0, translateY: "3rem" }}
+						animate={{ opacity: 1, translateY: 0 }}
+						className="w-full text-center text-medium"
+					>
+						sorry it's taking so long! just wait a bit longer...
+					</motion.span>
+				)}
+				{loaderMessages.length > 40 && (
+					<motion.span
+						initial={{ opacity: 0, translateY: "3rem" }}
+						animate={{ opacity: 1, translateY: 0 }}
+						className="w-full text-center text-medium"
+					>
+						okay, now i'm concerned.{" "}
+						<a
+							className="underline hover:brightness-125 focus:brightness-125 active:brightness-125"
+							href="mailto:ameya.gup@proton.me?subject=hither%20and%20dither%20bug!!"
+						>
+							reach out to me
+						</a>{" "}
+						to let me know!
+					</motion.span>
+				)}
+			</div>
 		</div>
 	) : ditheredImages.length == 0 && errorMsg.length > 0 ? (
 		<div className="flex flex-col items-center justify-center w-4/5 h-3/5">

@@ -7,7 +7,7 @@ export const loadingMessages = [
 	"making a really cool loading spinner",
 	"rofling",
 	"finding all your base",
-	"127.0.0.1",
+	"hosting on http://127.0.0.1:8080",
 	'echo "Hello World!"',
 	"ERROR: message not found",
 	"thinking of a good loading message",
