@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { DitheredImage } from "./DitherForm";
 import { spinners, loadingMessages } from "../utils/loader";
 
+import grad from "../assets/img/gradient.png";
 import download from "../assets/pixel_doodles/download.svg";
 import err from "../assets/pixel_doodles/crash.svg";
 import zip from "../assets/pixel_doodles/zip.svg";
@@ -79,7 +80,7 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 					loading ? loadingMessages[Math.floor(Math.random() * loadingMessages.length)] : "",
 					...prev,
 				]);
-			}, 4096);
+			}, 2048);
 		} else {
 			clearInterval(intervalId);
 			clearInterval(messageId);
@@ -94,11 +95,9 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 		sub: { opacity: 1, scale: 0.75, translateY: "0rem" },
 	};
 
-	// TODO: fix up interface for downloading images
-
 	return loading ? (
 		<div
-			className="relative flex flex-col items-center justify-center w-full gap-2 animate"
+			className="relative flex flex-col items-center justify-center w-full h-full gap-8 mt-24 animate"
 			id="loading"
 		>
 			{loader && (
@@ -111,16 +110,16 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 					{loader[loaderFrame]}
 				</pre>
 			)}
-			<div className="relative flex flex-col w-full gap-4">
+			<div className="relative flex flex-col w-full h-48 gap-4 pt-24 overflow-hidden">
 				<AnimatePresence>
 					{loaderMessages.map((msg, i) => (
 						// TODO: add a little disclaimer message if the length of loaderMessages is too long
 						<motion.h3
 							layout="position"
 							layoutId={msg + (i - loaderMessages.length + 1)}
+							key={msg + (i - loaderMessages.length + 1)}
 							className="absolute w-full text-center text-medium"
 							style={{ top: `${i * 1.5 + Math.min(i, 1)}rem` }}
-							key={msg}
 							variants={messageAnim}
 							initial="start"
 							animate={i === 0 ? "end" : "sub"}
@@ -132,6 +131,7 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 					))}
 				</AnimatePresence>
 			</div>
+			<div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-dark to-transparent"></div>
 		</div>
 	) : ditheredImages.length == 0 && errorMsg.length > 0 ? (
 		<div className="flex flex-col items-center justify-center w-4/5 h-3/5">

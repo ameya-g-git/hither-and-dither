@@ -330,7 +330,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 					<WindowImage
 						onClick={() => setWindowAbove(true)}
 						className={windowStyles(2, windowAbove)}
-						title={`${img.fileName.slice(0, -4)}_dithered_${img.algorithm}.png`}
+						title={`${img.fileName.slice(0, -4)}_dithered.png`}
 						height="66%"
 						exit={exit ? "exit" : ""}
 					>
