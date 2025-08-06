@@ -223,6 +223,11 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 										}}
 										onAnimationComplete={(def) => {
 											if (i === ditheredImages.length - 1 && def === "end") setShowZip(true);
+											if (i === ditheredImages.length - 1 && def === "exit")
+												saveAs(
+													ditherBlob,
+													`dithered-images-${moment().format("YYYYMMDD-HHmmss")}.zip`,
+												);
 										}}
 										className="absolute z-50 object-cover w-24 h-24 ease-out border-2 shadow-lg cursor-pointer shadow-dark left-1/2 border-medium rounded-xl"
 										src={dImg.data}
@@ -261,23 +266,22 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 							}}
 							className="absolute w-48 pb-8"
 							onAnimationComplete={(def) => {
-								if (!popImages) setTimeout(() => setPopImages(true), 250);
 								if (def === "pop" && popZip) setPopZip(false);
 							}}
 							src={zip}
-							alt=""
+							alt="Pixel art of a .zip file icon"
 						/>
 					)}
 					<div className="absolute w-full h-80 bottom-4 bg-gradient-to-b from-transparent to-50% to-dark" />
 					<h2 className="h-28 p-4 text-4xl text-center leading-[6rem] mt-12 -mb-7">
 						your images are ready!
 					</h2>
-					<h4 className="mb-4 text-sm opacity-50 pl-36 text-medium">have a splendid day!</h4>
+					<h4 className="mb-4 text-sm pl-36 text-medium">have a splendid day!</h4>
 					<button
 						id="width"
 						onClick={(e) => {
 							e.preventDefault();
-							saveAs(ditherBlob, `dithered-images-${moment().format("YYYYMMDD-HHmmss")}.zip`);
+							setPopImages(true);
 						}}
 						className="flex flex-row items-center h-16 gap-4 px-4 py-8 border-4 rounded-lg text-light bg-dark border-medium"
 					>
