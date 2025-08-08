@@ -92,6 +92,7 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 			<form className="flex after:z-10 items-center justify-center h-full min-h-[80dvh] w-10/12 before:absolute before:border-8 before:border-b-transparent before:border-r-transparent before:border-t-medium before:border-l-medium bg-dark pixel-corners rounded-[4rem] rounded-tl-none before:h-3/5 before:w-[calc(100%-2.5rem)] before:-top-1 before:-left-2">
 				{showUpload && (
 					<FileUpload
+						numImg={imgState.length}
 						className={imgState.length > 0 ? "h-[calc(100%-1rem)] bottom-0" : "h-full"}
 						onUpload={(file) => {
 							setCurrImageIndex(imgState.length);
@@ -105,52 +106,63 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 						<div className="absolute flex flex-row w-[calc(100%-7rem)] h-20 -left-2 -top-16">
 							{imgState.map((img, i) => {
 								return (
-									<motion.div
-										layout="position"
-										layoutId={img.id}
-										key={img.id}
-										transition={{}}
-										className="relative min-w-0 max-w-72 -mr-9"
-										style={{
-											zIndex: i == currImageIndex ? imgState.length : imgState.length - i,
-										}}
-									>
-										<button
+									<>
+										<motion.div
+											layout="position"
+											layoutId={img.id}
 											key={img.id}
-											className={buttonStyles(i == currImageIndex && !showUpload)}
-											onMouseOver={() => {
-												setTabDelIndex(i);
-												setTabHover(true);
-											}}
-											onMouseLeave={() => setTabHover(false)}
-											onFocus={() => {
-												setTabDelIndex(i);
-												setTabFocus(true);
-											}}
-											onBlur={() => setTabFocus(false)}
-											autoFocus
-											title={img.fileName}
-											onClick={(e) => {
-												e.preventDefault();
-												setShowUpload(false);
-												setCurrImageIndex(i);
+											className="relative min-w-0 max-w-72 -mr-9"
+											style={{
+												zIndex:
+													i == currImageIndex || i === tabDelIndex
+														? imgState.length
+														: imgState.length - i,
 											}}
 										>
-											{img.fileName}
-										</button>
-										{i === tabDelIndex && (
+											<button
+												key={img.id}
+												className={buttonStyles(i == currImageIndex && !showUpload)}
+												onMouseOver={() => {
+													setTabDelIndex(i);
+													setTabHover(true);
+												}}
+												onFocus={() => {
+													setTabDelIndex(i);
+													setTabFocus(true);
+												}}
+												onMouseLeave={() => {
+													setTabDelIndex(-1);
+													setTabHover(false);
+												}}
+												onBlur={() => {
+													setTabDelIndex(-1);
+													setTabFocus(false);
+												}}
+												autoFocus
+												title={img.fileName}
+												onClick={(e) => {
+													e.preventDefault();
+													setShowUpload(false);
+													setCurrImageIndex(i);
+												}}
+											>
+												{img.fileName}
+											</button>
+										</motion.div>
+										{i === tabDelIndex && i !== currImageIndex && (
 											<button
 												onClick={(e) => {
 													e.preventDefault();
 													onDelete(img.id);
 												}}
 												title={`delete ${img.fileName}`}
-												className="absolute z-50 flex items-center justify-center w-12 h-12 pl-0 text-xl border-4 rounded-full -top-4 -right-2 bg-dark border-medium text-medium "
+												className="absolute z-50 flex items-center justify-center w-12 h-12 pl-0 text-xl border-4 rounded-full -top-4 bg-dark border-medium text-medium "
+												style={{ left: `${(i * 100) / imgState.length}%` }}
 											>
 												x
 											</button>
 										)}
-									</motion.div>
+									</>
 								);
 							})}
 						</div>
