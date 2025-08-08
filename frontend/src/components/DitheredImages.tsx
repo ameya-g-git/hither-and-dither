@@ -112,7 +112,6 @@ export default function DitheredImages({ ditheredImages, loading, errorMsg }: Di
 			<div className="relative flex flex-col w-full h-48 gap-4 pt-24 overflow-hidden">
 				<AnimatePresence>
 					{loaderMessages.map((msg, i) => (
-						// TODO: add a little disclaimer message if the length of loaderMessages is too long
 						<motion.h3
 							layout="position"
 							layoutId={msg + (i - loaderMessages.length + 1)}
