@@ -52,7 +52,7 @@ export default function App() {
 		(Math.min(100, (s - 900) / 3) / screenWidth) * 100,
 		(Math.max(400, -(s - 2000) / 3) / screenHeight) * 100,
 		(Math.min(250, (s + 200) / 3) / screenHeight) * 100,
-		(Math.max(1080, -(s - 5800) / 3) / screenWidth) * 100,
+		(Math.max(1080, -(s - 5200) / 4) / screenWidth) * 100,
 	];
 
 	const waveElements = (n: number) => {
