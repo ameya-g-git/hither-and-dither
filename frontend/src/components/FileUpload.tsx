@@ -10,8 +10,7 @@ interface FileUploadType {
 	className?: string;
 	onUpload: uploadHandlerType;
 	visible?: boolean;
-	// isDraggedOver: boolean;
-	// setIsDraggedOver: (isDraggedOver: boolean) => void;
+	numImg: number;
 }
 
 /**
@@ -22,25 +21,15 @@ interface FileUploadType {
  * @returns | The JSX that displays the drag-and-drop uploader
  */
 
-export default function FileUpload({ className = "", onUpload }: FileUploadType) {
+export default function FileUpload({ className = "", onUpload, numImg }: FileUploadType) {
 	const [isDraggedOver, setIsDraggedOver] = useState(false);
 	const [isClicked, setIsClicked] = useState(false);
 	const [showCrashModal, setShowCrashModal] = useState(false);
+	const [crashMessage, setCrashMessage] = useState("");
 
 	const inputClasses = clsx(
 		"mt-0.5 w-[calc(100%-1rem)] h-[calc(100%-1rem)] transition-all rounded-[4.5rem] rounded-tl-none",
 	);
-
-	// useEffect(() => {
-	// 	if (
-	// 		mousePosition.x < screenPadding ||
-	// 		mousePosition.x > screenWidth - screenPadding ||
-	// 		mousePosition.y < screenPadding ||
-	// 		mousePosition.y > screenHeight - screenPadding
-	// 	) {
-	// 		setIsDraggedOver(false);
-	// 	}
-	// }, [mousePosition, screenHeight, screenWidth]);
 
 	function dragOverHandler(e: DragEvent) {
 		e.preventDefault();
@@ -132,6 +121,7 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 					<span className="inline-flex gap-2 text-center text-medium">
 						feel free to drag n' drop or click here to add images!
 					</span>
+					<span className="-mt-2 text-xs">(max of 5 images!)</span>
 				</div>
 			</label>
 			~
@@ -147,15 +137,19 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 				multiple
 				accept="image/*"
 				onChange={(e) => {
-					if (e.target.files && e.target.files.length > 0) {
+					if (e.target.files && e.target.files.length > 0 && e.target.files.length + numImg <= 5) {
 						for (const file of e.target.files) {
 							if (file.size < 25e6) {
 								// 25 MB limit, no need to be egregious with it
 								onUpload(file); // handle file upload via a handler function prop
 							} else {
 								setShowCrashModal(true);
+								setCrashMessage("file too large!");
 							}
 						}
+					} else {
+						setShowCrashModal(true);
+						setCrashMessage("too many images!");
 					}
 				}}
 			/>
@@ -193,11 +187,11 @@ export default function FileUpload({ className = "", onUpload }: FileUploadType)
 						<motion.img
 							className="-mb-2"
 							variants={shake}
-							onAnimationComplete={() => setShowCrashModal(false)}
+							onAnimationComplete={() => setTimeout(() => setShowCrashModal(false), 500)}
 							src={crash}
 							alt="Upload icon"
 						/>
-						<h2 className="w-full h-20 text-3xl text-center -mb-7">file too large!</h2>
+						<h2 className="w-full h-20 text-3xl text-center -mb-7">{crashMessage}</h2>
 						<span className="mb-8 mr-16 text-xs text-center text-medium/75">
 							be nice to the servers!
 						</span>

@@ -71,10 +71,6 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 		);
 	}
 
-	// TODO: add client-side 5 image validation
-	// TODO: add the bayer 8x8 and special bayer matrices
-	// TODO: add info hover thing for algorithm just to explain what's up
-
 	const [paletteOptions, setPaletteOptions] = useState<OptionGroup[]>(defaultPalette);
 
 	function deletePalette(id: string) {
@@ -161,9 +157,9 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 				}}
 				className="flex flex-row w-full"
 			>
-				<div className="flex flex-col w-1/2 gap-4 grow">
+				<div className="relative flex flex-col w-1/2 gap-4 grow">
 					<Dropdown
-						className="z-40"
+						className="z-10"
 						current={img.algorithm}
 						dropFor="algorithm"
 						id={img.id}
