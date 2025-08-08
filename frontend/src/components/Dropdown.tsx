@@ -122,13 +122,12 @@ export default function Dropdown({
 
 	return (
 		<motion.div
-			// layoutId={`dropdown-${dropFor}${id}`}
 			variants={variants}
 			transition={{ ease: "easeOut" }}
 			className={`min-h-32 min-w-48 ${className ? className : ""}`}
 		>
 			{showLabel && (
-				<label className="text-lg ">{dropFor.slice(0, 1).toUpperCase() + dropFor.slice(1)}</label>
+				<label className="text-lg">{dropFor.slice(0, 1).toUpperCase() + dropFor.slice(1)}</label>
 			)}
 			<motion.div
 				ref={dropdownRef}
