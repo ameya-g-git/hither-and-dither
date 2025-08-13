@@ -52,10 +52,7 @@ export default function WindowImage({
 			style={{
 				transform: `translate(${x}vw, ${y}vh)`,
 			}}
-			onAnimationComplete={(d) => {
-				console.log(d);
-				setLoaded(true);
-			}}
+			onAnimationComplete={() => setLoaded(true)}
 		>
 			<div className="box-border absolute flex flex-row w-11/12 h-6 overflow-hidden -bottom-4">
 				<img src={shadow} className="h-full" alt="" />
