@@ -39,7 +39,6 @@ export default function WindowImage({
 		<motion.div
 			key={title}
 			variants={windowVar}
-			// initial="start"
 			animate="end"
 			exit={exit}
 			transition={{
