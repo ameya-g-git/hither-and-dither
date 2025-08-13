@@ -48,6 +48,7 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 			"border-medium/50 text-medium hover:border-medium hover:text-glow": !open,
 		});
 
+	// TODO: change to aws sdk invoke function
 	async function submitImages() {
 		try {
 			setLoading(true);
