@@ -1,5 +1,3 @@
-import clsx from "clsx";
-import { Variants } from "motion/react";
 import { ChangeEvent, useState } from "react";
 
 interface ColourChipProps {
