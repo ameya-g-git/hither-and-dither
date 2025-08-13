@@ -6,7 +6,7 @@ phases:
             - cd frontend ; npm install
     build:
         commands:
-            - npm run build ; cd ..
+            - npm run build
 
 artifacts:
     base-directory: dist
