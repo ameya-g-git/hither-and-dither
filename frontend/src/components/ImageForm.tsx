@@ -159,7 +159,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 			>
 				<div className="relative flex flex-col w-1/2 gap-4 grow">
 					<Dropdown
-						className="z-10"
+						className="z-40"
 						current={img.algorithm}
 						dropFor="algorithm"
 						id={img.id}
