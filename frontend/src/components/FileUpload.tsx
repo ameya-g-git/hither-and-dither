@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import clsx from "clsx";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 
@@ -27,6 +27,8 @@ export default function FileUpload({ className = "", onUpload, numImg }: FileUpl
 	const [showCrashModal, setShowCrashModal] = useState(false);
 	const [crashMessage, setCrashMessage] = useState("");
 
+	const inputRef = useRef<HTMLInputElement>(null);
+
 	const inputClasses = clsx(
 		"mt-0.5 w-[calc(100%-1rem)] h-[calc(100%-1rem)] transition-all rounded-[4.5rem] rounded-tl-none",
 	);
@@ -52,10 +54,8 @@ export default function FileUpload({ className = "", onUpload, numImg }: FileUpl
 			if (files.length > 0) {
 				for (const file of files) {
 					if (file.size < 25e6) {
-						// 25 MB limit, no need to be egregious with it
 						onUpload(file); // handle file upload via a handler function prop
 					} else {
-						// alert("file is too big! be nice to the servers!");
 						setShowCrashModal(true);
 					}
 				}
@@ -121,14 +121,14 @@ export default function FileUpload({ className = "", onUpload, numImg }: FileUpl
 					<span className="inline-flex gap-2 text-center text-medium">
 						feel free to drag n' drop or click here to add images!
 					</span>
-					<span className="-mt-2 text-xs">(max of 5 images!)</span>
+					<span className="-mt-2 text-xs">(max of 7 images!)</span>
 				</div>
 			</label>
-			~
 			<input
+				ref={inputRef}
 				type="file"
 				id="fileElem"
-				key={"fileElem"}
+				key="fileElem"
 				name="fileElem"
 				onMouseLeave={() => setIsClicked(false)}
 				onMouseDown={() => setIsClicked(true)}
@@ -137,17 +137,19 @@ export default function FileUpload({ className = "", onUpload, numImg }: FileUpl
 				multiple
 				accept="image/*"
 				onChange={(e) => {
-					if (e.target.files && e.target.files.length > 0 && e.target.files.length + numImg <= 5) {
+					if (e.target.files && e.target.files.length > 0 && e.target.files.length + numImg <= 7) {
 						for (const file of e.target.files) {
 							if (file.size < 25e6) {
 								// 25 MB limit, no need to be egregious with it
 								onUpload(file); // handle file upload via a handler function prop
 							} else {
+								if (inputRef && inputRef.current) inputRef.current.value = "";
 								setShowCrashModal(true);
 								setCrashMessage("file too large!");
 							}
 						}
 					} else {
+						if (inputRef && inputRef.current) inputRef.current.value = "";
 						setShowCrashModal(true);
 						setCrashMessage("too many images!");
 					}
@@ -191,8 +193,8 @@ export default function FileUpload({ className = "", onUpload, numImg }: FileUpl
 							src={crash}
 							alt="Upload icon"
 						/>
-						<h2 className="w-full h-20 text-3xl text-center -mb-7">{crashMessage}</h2>
-						<span className="mb-8 mr-16 text-xs text-center text-medium/75">
+						<h2 className="w-full h-20 -mb-8 text-3xl text-center">{crashMessage}</h2>
+						<span className="mb-8 text-xs text-center mr-72 text-medium/75">
 							be nice to the servers!
 						</span>
 						<span className="text-xs text-center text-medium/75">

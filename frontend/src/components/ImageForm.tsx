@@ -30,6 +30,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 	const [paletteList, setPaletteList] = useState<string[]>(img.colours);
 	const [customPaletteName, setCustomPaletteName] = useState(false);
 	const [showSaveAnim, setShowSaveAnim] = useState(false);
+	const [paletteOptions, setPaletteOptions] = useState<OptionGroup[]>(defaultPalette);
 
 	const CUSTOM_IND = 2;
 
@@ -42,6 +43,8 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 			"z-0": !above,
 		});
 
+	// draw preview image on canvas
+	// didn't really implement the proper preview feature, so it's just there as a placeholder
 	function draw(
 		canvas: HTMLCanvasElement,
 		context: CanvasRenderingContext2D,
@@ -71,8 +74,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 		);
 	}
 
-	const [paletteOptions, setPaletteOptions] = useState<OptionGroup[]>(defaultPalette);
-
+	// delete custom colour palette from localStorage
 	function deletePalette(id: string) {
 		let newCustomOptions: Option[] = [...paletteOptions[CUSTOM_IND].options];
 
@@ -143,7 +145,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 	};
 
 	return (
-		<div className="flex flex-col w-full p-12  pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
+		<div className="flex flex-col w-full p-12 pt-16 mt-2 rounded-[4rem] md:flex-row bg-dark ">
 			<motion.div
 				variants={formVar}
 				initial="start"
@@ -220,7 +222,7 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 									/>
 								);
 							})}
-							{paletteList.length < 12 && (
+							{paletteList.length < 8 && (
 								<div className="flex w-fit h-fit border-medium border-4 rounded-full items-center p-1 text-4xl *:cursor-pointer">
 									<button
 										disabled={formDisabled}
