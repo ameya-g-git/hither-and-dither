@@ -153,8 +153,10 @@ export default function Dropdown({
 							style={{
 								transition: "all 0.1s ease-out",
 								rotate: showDropdownList ? "90deg" : "0deg",
+								fontStyle: "normal",
+								fontFamily: "sans-serif",
 							}}
-							className="mb-1 text-lg"
+							className="mb-1 text-lg origin-center"
 						>
 							▶︎
 						</span>
@@ -182,18 +184,17 @@ export default function Dropdown({
 									layout
 								>
 									<AnimatePresence>
-										{group.options.map((op) =>
-											op.id !== current ? (
-												<DropdownOption
-													key={op.id}
-													option={op}
-													onClick={(e) => optionClick(e, op)}
-													variants={opt}
-													onDelete={op.deletable && onDelete ? onDelete : () => {}}
-												/>
-											) : (
-												<></>
-											),
+										{group.options.map(
+											(op) =>
+												op.id !== current && (
+													<DropdownOption
+														key={op.id}
+														option={op}
+														onClick={(e) => optionClick(e, op)}
+														variants={opt}
+														onDelete={op.deletable && onDelete ? onDelete : () => {}}
+													/>
+												),
 										)}
 									</AnimatePresence>
 								</motion.ol>
