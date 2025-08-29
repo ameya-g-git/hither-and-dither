@@ -1,4 +1,4 @@
-import { isPaletteOption } from "./isA";
+import isPaletteOption from "./isPaletteOption";
 import { Option, OptionGroup } from "../components/Dropdown";
 
 export function loadCustomPalettes(): Option[] {
@@ -29,11 +29,13 @@ export function loadCustomPalettes(): Option[] {
 	return customPalettes;
 }
 
+// TODO: add more freaking palettes
+
 export const defaultPalette: OptionGroup[] = [
 	{
 		name: "Standard",
 		options: [
-			{ id: "h&d", val: ["#140428", "#79468a"], name: "Hither & Dither" },
+			{ id: "hnd", val: ["#140428", "#79468a"], name: "Hither & Dither" },
 			{ id: "bw_1", val: ["#000000", "#ffffff"], name: "1-Bit Grayscale" },
 			{
 				id: "bw_2",

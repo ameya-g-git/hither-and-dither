@@ -1,6 +1,6 @@
 import { Option } from "../components/Dropdown";
 
-export function isPaletteOption(obj: any): obj is Option {
+export default function isPaletteOption(obj: any): obj is Option {
 	return (
 		obj &&
 		typeof obj === "object" &&
