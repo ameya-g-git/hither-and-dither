@@ -113,7 +113,7 @@ export default function DitheredImages({
 									layout="position"
 									layoutId={msg + (loadingMessages.length - i)}
 									key={msg + (loadingMessages.length - i)}
-									className="absolute w-4/5 text-center text-nowrap text-ellipsis text-medium"
+									className="absolute w-4/5 overflow-hidden text-center text-nowrap text-ellipsis text-medium"
 									style={{ top: `${i * 1.5 + Math.min(i, 1)}rem` }}
 									variants={messageAnim}
 									initial="start"
