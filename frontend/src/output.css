@@ -1878,6 +1878,11 @@ canvas {
   image-rendering: pixelated;
 }
 
+button:disabled,
+button:disabled:hover {
+  filter: brightness(0.6);
+}
+
 h1,
 h2,
 h3 {
