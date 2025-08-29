@@ -92,7 +92,6 @@ export default function DitheredImages({
 					initial="start"
 					animate="end"
 					exit="exit"
-					onAnimationStart={(d) => console.log(d, loadingAnimComplete, loading)}
 					id="loading"
 					key="loading"
 				>
@@ -117,7 +116,6 @@ export default function DitheredImages({
 									className="absolute w-full text-center text-medium"
 									style={{ top: `${i * 1.5 + Math.min(i, 1)}rem` }}
 									variants={messageAnim}
-									onAnimationStart={() => console.log(msg, loadingMessages.length - i)}
 									initial="start"
 									animate={i === 0 ? "end" : "sub"}
 									exit="exit"

@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
-import { nanoid } from "nanoid";
 import { AnimatePresence, motion, Variants } from "motion/react";
 
 import Dropdown, { Option, OptionGroup } from "./Dropdown";
@@ -9,8 +8,8 @@ import Slider from "./Slider";
 import WindowImage from "./WindowImage";
 import ColourChip from "./ColourChip";
 import Canvas from "./Canvas";
+import isPaletteOption from "../utils/isPaletteOption";
 import { UploadedImage, inputHandlerType } from "../hooks/useUploadedImages";
-import { isPaletteOption } from "../utils/isA";
 import { algOptions } from "../utils/alg_options";
 import { defaultPalette, loadCustomPalettes } from "../utils/palette_options";
 import { widthOptions } from "../utils/width_options";
@@ -278,7 +277,6 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 									disabled={formDisabled}
 									type="text"
 									placeholder="name your palette!"
-									onSubmit={(e) => console.log(e)}
 									onKeyDown={(e) => {
 										if (e.key === "Enter") {
 											e.preventDefault();

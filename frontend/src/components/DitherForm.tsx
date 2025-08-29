@@ -40,10 +40,6 @@ interface PresignedURLResponse {
 // mention that ordered dithering is known to take some time
 // then just do a funny one if it takes a bit longer
 
-// TODO: then we just like   figure out how to secure the API url properly : )
-
-// and that .... should be ............. it
-
 export default function DitherForm({ imgState, onChange, onUpload, onDelete }: DitherFormProps) {
 	const [showForm, setShowForm] = useState(true);
 	const [showUpload, setShowUpload] = useState(true);
@@ -58,8 +54,6 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 	const [tabFocus, setTabFocus] = useState(false);
 	const [tabDelIndex, setTabDelIndex] = useState(-1);
 
-	// TODO: disable add image button
-
 	const buttonStyles = (open: boolean) =>
 		clsx({
 			"h-full min-w-0 w-full overflow-hidden text-nowrap cursor-pointer pr-6 text-lg font-bold border-8 border-b-0 rounded-b-none rounded-3xl text-ellipsis bg-dark":
@@ -72,7 +66,7 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 		try {
 			setLoading(true);
 			setShowUpload(false);
-			const API_URL: string = import.meta.env.VITE_API_URL; // TODO: move api url probably in an environment variable or whatever the securest way is
+			const API_URL: string = import.meta.env.VITE_API_URL;
 
 			if (imgState.length > 7) throw new Error("too many images uploaded! relax!! i'm not rich!!!");
 
@@ -259,7 +253,6 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 	}, [currImageIndex, showForm]);
 
 	useEffect(() => {
-		console.log("checking", ditheredImages.length);
 		if (imgState.length > 0 && ditheredImages.length === imgState.length) setLoading(false);
 	}, [ditheredImages]);
 

@@ -424,7 +424,6 @@ export const algOptions: OptionGroup[] = [
 					],
 				],
 			},
-			// TODO: add more of those matrices + blue noise as well
 		],
 	},
 ];
