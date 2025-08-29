@@ -287,7 +287,7 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 											layout="position"
 											layoutId={img.id}
 											key={img.id}
-											className="relative w-full min-w-0 max-w-[50%] -mr-9"
+											className="relative w-full min-w-0 max-w-[60%] -mr-9"
 											style={{
 												zIndex:
 													i === currImageIndex || i === tabDelIndex

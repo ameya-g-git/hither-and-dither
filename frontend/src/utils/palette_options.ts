@@ -1,10 +1,11 @@
 import { isPaletteOption } from "./isA";
-import { Option } from "../components/Dropdown";
+import { Option, OptionGroup } from "../components/Dropdown";
 
-function loadCustomPalettes(): Option[] {
+export function loadCustomPalettes(): Option[] {
 	const customPalettes: Option[] = [];
 
 	for (const name of Object.keys(localStorage).reverse()) {
+		// reverse the list because that often preserves order in terms of recency
 		let loadedPalette: unknown = JSON.parse(localStorage!.getItem(name) as string);
 
 		// check if the data loaded from localStorage is the right type to be an Option
@@ -28,7 +29,7 @@ function loadCustomPalettes(): Option[] {
 	return customPalettes;
 }
 
-export const defaultPalette = [
+export const defaultPalette: OptionGroup[] = [
 	{
 		name: "Standard",
 		options: [

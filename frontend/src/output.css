@@ -788,6 +788,10 @@ video {
   margin-bottom: -1.75rem;
 }
 
+.-mb-8 {
+  margin-bottom: -2rem;
+}
+
 .-mr-9 {
   margin-right: -2.25rem;
 }
@@ -832,8 +836,8 @@ video {
   margin-left: 24rem;
 }
 
-.mr-16 {
-  margin-right: 4rem;
+.mr-72 {
+  margin-right: 18rem;
 }
 
 .mt-0\.5 {
@@ -870,26 +874,6 @@ video {
 
 .mt-8 {
   margin-top: 2rem;
-}
-
-.mr-32 {
-  margin-right: 8rem;
-}
-
-.mr-96 {
-  margin-right: 24rem;
-}
-
-.mr-64 {
-  margin-right: 16rem;
-}
-
-.mr-72 {
-  margin-right: 18rem;
-}
-
-.-mb-8 {
-  margin-bottom: -2rem;
 }
 
 .box-border {
@@ -1150,20 +1134,16 @@ video {
   min-width: 12rem;
 }
 
-.max-w-72 {
-  max-width: 18rem;
-}
-
-.max-w-80 {
-  max-width: 20rem;
-}
-
-.max-w-\[50\%\] {
-  max-width: 50%;
+.max-w-\[60\%\] {
+  max-width: 60%;
 }
 
 .grow {
   flex-grow: 1;
+}
+
+.origin-center {
+  transform-origin: center;
 }
 
 .-translate-x-1\/2 {
@@ -1510,16 +1490,16 @@ video {
   padding: 3rem;
 }
 
+.p-2 {
+  padding: 0.5rem;
+}
+
 .p-4 {
   padding: 1rem;
 }
 
 .p-8 {
   padding: 2rem;
-}
-
-.p-2 {
-  padding: 0.5rem;
 }
 
 .px-3 {
@@ -1759,6 +1739,11 @@ video {
   outline-offset: 2px;
 }
 
+.blur {
+  --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
 .drop-shadow-lg {
   --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
@@ -1852,7 +1837,9 @@ video {
 
   line-height: normal;
 
-  src: url("./assets/fonts/IllusionSerif-Italic.otf");
+  src:
+		url("./assets/fonts/IllusionSerif-Italic.otf") format("opentype"),
+		url("./assets/fonts/IllusionSerif-Italic.woff") format("woff");
 }
 
 @font-face {
@@ -1864,7 +1851,9 @@ video {
 
   line-height: normal;
 
-  src: url("./assets/fonts/IllusionSerif-BoldItalic.otf");
+  src:
+		url("./assets/fonts/IllusionSerif-BoldItalic.otf") format("opentype"),
+		url("./assets/fonts/IllusionSerif-BoldItalic.woff") format("woff");
 }
 
 * {
@@ -1874,7 +1863,7 @@ video {
 }
 
 body {
-  font-family: IllusionSerif;
+  font-family: IllusionSerif, "Courier New", Courier, monospace;
   width: 100%;
   background-image: radial-gradient(#1d0638, #0f0121);
   overflow-x: hidden;

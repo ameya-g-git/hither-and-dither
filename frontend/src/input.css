@@ -15,7 +15,9 @@
 	font-style: italic;
 	font-weight: normal;
 	line-height: normal;
-	src: url("./assets/fonts/IllusionSerif-Italic.otf");
+	src:
+		url("./assets/fonts/IllusionSerif-Italic.otf") format("opentype"),
+		url("./assets/fonts/IllusionSerif-Italic.woff") format("woff");
 }
 
 @font-face {
@@ -23,7 +25,9 @@
 	font-style: italic;
 	font-weight: bold;
 	line-height: normal;
-	src: url("./assets/fonts/IllusionSerif-BoldItalic.otf");
+	src:
+		url("./assets/fonts/IllusionSerif-BoldItalic.otf") format("opentype"),
+		url("./assets/fonts/IllusionSerif-BoldItalic.woff") format("woff");
 }
 * {
 	padding: 0;
@@ -32,7 +36,7 @@
 }
 
 body {
-	font-family: IllusionSerif;
+	font-family: IllusionSerif, "Courier New", Courier, monospace;
 	width: 100%;
 	background-image: radial-gradient(#1d0638, #0f0121);
 	overflow-x: hidden;

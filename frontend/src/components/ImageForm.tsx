@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
 import { AnimatePresence, motion, Variants } from "motion/react";
 
@@ -12,7 +12,7 @@ import Canvas from "./Canvas";
 import { UploadedImage, inputHandlerType } from "../hooks/useUploadedImages";
 import { isPaletteOption } from "../utils/isA";
 import { algOptions } from "../utils/alg_options";
-import { defaultPalette } from "../utils/palette_options";
+import { defaultPalette, loadCustomPalettes } from "../utils/palette_options";
 import { widthOptions } from "../utils/width_options";
 
 import floppy from "../assets/pixel_doodles/floppy.svg";
@@ -33,6 +33,18 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 	const [paletteOptions, setPaletteOptions] = useState<OptionGroup[]>(defaultPalette);
 
 	const CUSTOM_IND = 2;
+
+	useEffect(() => {
+		setPaletteOptions((prev) => {
+			const newPaletteOptions = [...prev];
+
+			newPaletteOptions[CUSTOM_IND].options = loadCustomPalettes();
+
+			return newPaletteOptions;
+		});
+	}, []);
+
+	const localPaletteRef = useRef<HTMLInputElement>(null);
 
 	const windowStyles = (num: number, above: boolean) =>
 		clsx({
@@ -97,23 +109,37 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 	function saveLocalPalette(e: React.FocusEvent<HTMLInputElement>) {
 		if (!e.target.value) return;
 
-		const existingPalette = localStorage.getItem(img.palette);
+		const existingPalette = localStorage.getItem(`hnd-${e.target.value}`);
+		let newPaletteOp: Option;
 
 		if (existingPalette && isPaletteOption(JSON.parse(existingPalette))) {
 			const existingPaletteOp: Option = JSON.parse(existingPalette);
-			localStorage.setItem(
-				e.target.value,
-				JSON.stringify({
-					...existingPaletteOp,
-					name: e.target.value,
-					val: img.colours,
-				}),
-			);
+			newPaletteOp = {
+				...existingPaletteOp,
+				val: paletteList,
+			};
+			localStorage.setItem(existingPaletteOp.id, JSON.stringify(newPaletteOp));
+			setPaletteOptions((prev) => {
+				const updated = [...prev];
+
+				const customOptions = updated[CUSTOM_IND].options;
+
+				const oldPaletteIndex = customOptions.findIndex((op) => op.id === newPaletteOp.id);
+				customOptions.splice(oldPaletteIndex, 1);
+
+				updated[CUSTOM_IND] = {
+					...updated[CUSTOM_IND],
+					options: customOptions.concat(newPaletteOp),
+				};
+
+				return updated;
+			});
 		} else {
-			const newPaletteOp: Option = {
-				id: `hnd-${nanoid()}`,
+			// TODO: overwrite a palette if it has the same name as one being added
+			newPaletteOp = {
+				id: `hnd-${e.target.value}`,
 				name: e.target.value,
-				val: img.colours,
+				val: paletteList,
 				deletable: true,
 			};
 			localStorage.setItem(newPaletteOp.id, JSON.stringify(newPaletteOp));
@@ -129,6 +155,8 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 				return updated;
 			});
 		}
+
+		onChange(img.id, "colours", paletteList);
 
 		setShowSaveAnim(true);
 	}
@@ -245,10 +273,19 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 						{customPaletteName && (
 							<motion.div className="absolute flex flex-col -top-[4.75rem] items-end gap-5 right-2">
 								<input
+									ref={localPaletteRef}
 									onBlur={saveLocalPalette}
 									disabled={formDisabled}
 									type="text"
 									placeholder="name your palette!"
+									onSubmit={(e) => console.log(e)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											e.preventDefault();
+											if (localPaletteRef && localPaletteRef.current)
+												localPaletteRef.current.blur();
+										}
+									}}
 									className="z-30 w-64 h-12 px-4 text-sm border-2 rounded-xl border-medium bg-dark"
 								/>
 								<AnimatePresence>
