@@ -106,7 +106,7 @@ export default function DitheredImages({
 						</pre>
 					)}
 					<ProgressBar progress={progress} />
-					<div className="relative flex flex-col w-full h-48 gap-4 pt-24 overflow-hidden">
+					<div className="relative flex flex-col items-center w-full h-48 gap-4 pt-24 overflow-hidden">
 						<AnimatePresence>
 							{loadingMessages.map((msg, i) => (
 								<motion.h3
