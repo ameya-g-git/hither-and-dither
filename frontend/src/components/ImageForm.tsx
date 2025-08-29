@@ -134,7 +134,6 @@ export default function ImageForm({ img, onChange, exit, onExit, formDisabled }:
 				return updated;
 			});
 		} else {
-			// TODO: overwrite a palette if it has the same name as one being added
 			newPaletteOp = {
 				id: `hnd-${e.target.value}`,
 				name: e.target.value,
