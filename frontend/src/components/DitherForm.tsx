@@ -68,6 +68,8 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 			setShowUpload(false);
 			const API_URL: string = import.meta.env.VITE_API_URL;
 
+			setLoadingMessages((prev) => [`uploading ${imgState.length} images...`, ...prev]);
+
 			if (imgState.length > 7) throw new Error("too many images uploaded! relax!! i'm not rich!!!");
 
 			// upload images temporarily to s3 bucket
@@ -102,14 +104,6 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 				Object.entries(fields).map(([key, value]) => formData.append(key, value));
 				formData.append("Content-Type", "image/*");
 				formData.append("file", dataURItoBlob(img.src), fileName);
-
-				if (loadingMessages.length > 0)
-					setLoadingMessages((prev) => [`uploading ${imgState.length} images...`, ...prev]);
-				else
-					setLoadingMessages((prev) => [
-						`uploading ${((20 - progress) * imgState.length) / 20} images...`,
-						...prev.slice(1),
-					]);
 
 				console.log("uploading: ", img.fileName);
 				// upload image to S3
