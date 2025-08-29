@@ -135,7 +135,7 @@ export default function FileUpload({ className = "", onUpload, numImg }: FileUpl
 				onMouseUp={() => setIsClicked(false)}
 				className={`absolute top-1/2 left-1/2 hover:backdrop-brightness-125 cursor-pointer text-transparent -translate-x-1/2 -translate-y-1/2 ${inputClasses}`}
 				multiple
-				accept="image/*"
+				accept="image/png, image/jpg, image/jpeg"
 				onChange={(e) => {
 					if (e.target.files && e.target.files.length > 0 && e.target.files.length + numImg <= 7) {
 						for (const file of e.target.files) {
