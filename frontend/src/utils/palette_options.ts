@@ -29,8 +29,6 @@ export function loadCustomPalettes(): Option[] {
 	return customPalettes;
 }
 
-// TODO: add more freaking palettes
-
 export const defaultPalette: OptionGroup[] = [
 	{
 		name: "Standard",

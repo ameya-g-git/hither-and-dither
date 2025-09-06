@@ -9,4 +9,15 @@ pursue your pixelated dreams! a full-stack web app made with react, typescript, 
 ![final menu for hither and dither. shows a preview of the dithered images in front of a pixelated zip file icon. below is the text "your images are ready, have a splendid day!" and a button to download the dithered images.](assets/image-3.png)
 
 ## architecture
-TODO: make this diagram lole
+![AWS architecture diagram for the project. consists of cloudfront hooked up to an s3 bucket (built via codepipeline) and a serverless api using api gateway, lambda, and s3](/assets/architecture.png)
+
+## next steps
+this project has taken quite some time! it would have honestly taken more had i not minimized the scope over the course of making hither and dither. here's just a future ideas list to let me know where i can pick things back up again.
+
+- [ ] custom algorithm interface (allow users to create their own weight matrices)
+- [ ] implement better api auth! JWT or implementation with cognito (still need to figure out how this works)
+- [ ] save user generations in some sort of SQL database + file storage solution (aurora dsql + s3 seems to be the cheapest and most effective), and retrieve past generations on pageload
+- [ ] add disclaimer if loading is taking a long time (specifically for ordered dithering, which is known to take a long time)
+
+---
+thanks for checking out this project!

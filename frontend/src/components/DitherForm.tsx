@@ -36,10 +36,6 @@ interface PresignedURLResponse {
 	fields: object;
 }
 
-// TODO: add disclaimer messages if the loading is taking too long
-// mention that ordered dithering is known to take some time
-// then just do a funny one if it takes a bit longer
-
 export default function DitherForm({ imgState, onChange, onUpload, onDelete }: DitherFormProps) {
 	const [showForm, setShowForm] = useState(true);
 	const [showUpload, setShowUpload] = useState(true);
@@ -95,9 +91,6 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 					`${API_URL}/getPresignedUrl?fileName=${fileName}`,
 					{ method: "GET" },
 				).then((res) => res.json());
-
-				// TODO: later on, i need to make sure to change all of my access control origins to the cloudfront distribution
-				// so this includes my lambda headers, api gateway CORS config, and now s3 CORS config
 
 				const { url, fields } = response;
 				const formData = new FormData();
@@ -230,12 +223,6 @@ export default function DitherForm({ imgState, onChange, onUpload, onDelete }: D
 			setLoading(false);
 		}
 	}
-
-	// TODO: when i create the readme for this project, along with the AWS architecture diagram,
-	// i'll probably want to store all dithers in an s3 bucket. they're small files, and likely won't fuck me up
-	// i'll mention the DSQL idea in a "Next Steps / Future Ideas" section at least
-
-	// TODO: also   give each API route their request body models
 
 	useEffect(() => {
 		setTabHover(true);
